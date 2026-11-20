@@ -123,7 +123,7 @@ Under this fork's **Settings → Environments → production**, configure:
 | Kind | Name | Value |
 | --- | --- | --- |
 | Variable | `FTP_SERVER` | `ftpupload.net` (supplied by owner) |
-| Variable | `FTP_REMOTE_DIR` | Candidate: `/cspcssc.ct.ws/htdocs/`; confirm in the file manager/hosting panel before uploads |
+| Variable | `FTP_REMOTE_DIR` | `/cspcssc.ct.ws/htdocs/` (confirmed by the domain's Directory entry) |
 | Secret | `FTP_USERNAME` | Username shown in the hosting account's FTP Details |
 | Secret | `FTP_PASSWORD` | Password shown in FTP Details, which may differ from the client-area password |
 
@@ -136,9 +136,10 @@ gh secret set FTP_USERNAME --env production --repo mrfahrenheit0528/SSC-Website-
 gh secret set FTP_PASSWORD --env production --repo mrfahrenheit0528/SSC-Website-Vanilla
 ```
 
-Only a hostname and a tentative root are known so far. Having client-area
-credentials does not by itself verify an FTP login, a database login, or the
-correct document root. No credentials are derived from previously exposed Git
+The hostname and domain directory are confirmed, and both FTP secret names are
+present in the production environment. The stored credentials still require
+an actual FTPS login test; database access and configuration also remain pending.
+No credentials are derived from previously exposed Git
 history or uploaded automatically from this workstation.
 
 ### Before the first deployment

@@ -14,9 +14,10 @@ requirement for independent local development. No deployment workflow is enabled
 
 CI/CD setup progress: CI and a manual FTPS deployment workflow are prepared.
 GitHub Actions is enabled and a `production` environment permits only `main`.
-The owner supplied `ftpupload.net` and tentatively `/cspcssc.ct.ws/htdocs/`.
-The root is not verified; FTP credentials must be entered directly as environment
-secrets. Deployment defaults to a read-only preview, preserves uploads/private
+The owner supplied `ftpupload.net` and confirmed `/cspcssc.ct.ws/htdocs/` using
+the domain's Directory entry in InfinityFree. The `FTP_USERNAME` and
+`FTP_PASSWORD` environment secrets are present; authentication is not yet tested.
+Deployment defaults to a read-only preview, preserves uploads/private
 config, and requires backup confirmation for writes. The host's private config,
 production backups, source/schema comparison, and live FTPS test are still pending.
 See README.md for configuration and first-run steps. No live deployment has run.

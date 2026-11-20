@@ -8,6 +8,13 @@ still need verification. The original developer confirmed that GitHub Actions is
 not in use. Future CI/CD will be configured in the owner's fork. Local development
 will continue in VS Code independently of browser access.
 
+Subsequent CI/CD setup update: the owner confirmed the domain's Directory entry
+is `cspcssc.ct.ws/htdocs`, establishing the FTP document-root setting as
+`/cspcssc.ct.ws/htdocs/`. The FTP hostname is `ftpupload.net`. Both FTP secret
+names are present in the fork's `production` environment; login, private config,
+and production backup verification remain pending. Workflows have been prepared
+and CI passed; setup must reach `main` before the manual deployment can be run.
+
 During repository cleanup, the original connection config and historical SQL dump
 were also copied to the private folder
 `C:\Users\Elmo\AppData\Local\SSCWebsiteBackups\2026-11-21-cleanup`.
