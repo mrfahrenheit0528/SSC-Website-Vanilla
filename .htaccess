@@ -4,11 +4,11 @@ DirectoryIndex index.php index.html
 <IfModule mod_rewrite.c>
     RewriteEngine On
     # These are source/dependency directories, not public routes.
-    RewriteRule ^(?:\.git|config|vendor|node_modules|tests|backups)(?:/|$) - [F,L,NC]
+    RewriteRule ^(?:\.git|config|vendor|node_modules|scripts|tests|backups)(?:/|$) - [F,L,NC]
 </IfModule>
 
 # Keep dumps, private config, manifests and backup files out of public responses.
-<FilesMatch "(?i)(^\.env(?:\.|$)|^\.git|\.local\.php$|\.(?:sql|bak|backup|old|zip|7z|tar|gz|md)$|^(?:composer\.(?:json|lock)|package(?:-lock)?\.json)$)">
+<FilesMatch "(?i)(^\.env(?:\.|$)|^\.git|\.local\.php$|\.(?:sql|bak|backup|old|zip|7z|tar|gz|md)$|^(?:test\.php|hello\.html|composer\.(?:json|lock)|package(?:-lock)?\.json)$)">
     Require all denied
 </FilesMatch>
 

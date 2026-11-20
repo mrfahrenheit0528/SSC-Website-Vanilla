@@ -1,0 +1,66 @@
+name: Deploy to InfinityFree
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Read-only preview: do not upload or change hosting files'
+        type: boolean
+        default: true
+        required: true
+      backups_confirmed:
+        description: 'A current private backup of live files, uploads and database is verified'
+        type: boolean
+        default: false
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: infinityfree-production
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+  deploy:
+    needs: checks
+    if: github.repository == 'mrfahrenheit0528/SSC-Website-Vanilla' && github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: https://cspcssc.ct.ws/
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Require backup confirmation for writes
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+          BACKUPS_CONFIRMED: ${{ inputs.backups_confirmed }}
+        run: |
+          if [ "$DRY_RUN" != true ] && [ "$BACKUPS_CONFIRMED" != true ]; then
+            echo 'Verify a private production backup before enabling uploads.' >&2
+            exit 1
+          fi
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@d52fc211a0436f8839a587b3b5b8efddab4744ea # v2
+        with:
+          php-version: '8.3'
+          extensions: mysqli, gd, fileinfo, curl, mbstring
+          tools: composer:v2
+          coverage: none
+      - name: Prepare production package
+        run: |
+          composer install --no-dev --prefer-dist --no-interaction --no-progress --no-scripts --optimize-autoloader
+          python3 scripts/build_release.py
+      - name: Preview or upload over explicit FTPS
+        env:
+          FTP_SERVER: ${{ vars.FTP_SERVER }}
+          FTP_REMOTE_DIR: ${{ vars.FTP_REMOTE_DIR }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          DEPLOY_DRY_RUN: ${{ inputs.dry_run }}
+          BACKUPS_CONFIRMED: ${{ inputs.backups_confirmed }}
+        run: python3 scripts/deploy_ftps.py

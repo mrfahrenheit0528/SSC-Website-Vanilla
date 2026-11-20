@@ -12,6 +12,15 @@ Development will continue in VS Code. Future CI/CD will run from this fork after
 the hosting details and backups are established; browser access is not a
 requirement for independent local development. No deployment workflow is enabled.
 
+CI/CD setup progress: CI and a manual FTPS deployment workflow are prepared.
+GitHub Actions is enabled and a `production` environment permits only `main`.
+The owner supplied `ftpupload.net` and tentatively `/cspcssc.ct.ws/htdocs/`.
+The root is not verified; FTP credentials must be entered directly as environment
+secrets. Deployment defaults to a read-only preview, preserves uploads/private
+config, and requires backup confirmation for writes. The host's private config,
+production backups, source/schema comparison, and live FTPS test are still pending.
+See README.md for configuration and first-run steps. No live deployment has run.
+
 ## Objective
 
 Modernize the council website's public pages and administration tools while preserving its documents, officer information, and existing PHP/MySQL functionality. Prepare and verify changes locally before updating production.

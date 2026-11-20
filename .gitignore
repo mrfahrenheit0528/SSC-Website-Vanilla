@@ -34,6 +34,8 @@
 /dist/
 /build/
 *.tsbuildinfo
+__pycache__/
+*.pyc
 
 # Machine-generated editor and operating-system files
 /.vscode-test/

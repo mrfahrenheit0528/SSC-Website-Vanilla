@@ -87,7 +87,8 @@ history and other copies of the original repository.
 This repository is a fork. The owner currently has InfinityFree account
 credentials; FTP details, database access, and the exact deployed directory have
 not yet been verified. The original deployment does not use GitHub Actions.
-No CI/CD workflow has been added or production changes made during cleanup.
+Workflows are prepared in `.github/workflows/`; hosting connection verification
+and the first deployment remain pending. No production files have been changed.
 
 Before deploying this configuration change:
 
@@ -103,6 +104,91 @@ Before deploying this configuration change:
 5. Remove any old deployed diagnostic pages (`test.php`, `hello.html`) and the
    deployed SQL dump after preserving necessary private backups.
 6. Verify access restrictions, public documents, login, and generated reports.
+
+## GitHub Actions setup
+
+The `CI` workflow runs on pushes and pull requests. It validates dependency
+manifests, installs locked dependencies, checks PHP syntax, tests deployment
+safeguards, builds a runtime-only release, and checks PDF generation. Runners
+use PHP 8.3 and Node 22. Verify the hosting PHP version/extensions before release.
+
+The `Deploy to InfinityFree` workflow is manual and only deploys from this
+fork's `main` branch. A `production` environment has been created on GitHub and
+restricted to `main`. The deployment is a **read-only preview by default**.
+The workflow must be merged into the default branch before GitHub offers its
+manual Run workflow button.
+
+Under this fork's **Settings → Environments → production**, configure:
+
+| Kind | Name | Value |
+| --- | --- | --- |
+| Variable | `FTP_SERVER` | `ftpupload.net` (supplied by owner) |
+| Variable | `FTP_REMOTE_DIR` | Candidate: `/cspcssc.ct.ws/htdocs/`; confirm in the file manager/hosting panel before uploads |
+| Secret | `FTP_USERNAME` | Username shown in the hosting account's FTP Details |
+| Secret | `FTP_PASSWORD` | Password shown in FTP Details, which may differ from the client-area password |
+
+Enter secrets directly on GitHub or use the following commands in your own
+VS Code terminal; `gh` prompts for each value. Do not paste passwords in chat or
+commit them to configuration files.
+
+```powershell
+gh secret set FTP_USERNAME --env production --repo mrfahrenheit0528/SSC-Website-Vanilla
+gh secret set FTP_PASSWORD --env production --repo mrfahrenheit0528/SSC-Website-Vanilla
+```
+
+Only a hostname and a tentative root are known so far. Having client-area
+credentials does not by itself verify an FTP login, a database login, or the
+correct document root. No credentials are derived from previously exposed Git
+history or uploaded automatically from this workstation.
+
+### Before the first deployment
+
+1. Confirm the document root belongs to `cspcssc.ct.ws`. Back up the live files,
+   database, and uploads privately and verify the recovery plan.
+2. Rotate exposed credentials with a coordinated live-config update, and inspect
+   the deployed schema/source for production-only changes.
+3. On the host, create `config/database.local.php` using the example's array
+   format and the correct host database settings. Leave the currently deployed
+   `config/database.php` in place until deployment replaces it. The workflow
+   requires the private file to exist and be nonempty; it does not inspect its
+   contents or prove its settings/schema are correct. Validate those separately.
+4. Review and merge the cleanup/CI changes into this fork's `main`. This enables
+   the manual workflow; merging does not deploy the site.
+5. In **Actions → Deploy to InfinityFree → Run workflow**, select `main`, leave
+   `dry_run` checked, and run the read-only preflight. This logs in with explicit
+   FTPS, verifies the configured directory and required files, and uploads nothing.
+6. Resolve any errors. Only after the root, backups, configuration, and release
+   are confirmed, run it with `dry_run` unchecked and `backups_confirmed` checked.
+7. Check the live pages, existing PDFs, login, dashboard, reports, and denied
+   diagnostic/config/dump URLs in a browser. The hosting JavaScript cookie check
+   means an automated HTTP 200 response is not sufficient proof of application health.
+
+The release allowlist includes application PHP, shared includes, assets, Apache
+rules, the license, and installed Composer dependencies. It excludes uploads,
+private config, SQL exports, documentation, Git history, workflow/scripts/tests,
+and Node dependencies. It does not publish the historical SQL dump or run
+database migrations. No private production backups are stored as public-repo
+workflow artifacts.
+
+FTPS uses port 21, certificate verification, and encrypted control/data channels.
+There is no plaintext or insecure-certificate fallback. Each file is uploaded to
+a temporary name then renamed; replacements must be supported by the server.
+This is not an atomic whole-site release: a failed job can leave some files
+updated and may leave non-secret temporary files. Use a maintenance window for
+incompatible changes. The script never deletes remote files, overwrites private
+config/uploads, or deletes an original to force a failed rename. Old remote-only
+files require deliberate cleanup; Apache rules deny the removed diagnostic URLs.
+
+To run packaging/safeguard checks locally:
+
+```powershell
+python -m unittest discover -s tests -v
+python scripts/build_release.py
+```
+
+Python 3.10+ and Composer-installed dependencies are required. Generated packages
+are in ignored `build/release/`; they are not a production backup. The Python
+tests use synthetic files and a fake FTP server and do not contact production.
 
 See [OVERHAUL_PLAN.md](OVERHAUL_PLAN.md) and
 [DEPLOYMENT_BASELINE.md](DEPLOYMENT_BASELINE.md) for pending work.
