@@ -16,10 +16,14 @@ CI/CD setup progress: CI and a manual FTPS deployment workflow are prepared.
 GitHub Actions is enabled and a `production` environment permits only `main`.
 The owner supplied `ftpupload.net` and confirmed `/cspcssc.ct.ws/htdocs/` using
 the domain's Directory entry in InfinityFree. The `FTP_USERNAME` and
-`FTP_PASSWORD` environment secrets are present; authentication is not yet tested.
+`FTP_PASSWORD` environment secrets are present. PR #1 was merged into `main`,
+enabling the manual workflow. Read-only run 44781013044 verified the FTPS login,
+the configured directory, `index.php`, and `config/database.php`, then stopped
+because `config/database.local.php` is missing or empty. No files were uploaded.
 Deployment defaults to a read-only preview, preserves uploads/private
 config, and requires backup confirmation for writes. The host's private config,
-production backups, source/schema comparison, and live FTPS test are still pending.
+production backups and source/schema comparison are still pending. A read-only
+preflight rerun is needed after the private config has been prepared on the host.
 See README.md for configuration and first-run steps. No live deployment has run.
 
 ## Objective

@@ -137,8 +137,10 @@ gh secret set FTP_PASSWORD --env production --repo mrfahrenheit0528/SSC-Website-
 ```
 
 The hostname and domain directory are confirmed, and both FTP secret names are
-present in the production environment. The stored credentials still require
-an actual FTPS login test; database access and configuration also remain pending.
+present in the production environment. The first read-only run verified FTPS
+login and the target directory, then stopped because the host's
+`config/database.local.php` is missing or empty. Database configuration, backups,
+and full application verification remain pending. No files were uploaded.
 No credentials are derived from previously exposed Git
 history or uploaded automatically from this workstation.
 

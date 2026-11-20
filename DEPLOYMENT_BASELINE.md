@@ -15,6 +15,13 @@ names are present in the fork's `production` environment; login, private config,
 and production backup verification remain pending. Workflows have been prepared
 and CI passed; setup must reach `main` before the manual deployment can be run.
 
+Read-only preflight result: PR #1 was merged into `main`, then workflow run
+44781013044 used `dry_run=true` and `backups_confirmed=false`. FTPS authentication,
+the configured directory, `index.php`, and `config/database.php` checks succeeded.
+The run stopped because `config/database.local.php` is missing or empty. No
+upload, rename, directory creation, delete, or database migration was performed.
+Production backup and schema/source comparison are still pending.
+
 During repository cleanup, the original connection config and historical SQL dump
 were also copied to the private folder
 `C:\Users\Elmo\AppData\Local\SSCWebsiteBackups\2026-11-21-cleanup`.
