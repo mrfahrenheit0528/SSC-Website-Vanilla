@@ -1,0 +1,2 @@
+# These files are included by PHP; they must never be requested directly.
+Require all denied

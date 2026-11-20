@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@d52fc211a0436f8839a587b3b5b8efddab4744ea # v2
+        with:
+          php-version: '8.3'
+          extensions: mysqli, gd, fileinfo, curl, mbstring
+          tools: composer:v2
+          coverage: none
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+      - name: Validate dependency manifests
+        run: |
+          composer validate --no-check-publish
+          composer install --no-dev --prefer-dist --no-interaction --no-progress --no-scripts
+          npm ci --ignore-scripts --no-audit --no-fund
+      - name: Check PHP syntax
+        run: |
+          find . -type f -name '*.php' -not -path './vendor/*' -not -path './node_modules/*' -not -path './build/*' -print0 | xargs -0 -n1 php -l
+      - name: Check release packaging and deployment safeguards
+        run: |
+          python3 -m unittest discover -s tests -v
+          python3 scripts/build_release.py
+      - name: Verify PDF dependency
+        run: |
+          php -r 'require "vendor/autoload.php"; $pdf = new TCPDF(); $pdf->AddPage(); $pdf->Write(0, "CI smoke check"); if (substr($pdf->Output("check.pdf", "S"), 0, 5) !== "%PDF-") { exit(1); }'
