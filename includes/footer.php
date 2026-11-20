@@ -77,6 +77,3 @@
         </div>
     </div>
 </footer>
-
-<!-- Flowbite JS (handles navbar collapse, modals, dropdowns, tooltips) -->
-<script src="assets/js/flowbite.min.js"></script>
