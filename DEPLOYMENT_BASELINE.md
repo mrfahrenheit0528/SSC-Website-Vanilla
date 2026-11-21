@@ -131,3 +131,55 @@ This is a draft until the hosting document root, backup contents, and database r
 ## Phase 1 exit criteria
 
 The branch and local source snapshot are prepared. Phase 1 remains open until the hosting inventory, verified production file/database backup, deployed source/schema comparison, visual baseline, and usable recovery instructions are complete. A local restore test may finish during phase 2; this dependency must be recorded rather than treating an untested export as a verified restore.
+
+## Downloaded production backup verification — November 21, 2026
+
+Private location: `F:\SSC-Website-Backups\2026-11-21-production`.
+The user downloaded and extracted the website and exported the database.
+
+- All 2,487 downloaded files were readable and hashed, totaling 126,685,979 bytes.
+  A per-file SHA-256 manifest and detailed audit are stored privately alongside
+  the backup as `backup-manifest.csv` and `backup-audit.json`.
+- The extracted document root has an extra directory nesting:
+  `files\cspcssc.ct.ws\cspcssc.ct.ws\htdocs`. When restoring files, use the contents
+  of that `htdocs` directory, not the outer archive/container directories.
+- Expected application files, `.htaccess`, private config, Composer dependencies,
+  and the complete referenced upload set are present. The private config passes
+  PHP syntax validation and its four settings match the old deployed bootstrap.
+- The SQL export contains 11 tables, structure and data, and a COMMIT statement.
+  Its schema includes `documents.display_name`; the older Git dump did not.
+  `documents.title` is still NOT NULL without a default, so the upload/schema
+  mismatch remains a phase 2/3 issue.
+- The export restored successfully into a separate, temporary MariaDB 10.4.32
+  instance bound to localhost on port 33079, with a generated private password.
+  The source export identifies MariaDB 11.4.13. Relevant restored tables passed
+  CHECK TABLE, all 47 document file references resolved in the downloaded uploads,
+  no document uploader references were orphaned, and the event banner is present.
+- The isolated test instance was shut down. Its data, private client config, and
+  logs remain in the private `restore-test` directory. The existing local database
+  on port 3306 and production were not changed. The restore result is recorded in
+  `restore-verification.json`; no private row contents are committed here.
+
+Comparison against pre-cleanup commit `748df995` found 29 matching source/assets
+files after normalizing line endings. The only changed compared file was
+`.htaccess`. Git-only documentation/license/ignore files are absent from the
+server download. The source comparison excluded generated dependencies, uploads,
+and credential contents from the source-diff output; these were inventoried or
+validated separately.
+
+The deployed `.htaccess` contains PHP settings, security headers and an
+InfinityFree-managed block absent from the old Git version. The deployer has
+been updated to read and preserve existing directives, appending the repository
+rules in a replaceable marked block. Effective error-display settings need
+verification after deployment because appended rules can override earlier ones.
+The production-only `diagnostic.php` enables error display and queries the
+database; updated repository access rules deny it along with `test.php` and
+`hello.html`. No production file was edited or removed during verification.
+
+Read-only preflight 44782089782 passed before these preservation changes. A
+further read-only run will verify reading the live Apache configuration over the
+encrypted data channel. A full application rollback/recovery exercise on the
+host, hosting PHP version/extensions, and visual baseline remain unverified.
+The checks establish the downloaded snapshot's internal consistency; they do not
+prove that no live edits occurred during or after the user's downloads. Refresh
+or reconcile the backup immediately before a future release if data has changed.

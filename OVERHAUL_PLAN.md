@@ -5,12 +5,11 @@ Working plan created November 19, 2026.
 Production website: https://cspcssc.ct.ws/
 
 Access/deployment update (November 21, 2026): this repository is the owner's fork.
-The owner currently has only the InfinityFree account credentials; separate FTP
-details, database access, and the deployed directory have not been verified.
-The original developer confirmed that production does not use GitHub Actions.
-Development will continue in VS Code. Future CI/CD will run from this fork after
-the hosting details and backups are established; browser access is not a
-requirement for independent local development. No deployment workflow is enabled.
+The owner initially had only the InfinityFree account credentials. FTP details,
+the document root, and the downloaded database have since been verified as
+described below. The original developer did not use GitHub Actions. CI and manual
+deployment are now configured in this fork. Development continues in VS Code;
+browser access is not required for independent local development.
 
 CI/CD setup progress: CI and a manual FTPS deployment workflow are prepared.
 GitHub Actions is enabled and a `production` environment permits only `main`.
@@ -21,9 +20,14 @@ enabling the manual workflow. Read-only run 44781013044 verified the FTPS login,
 the configured directory, `index.php`, and `config/database.php`, then stopped
 because `config/database.local.php` is missing or empty. No files were uploaded.
 Deployment defaults to a read-only preview, preserves uploads/private
-config, and requires backup confirmation for writes. The host's private config,
-production backups and source/schema comparison are still pending. A read-only
-preflight rerun is needed after the private config has been prepared on the host.
+config, and requires backup confirmation for writes.
+The private config was created and read-only preflight 44782089782 passed.
+Production file/database backups have now been inspected, hashed, compared with
+the source baseline, and restored into an isolated test database. All 47 document
+file references and the event banner are present. Production `.htaccess`
+directives must be preserved during deployment; the uploader now merges its
+managed rules without discarding existing host configuration. The downloaded
+source also includes `diagnostic.php`, which the new access rules deny.
 See README.md for configuration and first-run steps. No live deployment has run.
 
 ## Objective
@@ -53,15 +57,19 @@ Approved scope: provide two UI themes: **Regular** for everyday council use and 
 
 - [x] Create a dedicated overhaul branch and record the current Git commit. Branch: `overhaul/ui-refresh`; baseline: `748df995c4d1f066441c086ce4b8168f17080379`.
 - [ ] Locate the InfinityFree account, domain settings, document root, PHP version, database management access, and current upload/deployment method.
-- [ ] Back up the live database and deployed files, including uploads and server configuration, to a private location outside the repository.
-- [ ] Compare the deployed source and schema with this checkout. Record production-only changes before editing or replacing anything.
-- [ ] Record which uploaded files exist only on production and protect them from deployment synchronization or deletion.
+- [x] Back up the live database and deployed files, including uploads and server configuration, to a private location outside the repository. Downloaded snapshot verified on November 21, 2026; see DEPLOYMENT_BASELINE.md for scope and limits.
+- [x] Compare the downloaded deployed source and schema with this checkout. Production-only `.htaccess` settings and `diagnostic.php` are recorded; the live schema includes `documents.display_name` and still requires `title`.
+- [x] Record the upload inventory and protect production uploads from deployment synchronization or deletion. All 48 backed-up uploads cover the 47 database document references plus the event banner; the deployer excludes the entire upload tree.
 - [ ] Capture the current public pages at desktop and mobile widths, plus authorized admin workflows when access is available.
-- [ ] Write down the restore procedure and check that backups are readable and complete.
+- [x] Write down the restore procedure and verify downloaded files are readable, SQL restores in isolation, and referenced uploads are present. Runtime recovery on the hosting account itself has not been exercised.
 
 **Checkpoint:** We know what is running, what must be preserved, and how to restore it. Missing hosting access does not block independent local preparation, but it blocks production rollout.
 
-Progress: a local Git source snapshot has been saved and inspected outside the repository. This is not a live hosting backup. Browser and native computer connections are unavailable in this session, so hosting inspection, production backups, source/schema comparison, screenshots, and restore verification remain pending. See [DEPLOYMENT_BASELINE.md](DEPLOYMENT_BASELINE.md) for evidence and remaining work.
+Progress: the local source snapshot and the user's downloaded production backup
+are preserved outside Git. Download readability, source/schema comparison, and
+an isolated SQL restore have been verified. Hosting runtime/version checks and
+the visual baseline remain pending. See [DEPLOYMENT_BASELINE.md](DEPLOYMENT_BASELINE.md)
+for evidence and remaining work.
 
 ## 2. Make local development reproducible
 

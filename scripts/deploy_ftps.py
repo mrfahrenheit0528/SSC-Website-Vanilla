@@ -1,6 +1,7 @@
 """Upload an allowlisted release with verified TLS; never mirror-delete files."""
 
 import ftplib
+import io
 import os
 from pathlib import Path, PurePosixPath
 import re
@@ -48,6 +49,24 @@ def preflight(ftp, remote):
             raise ValueError(f'Remote preflight failed: {name} is missing or empty; no files uploaded')
 
 
+def htaccess_payload(ftp, local):
+    """Keep host-managed directives and replace only our own appended rule block."""
+    chunks = []
+    ftp.retrbinary('RETR .htaccess', chunks.append)
+    existing = b''.join(chunks)
+    if not existing.strip():
+        raise ValueError('Remote .htaccess is empty; inspect host settings before deployment')
+    begin = b'# BEGIN SSC DEPLOYMENT RULES'
+    end = b'# END SSC DEPLOYMENT RULES'
+    block = re.compile(rb'(?ms)^' + re.escape(begin) + rb'\r?\n.*?^' + re.escape(end) + rb'(?:\r?\n|$)')
+    if existing.count(begin) != existing.count(end) or existing.count(begin) > 1:
+        raise ValueError('Remote .htaccess has malformed deployment markers')
+    if begin in existing and not block.search(existing):
+        raise ValueError('Remote .htaccess deployment block cannot be safely replaced')
+    preserved = block.sub(b'', existing).rstrip(b'\r\n')
+    return preserved + b'\n\n' + begin + b'\n' + local.read_bytes().strip() + b'\n' + end + b'\n'
+
+
 def upload_release(ftp, root, remote, dry_run=True):
     root = Path(root)
     files = release_files(root)
@@ -61,6 +80,9 @@ def upload_release(ftp, root, remote, dry_run=True):
         return (1 if len(path.relative_to(root).parts) == 1 else 0, relative)
     files.sort(key=priority)
     preflight(ftp, remote)
+    # Fetch before any writes, including previews, to verify the encrypted data
+    # channel and preserve the existing host-specific Apache configuration.
+    merged_htaccess = htaccess_payload(ftp, root / '.htaccess')
     if dry_run:
         print(f'Read-only preview passed: {len(files)} files would be uploaded; no hosting files changed.')
         return
@@ -81,7 +103,7 @@ def upload_release(ftp, root, remote, dry_run=True):
                 known_directories.add(current)
         ftp.cwd(remote)
         temporary = f'{relative}.deploy-{upload_id}.tmp'
-        with path.open('rb') as source:
+        with (io.BytesIO(merged_htaccess) if relative == '.htaccess' else path.open('rb')) as source:
             ftp.storbinary(f'STOR {temporary}', source)
         # Never delete the original to work around a failed replacement.
         ftp.rename(temporary, relative)
