@@ -160,9 +160,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["upload"])){
         }
 
         if(move_uploaded_file($_FILES["files"]["tmp_name"][$key], $target_file)) {
-            $sql = "INSERT INTO documents (original_name, file_path, category, uploaded_by, display_name, created_at) VALUES (?, ?, ?, ?, ?, NOW())";
+            $sql = "INSERT INTO documents (title, original_name, file_path, category, uploaded_by, display_name, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())";
             if($stmt = mysqli_prepare($conn, $sql)){
-                mysqli_stmt_bind_param($stmt, "sssis", $file_name, $target_file, $section, $_SESSION["id"], $display_name);
+                mysqli_stmt_bind_param($stmt, "ssssis", $file_name, $file_name, $target_file, $section, $_SESSION["id"], $display_name);
                 if(mysqli_stmt_execute($stmt)){
                     $uploaded_count++;
                 } else {

@@ -7,7 +7,7 @@ ROOT_FILES = (
     '.htaccess', 'LICENSE', 'index.php', 'officers.php', 'documents.php',
     'dashboard.php', 'login.php', 'logout.php', 'attendance.php',
     'delete_document.php', 'generate_report.php', 'pdfviewer.php', 'view_pdf.php',
-    'config/database.php', 'config/.htaccess',
+    'config/database.php', 'config/database-settings.php', 'config/.htaccess',
 )
 RUNTIME_DIRS = ('assets', 'includes', 'auth', 'vendor')
 
