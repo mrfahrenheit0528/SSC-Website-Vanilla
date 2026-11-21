@@ -33,6 +33,5 @@ $current_page = 'home';
 include 'includes/head.php';
 ?>
 <body class="<?php echo $site_theme === 'siklab' ? 'event-home' : 'bg-gray-50 font-sans min-h-screen flex flex-col'; ?>">
-<?php if ($site_theme === 'siklab'): ?><div class="event-frame"><?php endif; ?>
 <?php include 'includes/nav.php'; ?>
 <?php include $site_theme === 'siklab' ? 'includes/home-siklab.php' : 'includes/home-regular.php'; ?>

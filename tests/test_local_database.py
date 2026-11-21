@@ -1,8 +1,10 @@
 """Integration tests use a disposable ssc_test_* database, never ssc_dev/hosting."""
 
 import http.cookiejar
+import html
 import json
 import os
+import re
 from pathlib import Path
 import socket
 import shutil
@@ -124,7 +126,7 @@ class LocalApplicationTests(unittest.TestCase):
         return opener
 
     def test_public_pages_and_document_filter(self):
-        for path in ('/', '/officers.php', '/documents.php', '/login.php', '/auth/register.php'):
+        for path in ('/', '/about.php', '/officers.php', '/documents.php', '/login.php', '/auth/register.php'):
             with self.subTest(path=path), urllib.request.urlopen(self.base + path, timeout=10) as response:
                 self.assertEqual(response.status, 200)
                 body = response.read()
@@ -142,6 +144,7 @@ class LocalApplicationTests(unittest.TestCase):
                 request = urllib.request.Request(self.base + path, headers={'Cookie': 'ssc_theme=' + cookie_theme})
                 with self.subTest(path=path, cookie=cookie_theme), urllib.request.urlopen(request, timeout=10) as response:
                     body = response.read()
+                    body_text = ' '.join(re.sub(r'<[^>]+>', ' ', html.unescape(body.decode('utf-8'))).split())
                     self.assertIn(f'data-theme="{expected}"'.encode(), body)
                     for removed in (b'theme-picker', b'team-lineup', b'event-frame-note', b'Seven teams. One shared flame.',
                                     b'data-trophy-scene', b'data-model-url', b'stage-orbit', b'siklab-scene.bundle.js', b'<canvas', b'Warning:'):
@@ -152,14 +155,18 @@ class LocalApplicationTests(unittest.TestCase):
                     for original in (b'CSPC Supreme Student Council', b'Academic Year 2025-2026',
                                      b'Promoting transparency and student welfare through accessible documentation and information sharing.',
                                      b'Empowering students through leadership, service, and advocacy.',
-                                     b'View Officers', b'About Platform', b'Official Documents', b'Executive Officers',
-                                     b'Trixia Kate S. Morata', b'About This Platform', b'Get Involved with CSPC',
-                                     b'id="aboutModal"', b'id="profileModal"', b'No Upcoming Event'):
-                        self.assertIn(original, body)
-                    self.assertEqual(b'class="trophy-art"' in body, expected == 'siklab')
+                                     b'Meet the Council', b'Official Documents', b'Executive Officers',
+                                     b'Ann Kyla V. Aquiler', b'About This Platform',
+                                     b'Event announcements will appear here when posted.'):
+                        self.assertIn(original.decode('utf-8'), body_text)
+                    self.assertEqual(b'class="opening-trophy"' in body, expected == 'siklab')
                     if expected == 'siklab':
                         self.assertIn(b'assets/img/siklab/trophy.webp', body)
-                        self.assertEqual(body.count(b'class="college-emblem"'), 7)
+                        self.assertEqual(body.count(b'data-officer-section'), 8)
+                        self.assertEqual(body.count(b'data-document-card'), 3)
+                        self.assertNotIn(b'id="aboutModal"', body)
+                        self.assertNotIn(b'id="profileModal"', body)
+                        self.assertIn(b'href="about.php"', body)
                         for college in ('BUHI', 'CAS', 'CCS', 'CEA', 'CHS', 'CTDE', 'CTHBM'):
                             self.assertIn(f'<span>{college}</span>'.encode(), body)
         for asset in ('trophy', 'bc', 'cas', 'ccs', 'cea', 'chs', 'ctde', 'cthbm'):
@@ -169,6 +176,34 @@ class LocalApplicationTests(unittest.TestCase):
                 self.assertEqual(header[:4], b'RIFF')
                 self.assertEqual(header[8:12], b'WEBP')
         self.assertEqual(self.sql('SELECT COUNT(*) AS total FROM documents'), before)
+
+    def test_about_page_preserves_developer_profiles(self):
+        with urllib.request.urlopen(self.base + '/about.php', timeout=10) as response:
+            body = response.read()
+            for value in (b'About This Platform', b'Jeriel Agua', b'Jessil C. Martinez',
+                          b'Ralph Abonal', b'Jancee Kenn Abonita', b'Joberth Iballar',
+                          b'id="profileModal"', b'function openProfileModal', b'function closeProfileModal'):
+                self.assertIn(value, body)
+            self.assertNotIn(b'id="aboutModal"', body)
+            self.assertIn(b'<dialog id="profileModal"', body)
+            self.assertEqual(body.count(b'role="button" tabindex="0"'), 5)
+
+    def test_uploaded_event_announcement_is_available_from_opening(self):
+        original = self.sql("SELECT setting_value FROM site_settings WHERE setting_key='event_photo'")
+        self.sql("INSERT INTO site_settings (setting_key,setting_value) VALUES ('event_photo','assets/img/siklab/wordmark.webp') ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)")
+        try:
+            with urllib.request.urlopen(self.base + '/', timeout=10) as response:
+                body = response.read()
+                self.assertIn(b'data-event-poster-open', body)
+                self.assertIn(b'<dialog class="event-poster-dialog"', body)
+                self.assertIn(b'alt="Upcoming Event"', body)
+                self.assertNotIn(b'Event announcements will appear here when posted.', body)
+        finally:
+            self.sql("DELETE FROM site_settings WHERE setting_key='event_photo'")
+            if original:
+                value = original[0]['setting_value']
+                literal = 'NULL' if value is None else "'" + value.replace('\\', '\\\\').replace("'", "\\'") + "'"
+                self.sql("INSERT INTO site_settings (setting_key,setting_value) VALUES ('event_photo'," + literal + ")")
 
     def test_local_router_blocks_private_files(self):
         for path in ('/config/database.local.php', '/config/dev.local.json', '/.git/config',

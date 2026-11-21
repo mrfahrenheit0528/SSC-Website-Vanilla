@@ -34,6 +34,7 @@
                         ['href' => 'index.php',     'label' => 'Home'],
                         ['href' => 'officers.php',  'label' => 'Officers'],
                         ['href' => 'documents.php', 'label' => 'Documents'],
+                        ['href' => 'about.php',     'label' => 'About This Platform'],
                         ['href' => 'login.php',     'label' => 'Login'],
                     ];
                     foreach ($footer_links as $lnk): ?>

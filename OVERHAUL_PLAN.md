@@ -125,34 +125,27 @@ Apache access rules still require environment-specific testing.
 
 ## 4. Agree on content and visual direction
 
-SIKLAB direction update: the owner supplied the event palette, seven team emblems,
-SIKLAB wordmark/emblem and torch PNGs, plus a reference using a large glass panel,
-soft color fields, bold dark typography and a floating object. A local event
-homepage follows that direction using the owner's original 2D trophy artwork.
-SIKLAB stays active until the owner requests a change; the December 5 cutoff is
-removed. Theme links and preference cookies cannot override the active theme.
-The visitor theme selector and added team/emblem strip are removed.
-Original homepage text, document counts, officer rosters, platform dialogs and
-calls to action are shared by both themes; the announcement banner is retained
-below the trophy hero. Regular preserves its earlier hero for now. The owner
-replaced the 3D model with the original 2D trophy, surrounded by the seven college
-logos (BUHI, CAS, CCS, CEA, CHS, CTDE, CTHBM) instead of orbit circles. The hero is
-static and responsive; unused 3D code and build dependencies are removed. Buttons
-use sharp corners and colors sampled from the supplied palette.
-No match schedules, results or new official slogans are fabricated.
+SIKLAB reference-based homepage rebuild: the owner approved the bright palette
+with the layout and animations of `assets/reference/Reference.mp4`. The new opening
+uses a cartoon campus background generated from the supplied photos and the original
+2D trophy. Three flipping document cards keep the existing category routes and live
+counts. Eight full-height executive-officer sections use the original AY 2025-2026
+roster in `includes/executive-officers.php`, pending the owner's new order. College
+logos now sit immediately above the existing footer. About This Platform and its
+original developer profiles are on `about.php`.
 
-Reference-based redesign brief (discussion only; not yet implemented):
+SIKLAB has no automatic expiry, visitor theme picker or preference override. The
+Regular redesign is deferred. Buttons keep sharp corners and the supplied palette.
+Motion supports reduced-motion preferences; document cards have keyboard controls,
+focus handling and no-JavaScript links. Scrolling is natural, without forced capture.
+The footer retains the existing contact information and social links. Existing
+uploaded event artwork opens in an announcement dialog from the hero. No match
+schedules, results or official slogans have been fabricated.
 
-- Use the bright SIKLAB palette with the layout and motion of `assets/reference/Reference.mp4`.
-- Opening illustration: showcase the SSC and current/upcoming event, with a cartoon treatment of the supplied campus photos as the background and the original 2D trophy in the foreground.
-- Official documents: use flipping category cards with working document-library links.
-- Executive officers: present one full-height scroll section per officer, in order. Use the existing roster with its accurate academic-year label until the owner supplies the current roster/order.
-- Retain the footer shown by the owner, including its council information, links and contact details.
-- Move About This Platform and its developer information to a separate page.
-- Keep college logos separate from the opening trophy; their final placement remains to be settled.
+The generated PNG, web encoding and exact image prompt are recorded in
+`docs/siklab-artwork.txt`. Design-reference videos are excluded from release packages.
 
-This is an initial homepage/shared-shell review, not approval of the final design
-or a complete redesign of secondary pages. Browser visual inspection is pending
+This rebuild is ready for the owner's visual review; secondary page layouts are not yet overhauled. Browser visual inspection is pending
 because the local preview connection is unavailable. No production deployment is
 part of this design iteration; the already running local PHP preview is retained
 for review in the user's browser.

@@ -6,6 +6,7 @@
 }
 html { scroll-behavior: smooth; scroll-padding-top: 100px; }
 body { margin: 0; font-family: var(--body-font); color: var(--ink); }
+*, *::before, *::after { box-sizing: border-box; }
 button, input, select { font: inherit; }
 a { color: inherit; }
 a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid #3253dc; outline-offset: 5px; }
@@ -30,25 +31,12 @@ body:not(.event-home) .site-header { position: sticky; top: 0; background: #ffff
 html[data-theme=siklab] body:not(.event-home):not(.gradient-bg) { background: #f5f7ff; }
 html[data-theme=siklab] .gradient-bg { background: linear-gradient(115deg, #252659, #3645b0); }
 body.event-home {
-  /* Sampled from assets/static/SIKLAB 2026 - Color Palette.png. */
   --siklab-blue: linear-gradient(110deg, #2364ae, #020593);
   --siklab-pink: linear-gradient(110deg, #f60092, #f64a92);
   --siklab-gold: linear-gradient(110deg, #eeb70b, #eefb01);
   --siklab-silver: linear-gradient(110deg, #fdfdfd, #bfc1c3);
   display: block; min-height: 100vh;
-  background: radial-gradient(ellipse 50% 32% at 97% 0, #7556ff75, transparent 100%), radial-gradient(ellipse 60% 34% at 3% 3%, #a5dfff9e, transparent 100%), radial-gradient(ellipse 70% 24% at 52% 37%, #ffedd694, transparent), #f4f6ff;
 }
-.event-frame { max-width: 1400px; width: calc(100% - 64px); margin: 32px auto 0; border: 1px solid #ffffffc7; border-radius: 38px; box-shadow: 0 28px 90px #30356c0a; position: relative; isolation: isolate; }
-.event-frame::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: radial-gradient(ellipse 48% 58% at 88% 22%, #8763ed47, transparent), radial-gradient(ellipse 48% 48% at 60% 60%, #ff9ba35e, transparent), radial-gradient(ellipse 65% 64% at 16% 94%, #fffccca8, transparent), #ffffff5e; backdrop-filter: blur(22px); }
-.siklab-hero { display: grid; grid-template-columns: 1.04fr 1fr; align-items: center; gap: 24px; padding: 24px 56px 16px; }
-.hero-copy { padding: 20px 0 26px; position: relative; z-index: 2; }
-.event-eyebrow { display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; letter-spacing: .2em; color: #454a72; margin-bottom: 24px; }
-.eyebrow-line { width: 27px; height: 1px; background: #545a8c; }
-.event-wordmark { display: block; width: 287px; max-width: 100%; height: auto; margin-bottom: 25px; }
-.hero-copy h1 { font-family: var(--display-font); font-size: clamp(2.65rem, 4.2vw, 3.85rem); line-height: 1.065; letter-spacing: -.05em; font-weight: 600; color: #141a2e; margin: 0 0 22px; }
-.hero-copy h1 span { color: #3d3b9b; }
-.hero-description { color: #555b74; font-size: 16px; line-height: 1.75; margin: 0 0 27px; }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 .button { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 13px 24px; border: 1px solid transparent; border-radius: 13px; text-decoration: none; font-size: 14px; font-weight: 600; transition: transform .2s, box-shadow .2s, background .2s; }
 .button:hover { transform: translateY(-3px); }
 .button-primary { background: #253bc0; color: white; box-shadow: 0 8px 24px #253bc01a; }
@@ -62,84 +50,40 @@ body.event-home {
 .event-home .button-gold { background: var(--siklab-gold); color: #141a2e; border-color: transparent; }
 .event-home :is(.button, .navigation-account, .council-action):hover { filter: brightness(1.06); }
 .event-home :is(.button, .navigation-account, .council-action):focus-visible { outline-color: #020593; }
-.event-home .council-home-content button[role=tab] { color: #020593; border-color: transparent; }
-.event-home .council-home-content button[role=tab][aria-selected=true] {
-  background: var(--siklab-gold); color: #141a2e; border-color: #020593;
-}
-/* The supplied 2D artwork stays upright, framed by the seven college emblems. */
-.trophy-stage { position: relative; min-height: 540px; width: 100%; align-self: stretch; margin: 0; }
-.trophy-art { position: absolute; height: 84%; width: 54%; object-fit: contain; left: 50%; top: 50%; transform: translate(-50%, -50%); filter: drop-shadow(0 16px 20px #70495720); }
-.college-emblems { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; }
-.college-emblem { position: absolute; left: var(--emblem-x); top: var(--emblem-y); transform: translate(-50%, -50%); display: grid; justify-items: center; width: 100px; }
-.college-emblem img { width: 100%; height: auto; object-fit: contain; filter: drop-shadow(0 5px 8px #30245c12); }
-.college-emblem span { margin-top: -12px; font-size: 11px; line-height: 1.5; font-weight: 600; letter-spacing: .08em; color: #454a72; }
-.event-home .navigation-toggle { background: var(--siklab-silver); color: #020593; border-color: #bfc1c3; }
 
-.content-width { width: calc(100% - 112px); max-width: 1256px; margin-left: auto; margin-right: auto; }
-html[data-theme=siklab] .site-footer { background: #15203c; }
+.event-home .navigation-toggle { background: var(--siklab-silver); color: #020593; }
+html[data-theme=siklab] .site-footer { background: #111827; }
 html[data-theme=siklab] .site-footer .text-gray-600 { color: #8e9bb7; }
-@media (min-width: 1600px) { .event-frame { margin-top: 44px; } .siklab-hero { padding-top: 35px; padding-bottom: 30px; } .trophy-stage { min-height: 570px; } }
+.about-main { padding: 65px 20px 85px; }
+.about-introduction { max-width: 780px; margin: 0 auto 32px; text-align: center; }
+.about-introduction .section-kicker { font-size: 11px; letter-spacing: .15em; color: #59637e; margin-bottom: 18px; }
+.about-introduction h1 { font: 600 clamp(36px, 5vw, 58px)/1.1 var(--display-font); letter-spacing: -.04em; margin: 0 0 20px; }
+.about-introduction > p:not(.section-kicker) { font-size: 16px; line-height: 1.8; color: #59637e; }
+.about-introduction > a { display: inline-block; margin-top: 20px; font-size: 13px; color: #020593; }
+.about-page #profileModal { z-index: 100; width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; overflow-y: auto; }
+.about-page #profileModal::backdrop { background: #111638bd; }
+.about-page [role=button]:focus-visible { outline: 3px solid #3253dc; outline-offset: 4px; }
 @media (max-width: 1150px) {
-  .site-navigation { padding: 24px 32px; gap: 15px; } .navigation-links { gap: 19px; }
-  .siklab-hero { padding: 22px 40px 12px; gap: 8px; } .hero-copy h1 { font-size: 46px; }
-  .trophy-stage { min-height: 515px; }
-  .content-width { width: calc(100% - 88px); }
+  .site-navigation { padding: 24px 32px; gap: 15px; }
+  .navigation-links { gap: 19px; }
 }
 @media (max-width: 930px) {
-  .site-navigation { padding: 21px 28px; } .navigation-toggle { display: inline-flex; }
+  .site-navigation { padding: 21px 28px; }
+  .navigation-toggle { display: inline-flex; }
   .navigation-links { display: none; position: absolute; top: calc(100% - 5px); left: 18px; right: 18px; padding: 18px; background: #fffffff5; border: 1px solid #e3e6f2; border-radius: 17px; box-shadow: 0 18px 35px #17234b14; }
   .navigation-links.is-open { display: flex; align-items: stretch; flex-direction: column; gap: 5px; }
-  .navigation-link { padding: 10px; } .navigation-link.is-current::after { display: none; }
+  .navigation-link { padding: 10px; }
+  .navigation-link.is-current::after { display: none; }
   .navigation-link.is-current { background: #edf0ff; border-radius: 8px; }
   .navigation-account { text-align: center; background: #e9edfc; margin-top: 8px; }
-  .event-frame { width: calc(100% - 40px); margin-top: 20px; border-radius: 30px; }
-  .hero-copy h1 { font-size: 41px; } .hero-description { font-size: 16px; } .event-wordmark { width: 240px; }
-  .siklab-hero { padding: 20px 30px 10px; gap: 0; grid-template-columns: 1.08fr 1fr; }
-  .trophy-stage { min-height: 490px; } .college-emblem { width: 82px; }
-  .event-eyebrow { font-size: 12px; letter-spacing: .14em; } .button { font-size: 14px; padding: 12px 18px; }
 }
 @media (max-width: 680px) {
-  .event-frame { width: calc(100% - 24px); margin-top: 12px; border-radius: 25px; }
-  .site-navigation { padding: 20px 22px; } .council-brand img { width: 35px; height: 35px; }
-  .council-brand strong { font-size: 18px; } .council-brand small { font-size: 10px; }
-  .siklab-hero { grid-template-columns: 1fr; padding: 17px 25px 0; }
-  .hero-copy { padding: 13px 0 0; } .event-wordmark { width: 250px; margin-bottom: 22px; }
-  .event-eyebrow { font-size: 12px; margin-bottom: 23px; } .hero-copy h1 { font-size: clamp(35px, 8.8vw, 49px); }
-  .hero-description { font-size: 16px; margin-bottom: 23px; }
-  .trophy-stage { min-height: 460px; margin-top: 10px; }
-  .college-emblem { width: clamp(64px, 19vw, 95px); }
-  .college-emblem span { margin-top: -8px; font-size: 10px; }
-  .content-width { width: calc(100% - 44px); }
+  .site-navigation { padding: 20px 22px; }
+  .council-brand img { width: 35px; height: 35px; }
+  .council-brand strong { font-size: 18px; }
+  .council-brand small { font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-}
-
-/* Original council content and behavior, with the event's visual treatment. */
-html[data-theme=siklab] .council-home-content {
-  max-width: 1400px; width: calc(100% - 64px); margin: 28px auto 50px;
-  border: 1px solid #ffffffc7; border-radius: 28px; background: #ffffff60;
-  overflow: hidden;
-}
-html[data-theme=siklab] .council-home-content > section { background: transparent; border-color: #e1e3f1; }
-html[data-theme=siklab] .council-home-content > section:first-child,
-html[data-theme=siklab] .council-home-content > section:last-of-type {
-  background: linear-gradient(115deg, #293d8c, #503b8d);
-}
-html[data-theme=siklab] .council-home-content h2,
-html[data-theme=siklab] .council-home-content h3 { font-family: var(--display-font); }
-html[data-theme=siklab] .council-home-content [id=aboutModal],
-html[data-theme=siklab] .council-home-content [id=profileModal] { z-index: 100; }
-.home-announcement {
-  display: flex; align-items: center; gap: 28px; margin-top: 26px;
-  padding: 24px 30px; background: #ffffff65; border: 1px solid #ffffffb3; border-radius: 22px;
-}
-.home-announcement h2 { font: 500 22px/1.3 var(--display-font); margin: 0 0 7px; }
-.home-announcement p { margin: 0; color: var(--muted); font-size: 16px; }
-.home-announcement-image img { width: 180px; max-height: 220px; object-fit: contain; border-radius: 14px; }
-@media (max-width: 680px) {
-  html[data-theme=siklab] .council-home-content { width: calc(100% - 24px); border-radius: 22px; }
-  .home-announcement { padding: 22px; flex-direction: column; align-items: flex-start; }
-  .home-announcement-image img { width: 100%; max-height: 350px; }
 }

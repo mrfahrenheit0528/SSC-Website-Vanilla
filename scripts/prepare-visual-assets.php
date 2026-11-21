@@ -7,8 +7,11 @@ $output = $root . '/assets/img/siklab';
 if (!is_dir($output)) mkdir($output, 0755, true);
 $assets = ['Throphy' => ['trophy', 900], 'SIKLAB' => ['wordmark', 1100],
     'BC' => ['bc', 240], 'CAS' => ['cas', 240], 'CCS' => ['ccs', 240],
-    'CEA' => ['cea', 240], 'CHS' => ['chs', 240], 'CTDE' => ['ctde', 240], 'CTHBM' => ['cthbm', 240]];
-foreach ($assets as $source => [$name, $size]) {
+    'CEA' => ['cea', 240], 'CHS' => ['chs', 240], 'CTDE' => ['ctde', 240], 'CTHBM' => ['cthbm', 240],
+    'campus-illustration-v1' => ['campus-illustration-v1', 1920, 86]];
+foreach ($assets as $source => $specification) {
+    [$name, $size] = $specification;
+    $quality = $specification[2] ?? 88;
     // Some supplied PNGs have a legacy ICC profile. Preserve pixel colors while
     // discarding profile metadata in the web encoding; fail on unreadable input.
     $image = @imagecreatefrompng($root . '/assets/static/' . $source . '.png');
@@ -22,7 +25,7 @@ foreach ($assets as $source => [$name, $size]) {
     $result = imagescale($image, max(1, (int)round(imagesx($image) * $ratio)), max(1, (int)round(imagesy($image) * $ratio)), IMG_BICUBIC);
     imagealphablending($result, false);
     imagesavealpha($result, true);
-    imagewebp($result, $output . '/' . $name . '.webp', 88);
+    imagewebp($result, $output . '/' . $name . '.webp', $quality);
     imagedestroy($result);
     imagedestroy($image);
     echo 'Prepared ' . $name . '.webp' . PHP_EOL;

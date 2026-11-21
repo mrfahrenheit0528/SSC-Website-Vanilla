@@ -1,0 +1,10 @@
+SIKLAB homepage campus illustration
+Tool: built-in image_gen (style-transfer), not CLI fallback.
+References: the owner's three attached campus photographs; the third photograph
+is the main composition reference. The attached footer is excluded from artwork.
+
+Source output copied into assets/static/campus-illustration-v1.png.
+Web encoding: assets/img/siklab/campus-illustration-v1.webp (GD, quality 86).
+
+Final prompt:
+Use case: style-transfer. Asset type: wide cartoon campus background for the SIKLAB CSPC Intramurals homepage. Input images: the three supplied photographs of the same CSPC campus plaza are the visual references; the fourth image is a website footer screenshot and must NOT appear in the artwork. Transform the campus scene into a polished hand-painted 2D cartoon illustration, like an illustrated game landing page. Preserve the recognizable central metal globe monument on its angular blue pedestal, circular landscaped planter, campus buildings on both sides, tall trees/palms, steps on the right and Philippine flagpole. Use the third campus photograph as the main composition reference. Landscape 16:9, generous open sky in upper half for HTML headings and logos. Put the monument slightly right of center and keep left sky softly uncluttered for readable copy. Bright warm daylight, blue sky with soft peach/pink clouds, lush greenery, blue architecture, cheerful saturated colors compatible with SIKLAB's blue, pink, orange, gold and green palette. Cohesive painterly cartoon contours, subtle depth, clean shapes, rich detailed scenery, not photorealistic, not 3D rendering. No website interface, no buttons, no headlines, no invented text, no watermark. Do not add characters. Keep flag colors recognizable; no need to reproduce tiny lettering on building signage or the monument seal.

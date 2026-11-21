@@ -107,5 +107,10 @@ $page_description = $page_description ?? 'Promoting transparency and student wel
     <script src="assets/js/flowbite.min.js" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="assets/css/site.css?v=<?php echo filemtime(__DIR__ . '/../assets/css/site.css'); ?>" rel="stylesheet">
+    <?php if (($current_page ?? '') === 'home'): ?>
+    <link rel="preload" as="image" href="assets/img/siklab/campus-illustration-v1.webp" fetchpriority="high">
+    <link href="assets/css/home.css?v=<?php echo filemtime(__DIR__ . '/../assets/css/home.css'); ?>" rel="stylesheet">
+    <script src="assets/js/home.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/home.js'); ?>" defer></script>
+    <?php endif; ?>
     <script src="assets/js/site.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/site.js'); ?>" defer></script>
 </head>

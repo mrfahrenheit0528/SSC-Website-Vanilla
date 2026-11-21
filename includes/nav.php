@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/theme.php';
 $current_page = $current_page ?? '';
-$nav_links = [['index.php','Home','home'], ['officers.php','Officers','officers'], ['documents.php','Documents','documents']];
+$nav_links = [['index.php','Home','home'], ['officers.php','Officers','officers'], ['documents.php','Documents','documents'], ['about.php','About','about']];
 if (!empty($_SESSION['loggedin'])) $nav_links[] = ['dashboard.php','Dashboard','dashboard'];
 ?>
 <a class="skip-link" href="#main-content">Skip to content</a>
