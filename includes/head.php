@@ -5,10 +5,11 @@
  *   $page_title       – <title> text
  *   $page_description – meta description / OG description
  */
+require_once __DIR__ . '/theme.php';
 $page_title       = $page_title       ?? 'CSPC — Supreme Student Council';
 $page_description = $page_description ?? 'Promoting transparency and student welfare through accessible documentation and information sharing.';
 ?><!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="<?php echo $site_theme; ?>" data-page="<?php echo htmlspecialchars($current_page ?? '', ENT_QUOTES, 'UTF-8'); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -104,4 +105,7 @@ $page_description = $page_description ?? 'Promoting transparency and student wel
     </style>
     <!-- Flowbite JS (deferred — not needed for first paint) -->
     <script src="assets/js/flowbite.min.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="assets/css/site.css?v=<?php echo filemtime(__DIR__ . '/../assets/css/site.css'); ?>" rel="stylesheet">
+    <script src="assets/js/site.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/site.js'); ?>" defer></script>
 </head>

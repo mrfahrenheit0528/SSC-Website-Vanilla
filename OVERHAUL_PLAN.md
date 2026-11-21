@@ -125,6 +125,21 @@ Apache access rules still require environment-specific testing.
 
 ## 4. Agree on content and visual direction
 
+SIKLAB direction update: the owner supplied the event palette, seven team emblems,
+SIKLAB wordmark/emblem and torch PNGs, plus a reference using a large glass panel,
+soft color fields, bold dark typography and a floating object. A local event
+homepage prototype follows that direction with an original WebGL torch sculpture.
+The default is SIKLAB with a visitor-selectable Regular alternative stored in a
+validated cookie. Regular preserves its earlier homepage for now. The 3D object
+supports drag/keyboard controls, pause, reduced motion and a static-art fallback.
+Event dates and schedules have not been supplied and are not fabricated.
+
+This is an initial homepage/shared-shell review, not approval of the final design
+or a complete redesign of secondary pages. Browser visual inspection is pending
+because the local preview connection is unavailable. No production deployment is
+part of this design iteration; the already running local PHP preview is retained
+for review in the user's browser.
+
 - [ ] Confirm the council's logo, approved colors, fonts, contact details, and available campus/event photography.
 - [ ] Confirm the current academic year and which officer rosters should be current versus archived. Avoid inferring this solely from today's date.
 - [ ] Review homepage copy, document category labels, officer names/roles, and event details for accuracy.

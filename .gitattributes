@@ -1,0 +1,3 @@
+# Generated Three.js bundles contain GLSL template strings with significant
+# formatting. Keep deterministic line endings and exclude generated whitespace.
+assets/js/siklab-scene.bundle.js text eol=lf -whitespace linguist-generated=true

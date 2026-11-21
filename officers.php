@@ -10,7 +10,7 @@ include 'includes/head.php';
 <?php include 'includes/nav.php'; ?>
 
     <!-- Hero Section -->
-    <section class="gradient-bg py-16">
+    <section id="main-content" tabindex="-1" class="gradient-bg py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">Our Officers</h1>
             <p class="text-xl text-blue-100 max-w-3xl mx-auto">

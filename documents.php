@@ -60,7 +60,7 @@ include 'includes/head.php';
 <?php include 'includes/nav.php'; ?>
 
     <!-- Hero Section -->
-    <section class="gradient-bg py-10">
+    <section id="main-content" tabindex="-1" class="gradient-bg py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">Documents &amp; Resources</h1>
             <p class="text-blue-100 max-w-2xl mx-auto text-base">

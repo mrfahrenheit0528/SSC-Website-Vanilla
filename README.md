@@ -105,11 +105,50 @@ they do not reset your persistent development database.
 
 ## Frontend dependencies
 
-Flowbite's vendored CSS and JavaScript in `assets/` are used by the pages. `npm ci`
-restores the package dependency if needed; there is currently no frontend build
-or asset-copy script. Tailwind, the active PDF.js viewer, fonts, and some other
-libraries still load from CDNs. The unused npm PDF.js dependency and local module
-copies were removed; the existing viewer was retained.
+Flowbite's vendored CSS and JavaScript in `assets/` are used by existing pages.
+The SIKLAB trophy is actual Three.js geometry, bundled locally with esbuild:
+
+```powershell
+npm ci --ignore-scripts
+npm run build
+```
+
+The generated `assets/js/siklab-scene.bundle.js` is versioned so the PHP preview
+works without running Node. CI rebuilds it and checks it matches the committed
+version; deployment also builds it before packaging. Rebuild after editing the
+scene or model source. The Three.js license is retained beside the bundle.
+Tailwind, PDF.js, fonts, and the existing council logo still use their CDNs.
+
+### SIKLAB theme prototype
+
+Open `http://127.0.0.1:8000/?theme=siklab`. The shared navigation has a theme
+picker for **SIKLAB 2026** and **Regular**. The validated preference is stored in
+an HTTP-only SameSite=Lax cookie; it changes presentation, not records. SIKLAB is
+the current default. Regular retains the existing council homepage while its
+redesign remains a later task. Shared navigation, fonts, footer and header colors
+are the first theme foundation; secondary page layouts are not yet overhauled.
+
+The event homepage uses the supplied palette, wordmark, seven team emblems and
+torch artwork. The new WebGL trophy is a sculptural interpretation of that
+artwork, not an imported 3D model. It gently rotates/floats, supports horizontal
+dragging and left/right/Home keys, and has an explicit play/pause control.
+Reduced-motion preferences start with a still scene. Rendering stops when the
+scene is outside the viewport or the tab is hidden. If WebGL is unavailable,
+the supplied torch artwork remains visible as a lightweight static fallback.
+
+Original PNGs are retained in `assets/static/`. Prepared WebP variants are in
+`assets/img/siklab/`; regenerate them with:
+
+```powershell
+php -d extension=gd scripts/prepare-visual-assets.php
+```
+
+This CLI-only encoder preserves the originals and uses a temporary 512 MB memory
+limit for the large source artwork. It is not run on the hosting server. No event
+dates, match schedules, results or official slogans were invented; existing
+documents, officer rosters and the admin-managed announcement banner remain the
+source of council content. Default theme retirement/scheduling is not automated.
+Visual browser QA is pending because the preview browser connection is unavailable.
 
 ## Private files and uploaded records
 

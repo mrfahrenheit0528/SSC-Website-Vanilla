@@ -133,6 +133,28 @@ class LocalApplicationTests(unittest.TestCase):
         with urllib.request.urlopen(self.base + '/documents.php?section=treasurer&search=Example', timeout=10) as response:
             self.assertIn(b'Example Finance Report', response.read())
 
+    def test_regular_and_siklab_theme_selection_persists_without_changing_records(self):
+        before = self.sql('SELECT COUNT(*) AS total FROM documents')
+        opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+        with opener.open(self.base + '/?theme=regular', timeout=10) as response:
+            body = response.read()
+            self.assertIn(b'data-theme="regular"', body)
+            self.assertNotIn(b'data-trophy-scene', body)
+        with opener.open(self.base + '/documents.php?section=treasurer&search=Example', timeout=10) as response:
+            body = response.read()
+            self.assertIn(b'data-theme="regular"', body)
+            self.assertIn(b'section=treasurer&amp;search=Example&amp;theme=siklab', body)
+        with opener.open(self.base + '/?theme=siklab', timeout=10) as response:
+            body = response.read()
+            self.assertIn(b'data-theme="siklab"', body)
+            self.assertIn(b'data-trophy-scene', body)
+            self.assertIn(b'assets/img/siklab/trophy.webp', body)
+        with opener.open(self.base + '/?theme%5B%5D=invalid', timeout=10) as response:
+            body = response.read()
+            self.assertIn(b'data-theme="siklab"', body)
+            self.assertNotIn(b'Warning:', body)
+        self.assertEqual(self.sql('SELECT COUNT(*) AS total FROM documents'), before)
+
     def test_local_router_blocks_private_files(self):
         for path in ('/config/database.local.php', '/config/dev.local.json', '/.git/config',
                      '/vendor/autoload.php', '/scripts/database.php', '/database/migrations/001_initial.sql',

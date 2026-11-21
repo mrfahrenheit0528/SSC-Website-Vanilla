@@ -1,78 +1,23 @@
 <?php
-/*
- * Shared navigation partial.
- * Expected variable (set before including):
- *   $current_page – one of: 'home', 'officers', 'documents', 'attendance', 'dashboard'
- */
+require_once __DIR__ . '/theme.php';
 $current_page = $current_page ?? '';
-
-function nav_cls($page, $current) {
-    $base = 'nav-link px-3 py-2 rounded-lg font-medium text-sm transition-colors ';
-    return $base . ($page === $current ? 'active text-blue-600' : 'text-gray-600 hover:text-blue-600');
-}
-function mob_cls($page, $current) {
-    $base = 'flex items-center px-3 py-2.5 rounded-lg font-medium text-sm ';
-    return $base . ($page === $current ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50');
-}
+$nav_links = [['index.php','Home','home'], ['officers.php','Officers','officers'], ['documents.php','Documents','documents']];
+if (!empty($_SESSION['loggedin'])) $nav_links[] = ['dashboard.php','Dashboard','dashboard'];
 ?>
-<nav class="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-50 border-b border-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-
-            <!-- Brand -->
-            <div class="flex items-center">
-                <a href="index.php" class="flex items-center space-x-3 group">
-                    <img src="https://i.ibb.co/Cp38FdLC/logo.png" alt="SSC Logo"
-                         class="h-9 w-9 object-contain transition-transform group-hover:scale-110">
-                    <div class="flex flex-col leading-tight">
-                        <span class="text-base font-bold text-gray-900">CSPC - SSC</span>
-                        <span class="text-xs text-gray-500 hidden sm:block">Supreme Student Council</span>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Desktop links -->
-            <div class="hidden md:flex items-center space-x-1">
-                <a href="index.php"    class="<?php echo nav_cls('home',      $current_page); ?>">Home</a>
-                <a href="officers.php" class="<?php echo nav_cls('officers',  $current_page); ?>">Officers</a>
-                <a href="documents.php"class="<?php echo nav_cls('documents', $current_page); ?>">Documents</a>
-
-                <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
-                 
-                    <a href="dashboard.php"  class="<?php echo nav_cls('dashboard',  $current_page); ?>">Dashboard</a>
-                    <a href="logout.php"
-                       class="ml-2 bg-red-50 hover:bg-red-500 text-red-600 hover:text-white px-4 py-2 rounded-lg font-medium text-sm transition-all border border-red-200 hover:border-red-500">
-                        <i class="fas fa-sign-out-alt mr-1.5"></i>Logout
-                    </a>
-                <?php endif; ?>
-            </div>
-
-            <!-- Mobile hamburger -->
-            <div class="md:hidden flex items-center">
-                <button data-collapse-toggle="navbar-mobile" type="button"
-                        class="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        aria-controls="navbar-mobile" aria-expanded="false">
-                    <span class="sr-only">Open main menu</span>
-                    <i class="fas fa-bars text-lg"></i>
-                </button>
-            </div>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header">
+    <nav class="site-navigation" aria-label="Main navigation">
+        <a class="council-brand" href="index.php" aria-label="CSPC Supreme Student Council home">
+            <img src="https://i.ibb.co/Cp38FdLC/logo.png" width="42" height="42" alt="">
+            <span><strong>CSPC <span class="brand-slash">/</span> SSC</strong><small>Supreme Student Council</small></span>
+        </a>
+        <button class="navigation-toggle" type="button" aria-label="Open navigation" aria-controls="site-navigation-links" aria-expanded="false" data-navigation-toggle><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+        <div class="navigation-links" id="site-navigation-links" data-navigation>
+            <?php foreach ($nav_links as [$href, $label, $page]): ?>
+            <a class="navigation-link <?php echo $page === $current_page ? 'is-current' : ''; ?>" href="<?php echo $href; ?>" <?php echo $page === $current_page ? 'aria-current="page"' : ''; ?>><?php echo $label; ?></a>
+            <?php endforeach; ?>
+            <details class="theme-picker"><summary><span class="theme-swatch" aria-hidden="true"></span><?php echo $site_theme === 'siklab' ? 'SIKLAB 2026' : 'Regular'; ?><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></summary><div class="theme-options"><a href="<?php echo ssc_theme_url('siklab'); ?>" <?php echo $site_theme === 'siklab' ? 'aria-current="true"' : ''; ?>>SIKLAB 2026<span>Event theme</span></a><a href="<?php echo ssc_theme_url('regular'); ?>" <?php echo $site_theme === 'regular' ? 'aria-current="true"' : ''; ?>>Regular<span>Everyday council</span></a></div></details>
+            <?php if (!empty($_SESSION['loggedin'])): ?><a class="navigation-account" href="logout.php">Sign out</a><?php else: ?><a class="navigation-account" href="login.php">Council login</a><?php endif; ?>
         </div>
-    </div>
-
-    <!-- Mobile menu -->
-    <div id="navbar-mobile" class="hidden md:hidden bg-white border-t border-gray-100 shadow-lg">
-        <div class="px-3 pt-2 pb-3 space-y-1">
-            <a href="index.php"    class="<?php echo mob_cls('home',      $current_page); ?>"><i class="fas fa-home w-5 mr-2 text-center"></i>Home</a>
-            <a href="officers.php" class="<?php echo mob_cls('officers',  $current_page); ?>"><i class="fas fa-users w-5 mr-2 text-center"></i>Officers</a>
-            <a href="documents.php"class="<?php echo mob_cls('documents', $current_page); ?>"><i class="fas fa-file-alt w-5 mr-2 text-center"></i>Documents</a>
-
-            <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
-              
-                <a href="dashboard.php"  class="<?php echo mob_cls('dashboard',  $current_page); ?>"><i class="fas fa-tachometer-alt w-5 mr-2 text-center"></i>Dashboard</a>
-                <a href="logout.php"     class="flex items-center px-3 py-2.5 rounded-lg text-red-600 hover:bg-red-50 font-medium text-sm">
-                    <i class="fas fa-sign-out-alt w-5 mr-2 text-center"></i>Logout
-                </a>
-            <?php endif; ?>
-        </div>
-    </div>
-</nav>
+    </nav>
+</header>
