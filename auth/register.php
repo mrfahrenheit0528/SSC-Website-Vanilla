@@ -95,11 +95,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         <h2 class="text-center mb-4">Register</h2>
                         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                             <div class="mb-3">
-                                <label class="form-label">Username</label>
+                                <label class="form-label" for="name">Name</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    <input type="text" name="username" class="form-control <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $username; ?>">
-                                    <span class="invalid-feedback"><?php echo $username_err; ?></span>
+                                    <input id="name" type="text" name="name" class="form-control <?php echo (!empty($name_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($name); ?>">
+                                    <span class="invalid-feedback"><?php echo $name_err; ?></span>
                                 </div>
                             </div>    
                             <div class="mb-3">
@@ -128,7 +128,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             </div>
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary">Register</button>
-                                <a href="login.php" class="btn btn-link">Already have an account? Login</a>
+                                <a href="../login.php" class="btn btn-link">Already have an account? Login</a>
                             </div>
                         </form>
                     </div>
@@ -138,4 +138,4 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+</html>

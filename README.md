@@ -15,13 +15,14 @@ Copy-Item config/database.example.php config/database.local.php
 ```
 
 Do not overwrite an existing private config. `config/database.local.php` returns
-an array with `server`, `username`, `password`, and `name` keys. It is ignored by
-Git. The cleanup preserved this checkout's previous values in that local file;
-they have not been validated. **Replace them with local database settings before
-starting local development.** Do not use production as a development database.
+an array with `server`, `username`, `password`, `name`, and optional `port`
+(default 3306). It is ignored by Git. Local setup replaces this workstation's
+old production connection with a dedicated development connection, preserving
+the previous private config outside the repository. Do not use production as
+a development database.
 
 Alternatively, configure `DB_SERVER`, `DB_USERNAME`, `DB_PASSWORD`, and `DB_NAME`
-environment variables. Each supplied variable overrides the corresponding local
+and optional `DB_PORT` environment variables. Each supplied variable overrides the corresponding local
 file value. An explicitly empty password is supported; the other values must be
 nonempty. The application does not load `.env` files automatically.
 
@@ -30,28 +31,77 @@ produce a generic HTTP 503 response without exposing connection details.
 
 ## Local development
 
-1. Use PHP 8.3 with mysqli, GD, fileinfo, and the extensions required by Composer
-   dependencies (including curl). The current workstation still needs mysqli and GD.
-2. Install PHP dependencies from the committed lockfile:
+The Windows launcher uses Python 3.10+, PHP 8.3+, Composer, and the MariaDB binaries
+already installed with XAMPP. The default binary directory is
+`C:\xampp\mysql\bin`; set `SSC_MYSQL_BIN` if yours differs. PHP and Composer must
+be on PATH, with `composer.phar` beside the Composer launcher. PHP extension
+binaries for mysqli and GD must be installed. The helper enables them with
+process-specific flags and leaves the global `php.ini` unchanged.
 
-   ```powershell
-   composer install --no-dev --prefer-dist
-   ```
+From the repository root in VS Code's terminal:
 
-3. Create an isolated local MySQL/MariaDB database and configure it as above.
-   A clean schema/fixture and migrations are pending phase 2 of the overhaul.
-   The historical SQL export is not a reliable initializer: it lacks
-   `documents.display_name` and requires `title`, which current uploads do not supply.
-4. Start the local server from the repository root:
+```powershell
+python scripts/dev.py setup
+python scripts/dev.py serve
+```
 
-   ```powershell
-   php -S 127.0.0.1:8000
-   ```
+Open **http://127.0.0.1:8000/**. Alternatively, use **Terminal → Run Task** and
+choose **SSC: Set up local environment** or **SSC: Start local website**.
+Login credentials are in ignored `config/dev.local.json`. The fixture accounts
+are `admin@example.test` and `member@example.test`, with generated passwords.
+The member account currently inherits the existing application's overly broad
+dashboard access; role enforcement is scheduled for phase 3. Use the synthetic
+administrator when testing management workflows in this phase.
 
-5. Open `http://127.0.0.1:8000/` in your browser. Development remains in VS Code.
+Setup installs locked PHP dependencies and creates a dedicated, password-protected
+MariaDB instance on **127.0.0.1:33079**, with an `ssc_dev` schema and a restricted
+database user. It does not use or change the existing service on port 3306.
+Private server files, logs, root credentials, and the previous connection config
+live under `%LOCALAPPDATA%\SSCWebsiteDev\<workspace-id>`. No OS service is installed.
+The three seeded PDFs are in ignored `uploads/development/ssc_dev/`. No production
+accounts, sessions, or database records are imported into development.
 
-The PHP development server does not enforce Apache `.htaccess` rules. Bind it
-only to localhost. Full application testing requires the local schema setup.
+Useful commands:
+
+```powershell
+python scripts/dev.py doctor    # Check project PHP extensions
+python scripts/dev.py status    # Start DB if necessary and show table counts
+python scripts/dev.py migrate   # Apply unapplied versioned migrations
+python scripts/dev.py seed      # Add missing synthetic fixtures without resetting data
+python scripts/dev.py test      # Run tests against a separate disposable database
+python scripts/dev.py stop-web  # Stop this workspace's PHP launcher
+python scripts/dev.py stop-db   # Stop only the dedicated development instance
+```
+
+Ctrl+C stops the PHP server; the database stays available until `stop-db`.
+Repeating setup preserves the generated passwords, existing development records,
+and migration history. An occupied database port with incompatible credentials
+fails safely instead of reinitializing or stopping an unrelated instance.
+
+The helper's PHP router blocks private/configuration/development files because
+PHP's built-in server does not enforce `.htaccess`. Always use the launcher for
+previewing this checkout, bound to localhost. VS Code tasks do not publish or
+deploy the site.
+
+On other operating systems, provision a loopback-only MySQL/MariaDB database named
+`ssc_dev`, configure the ignored local file (or DB_* variables), enable the required
+PHP extensions, run `php scripts/database.php migrate`, then seed through the CLI
+using generated passwords on standard input. The Windows/XAMPP lifecycle helper
+is not a cross-platform database installer.
+
+Versioned migrations live in `database/migrations/`, with checksums recorded in
+`_schema_migrations`. The initial migration creates only the application's tables;
+the next adds `documents.display_name` to older schemas without recreating tables.
+Keep applied migrations unchanged and add a new version for subsequent changes.
+The upload query now supplies the schema's required `title` column explicitly.
+Web requests never run DDL. The migration/seed CLI refuses remote hosts and database
+names outside `ssc_dev`/`ssc_test_*`, and these scripts are not in the deploy package.
+Production schema changes will need a separately reviewed hosting procedure.
+
+CI uses an ephemeral MariaDB 11.4 service to exercise migrations, synthetic seed
+data, public pages, login, PDFs, reports, uploads, and private-path restrictions.
+Local integration tests create and drop only a generated `ssc_test_*` database;
+they do not reset your persistent development database.
 
 ## Frontend dependencies
 

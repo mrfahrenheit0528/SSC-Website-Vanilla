@@ -12,6 +12,19 @@ jobs:
   checks:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    services:
+      mariadb:
+        image: mariadb:11.4
+        env:
+          MARIADB_ROOT_PASSWORD: ci-only-fixture-password
+          MARIADB_DATABASE: ssc_test_ci
+        ports:
+          - 3306/tcp
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -34,6 +47,13 @@ jobs:
         run: |
           find . -type f -name '*.php' -not -path './vendor/*' -not -path './node_modules/*' -not -path './build/*' -print0 | xargs -0 -n1 php -l
       - name: Check release packaging and deployment safeguards
+        env:
+          SSC_INTEGRATION: '1'
+          DB_SERVER: 127.0.0.1
+          DB_PORT: ${{ job.services.mariadb.ports['3306'] }}
+          DB_USERNAME: root
+          DB_PASSWORD: ci-only-fixture-password
+          DB_NAME: ssc_test_ci
         run: |
           python3 -m unittest discover -s tests -v
           python3 scripts/build_release.py

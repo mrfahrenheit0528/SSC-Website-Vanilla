@@ -75,14 +75,21 @@ for evidence and remaining work.
 
 ## 2. Make local development reproducible
 
-- [ ] Enable mysqli and GD in local PHP and verify the other extensions required by Composer and existing features.
-- [ ] Set up a local MySQL or MariaDB database using a sanitized fixture.
+- [x] Enable mysqli and GD for the project PHP process and verify required extensions/dependencies. The launcher leaves global php.ini unchanged.
+- [x] Set up a dedicated local MariaDB instance with synthetic fixtures. It binds to 127.0.0.1:33079, uses ssc_dev, and leaves the existing port-3306 server alone.
 - [x] Move database credentials into an untracked configuration mechanism and provide an example with placeholders. The bootstrap now reads ignored `config/database.local.php` or environment variables; actual hosting compatibility still needs verification.
 - [ ] Arrange rotation of any active credentials tracked in Git. Coordinate the configuration update so rotation does not leave production disconnected.
-- [ ] Compare the SQL export, application queries, and live schema. Resolve the missing `documents.display_name`, the required `title` column, and any other differences.
-- [ ] Add explicit, versioned database migration scripts. Move table creation out of normal page requests once the migration path is established.
-- [ ] Install locked dependencies and document local setup, startup, asset build, and database initialization in README.md.
-- [ ] Start the site locally and verify that public pages load and a test account can sign in.
+- [x] Compare the SQL export, queries, and backed-up live schema. A migration adds missing documents.display_name to older schemas, and uploads now supply the required title value. The production schema/data have not been changed.
+- [x] Add versioned migrations with checksums and remove table creation from normal page requests. Local-only CLI guards prevent migration/seed commands from connecting to hosting.
+- [x] Install locked dependencies and document local setup, startup, dependency handling, and initialization. VS Code tasks are included; frontend assets still have no build pipeline until the UI phase.
+- [x] Verify public pages and test-account sign-in through a local HTTP server. Integration checks also cover uploads, reports, PDF viewing, filters, repeat migrations/seeding, and private-file restrictions.
+
+Local setup progress: synthetic credentials are in ignored config/dev.local.json.
+The old workstation connection config was preserved outside Git before switching
+to the dedicated development database. Repeating setup keeps development data and
+passwords. Tests use separate disposable ssc_test_* databases, never the persistent
+development database or production. The existing admin-role/CSRF/upload-hardening
+work remains phase 3. Credential rotation is still an external pre-release task.
 
 **Checkpoint:** A fresh local setup can run the application using documented steps without production credentials or a production database connection.
 
