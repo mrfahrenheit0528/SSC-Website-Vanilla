@@ -121,8 +121,10 @@ Secondary page layouts are not yet overhauled.
 
 The homepage is rebuilt around the supplied reference video:
 
-- An illustrated campus opening featuring the SSC and SIKLAB, the original 2D trophy,
-  a bright background derived from the supplied campus photos, and subtle parallax/particles.
+- A dark dusk opening with the campus monument on the left and the SIKLAB wordmark
+  on the right. Five separately painted planes (sky, distance, campus, monument,
+  foreground) move at distinct rates during scroll; the stage stays in view for
+  the opening sequence. Fine-pointer movement adds secondary depth on desktop.
 - Three flipping document-category cards (Treasurer, Legislative, Secretary), using
   live database counts and the existing document-library filters. Click/tap to flip;
   Escape returns to the front. Hidden faces are inert; without JavaScript both faces
@@ -135,15 +137,21 @@ The homepage is rebuilt around the supplied reference video:
 - `about.php` contains About This Platform and the original developer profiles.
   Profile dialogs use native modal focus handling and keyboard-accessible triggers.
 
-`assets/css/home.css` and `assets/js/home.js` provide the new homepage. Motion respects
-reduced-motion preferences; officer panels use natural scrolling rather than forced
-scroll capture. The legacy Regular template remains archived for the later redesign.
+`assets/css/home.css` styles the dark navy/purple homepage. `assets/js/home.js`
+handles document cards and reveals; `assets/js/parallax-scene.mjs` drives the
+independent scene planes using `parallax-math.mjs`. The opening uses native sticky
+positioning, with no intercepted wheel/touch events. Motion respects reduced-motion
+preferences, which remove the extended scene and reset every plane. Faded copy
+becomes inert; animation stops offscreen or in hidden tabs. Officer panels keep
+natural scrolling. The legacy Regular template remains archived for the later redesign.
 The uploaded event banner is accessible through the opening's announcement dialog;
 when none is uploaded the opening shows a short announcement placeholder.
 
-The background WebP is approximately 306 KB. The generated source, built-in-tool
-prompt and encoding provenance are recorded in `docs/siklab-artwork.txt`; the source
-PNG is kept at `assets/static/campus-illustration-v1.png`.
+All five runtime WebP layers total approximately 320 KB. Four have true alpha
+transparency, and all retain the same 1672 x 941 registration canvas. Their source
+PNGs and composition master are in `assets/static/parallax-v2/`. The built-in-tool
+master/layer prompts and encoding provenance are recorded in `docs/siklab-artwork.txt`.
+The superseded daylight composite has been removed.
 
 Original PNGs are retained in `assets/static/`. Prepared WebP variants are in
 `assets/img/siklab/`; regenerate them with:
@@ -159,7 +167,9 @@ documents, officer rosters and the admin-managed announcement banner remain the
 source of council content. The supplied GLB remains in the source assets for
 future use but is not loaded by the homepage. PHP tests cover the active theme,
 the homepage, About page, event-poster branch, college identities and image delivery.
-Run `node --test tests/home-interactions.test.mjs` for card focus/inert/Escape checks.
+Run `node --test tests/home-interactions.test.mjs tests/parallax.test.mjs` for card
+focus/inert/Escape checks, depth displacement, scroll-controller wiring and
+reduced-motion resets. PHP tests check layer alpha and full-canvas registration.
 Visual desktop/mobile browser QA is pending because both browser and native preview connections are unavailable. HTTP, HTML structure, CSS parsing, PHP/JS syntax and interaction-state checks pass.
 Local reference videos under `assets/reference/` are excluded from runtime packages.
 

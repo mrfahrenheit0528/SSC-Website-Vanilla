@@ -1,35 +1,43 @@
 <?php $executive_officers = require __DIR__ . '/executive-officers.php'; ?>
 <main id="main-content" tabindex="-1">
     <section class="opening-scene" aria-labelledby="hero-heading" data-opening-scene>
-        <div class="campus-backdrop" aria-hidden="true"></div>
-        <div class="scene-light light-pink" aria-hidden="true"></div>
-        <div class="scene-light light-gold" aria-hidden="true"></div>
-        <div class="scene-particles" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-        <div class="opening-content page-width">
-            <div class="opening-copy">
-                <p class="section-kicker">CSPC · SUPREME STUDENT COUNCIL</p>
-                <h1 id="hero-heading">CSPC Supreme<br>Student <span>Council</span></h1>
-                <p class="council-introduction">Promoting transparency and student welfare through accessible documentation and information sharing. Empowering students through leadership, service, and advocacy.</p>
-                <div class="hero-actions">
-                    <a class="button button-primary" href="#official-documents">Explore Documents <span aria-hidden="true">↗</span></a>
-                    <a class="button button-gold" href="#executive-officers">Meet the Council</a>
+        <div class="scene-stage" data-parallax-stage>
+            <div class="scene-background" aria-hidden="true">
+                <img class="parallax-layer layer-sky" src="assets/img/siklab/parallax-sky-v2.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.06" fetchpriority="high">
+                <div class="scene-landscape">
+                    <img class="parallax-layer layer-distance" src="assets/img/siklab/parallax-distance-v2.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.18">
+                    <img class="parallax-layer layer-campus" src="assets/img/siklab/parallax-campus-v2.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.38">
+                    <img class="parallax-layer layer-monument" src="assets/img/siklab/parallax-monument-v2.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.68">
+                    <div class="parallax-layer layer-foreground" data-scene-layer data-depth="1"><img src="assets/img/siklab/parallax-foreground-v2.webp" alt="" width="1672" height="941"></div>
                 </div>
-                <a class="about-link" href="about.php">About This Platform <span aria-hidden="true">↗</span></a>
             </div>
-            <div class="opening-event">
-                <div class="event-artwork"><img class="opening-trophy" src="assets/img/siklab/trophy.webp" width="464" height="900" alt="The official SIKLAB trophy with seven colorful flames and a gold base" fetchpriority="high"></div>
-                <div class="event-identity">
+            <div class="scene-shade" aria-hidden="true"></div>
+            <div class="scene-particles" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="opening-content page-width" data-scene-copy>
+                <div class="opening-copy">
+                    <p class="section-kicker">CSPC SUPREME STUDENT COUNCIL</p>
+                    <h1 id="hero-heading"><img src="assets/img/siklab/wordmark.webp" width="1100" height="202" alt="SIKLAB" class="opening-wordmark"></h1>
                     <p class="event-kicker">CSPC INTRAMURALS 2026</p>
-                    <img src="assets/img/siklab/wordmark.webp" width="1100" height="202" alt="SIKLAB" class="opening-wordmark">
-                    <?php if ($event_photo): ?>
-                    <button class="poster-trigger" type="button" data-event-poster-open>View event announcement <span aria-hidden="true">↗</span></button>
-                    <?php else: ?>
-                    <p class="announcement-note">Event announcements will appear here when posted.</p>
-                    <?php endif; ?>
+                    <p class="council-introduction">Promoting transparency and student welfare through accessible documentation and information sharing. Empowering students through leadership, service, and advocacy.</p>
+                    <div class="hero-actions">
+                        <a class="button button-primary" href="#official-documents">Explore Documents <span aria-hidden="true">&#8599;</span></a>
+                        <a class="button button-gold" href="#executive-officers">Meet the Council</a>
+                    </div>
+                    <div class="opening-event">
+                        <img class="opening-trophy" src="assets/img/siklab/trophy.webp" width="464" height="900" alt="The official SIKLAB trophy with seven colorful flames and a gold base">
+                        <div>
+                            <?php if ($event_photo): ?>
+                            <button class="poster-trigger" type="button" data-event-poster-open>View event announcement <span aria-hidden="true">&#8599;</span></button>
+                            <?php else: ?>
+                            <p class="announcement-note">Event announcements will appear here when posted.</p>
+                            <?php endif; ?>
+                            <a class="about-link" href="about.php">About This Platform <span aria-hidden="true">&#8599;</span></a>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <div class="opening-bottom page-width"><span>CSPC Supreme Student Council</span><a href="#official-documents">Scroll to explore <span aria-hidden="true">&#8595;</span></a><span>SIKLAB &middot; 2026</span></div>
         </div>
-        <div class="opening-bottom page-width"><span>CSPC Supreme Student Council</span><a href="#official-documents">Scroll to explore <span aria-hidden="true">↓</span></a><span>SIKLAB · 2026</span></div>
     </section>
 
     <section class="document-chapter" id="official-documents" aria-labelledby="documents-heading">

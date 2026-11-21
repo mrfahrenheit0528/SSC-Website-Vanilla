@@ -125,10 +125,13 @@ Apache access rules still require environment-specific testing.
 
 ## 4. Agree on content and visual direction
 
-SIKLAB reference-based homepage rebuild: the owner approved the bright palette
-with the layout and animations of `assets/reference/Reference.mp4`. The new opening
-uses a cartoon campus background generated from the supplied photos and the original
-2D trophy. Three flipping document cards keep the existing category routes and live
+SIKLAB reference-based homepage rebuild: use the owner's Sakura/Kamui references
+for a dark navy/purple treatment with a peach/lavender dusk opening. The illustration
+has five independent source/transparent layers: sky, distant scenery, campus,
+monument, foreground. Native sticky positioning keeps the opening in view while
+actual scroll progress drives distinct layer transforms; fine-pointer movement is
+secondary. The monument is on the left and SIKLAB branding on the right.
+Three flipping document cards keep the existing category routes and live
 counts. Eight full-height executive-officer sections use the original AY 2025-2026
 roster in `includes/executive-officers.php`, pending the owner's new order. College
 logos now sit immediately above the existing footer. About This Platform and its
@@ -136,14 +139,16 @@ original developer profiles are on `about.php`.
 
 SIKLAB has no automatic expiry, visitor theme picker or preference override. The
 Regular redesign is deferred. Buttons keep sharp corners and the supplied palette.
-Motion supports reduced-motion preferences; document cards have keyboard controls,
-focus handling and no-JavaScript links. Scrolling is natural, without forced capture.
+Motion supports reduced-motion preferences, which remove the extended opening
+and restore static planes. Document cards have keyboard controls, focus handling
+and no-JavaScript links. Wheel/touch events are never intercepted; officers retain
+natural scrolling. Faded hero controls become inert and offscreen animation stops.
 The footer retains the existing contact information and social links. Existing
 uploaded event artwork opens in an announcement dialog from the hero. No match
 schedules, results or official slogans have been fabricated.
 
-The generated PNG, web encoding and exact image prompt are recorded in
-`docs/siklab-artwork.txt`. Design-reference videos are excluded from release packages.
+The source/master PNGs are in `assets/static/parallax-v2/`; exact master/layer
+prompts and WebP encoding details are recorded in `docs/siklab-artwork.txt`. Design-reference videos are excluded from release packages.
 
 This rebuild is ready for the owner's visual review; secondary page layouts are not yet overhauled. Browser visual inspection is pending
 because the local preview connection is unavailable. No production deployment is

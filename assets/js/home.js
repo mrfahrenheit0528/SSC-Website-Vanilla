@@ -38,23 +38,6 @@
     });
   }
 
-  const opening = document.querySelector('[data-opening-scene]');
-  let frame = 0;
-  function updateScene() {
-    frame = 0;
-    if (!opening) return;
-    const height = opening.offsetHeight;
-    const offset = reducedMotion.matches ? 0 : Math.max(0, Math.min(scrollY, height)) * .13;
-    opening.style.setProperty('--scene-offset', `${offset}px`);
-  }
-  if (opening) {
-    addEventListener('scroll', () => {
-      if (!frame && scrollY < opening.offsetHeight + innerHeight) frame = requestAnimationFrame(updateScene);
-    }, { passive: true });
-    reducedMotion.addEventListener('change', updateScene);
-    updateScene();
-  }
-
   const poster = document.querySelector('#event-poster-dialog');
   document.querySelector('[data-event-poster-open]')?.addEventListener('click', () => poster?.showModal());
   poster?.addEventListener('click', (event) => {
