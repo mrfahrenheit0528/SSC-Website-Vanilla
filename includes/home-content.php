@@ -476,7 +476,7 @@
             </div>
 
             <div class="text-center mt-10">
-                <a href="officers.php" class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                <a href="officers.php" class="council-action inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                     <i class="fas fa-users mr-2"></i>View All Officers
                 </a>
             </div>
@@ -494,7 +494,7 @@
                 This information disclosure system was proposed and developed by dedicated SSC officers to promote transparency, financial accountability, and accessible documentation for the CSPC student body.
             </p>
             <button onclick="document.getElementById('aboutModal').classList.remove('hidden')"
-                    class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors shadow-lg">
+                    class="council-action inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors shadow-lg">
                 <i class="fas fa-users mr-2"></i>Meet the Proposers
             </button>
         </div>
@@ -509,11 +509,11 @@
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="officers.php"
-                   class="text-blue-700 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-white/50 font-semibold rounded-lg text-sm px-8 py-3 text-center transition-colors">
+                   class="council-action button-gold text-blue-700 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-white/50 font-semibold rounded-lg text-sm px-8 py-3 text-center transition-colors">
                     <i class="fas fa-users mr-2"></i>Meet the Officers
                 </a>
                 <a href="documents.php"
-                   class="text-white bg-white/20 hover:bg-white/30 focus:ring-4 focus:ring-white/30 font-semibold rounded-lg text-sm px-8 py-3 text-center border border-white/40 transition-colors backdrop-blur-sm">
+                   class="council-action button-pink text-white bg-white/20 hover:bg-white/30 focus:ring-4 focus:ring-white/30 font-semibold rounded-lg text-sm px-8 py-3 text-center border border-white/40 transition-colors backdrop-blur-sm">
                     <i class="fas fa-file-alt mr-2"></i>Browse Documents
                 </a>
             </div>

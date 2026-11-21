@@ -7,8 +7,8 @@
             <p class="hero-description">Promoting transparency and student welfare through accessible documentation and information sharing. Empowering students through leadership, service, and advocacy.</p>
             <div class="hero-actions">
                 <a class="button button-primary" href="officers.php">View Officers</a>
-                <a class="button button-glass" href="documents.php">Documents</a>
-                <button class="button button-glass" type="button" onclick="document.getElementById('aboutModal').classList.remove('hidden')">About Platform</button>
+                <a class="button button-pink" href="documents.php">Documents</a>
+                <button class="button button-gold" type="button" onclick="document.getElementById('aboutModal').classList.remove('hidden')">About Platform</button>
             </div>
         </div>
         <div class="trophy-stage" aria-label="SIKLAB trophy showcase">
