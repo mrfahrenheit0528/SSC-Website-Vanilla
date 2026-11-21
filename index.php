@@ -27,17 +27,8 @@ if($_ep){
 }
 
 require_once __DIR__ . '/includes/theme.php';
-$latest_documents = [];
-if ($site_theme === 'siklab') {
-    $latest_result = mysqli_query($conn, "SELECT id, original_name, file_path, category, created_at FROM documents ORDER BY created_at DESC LIMIT 3");
-    if ($latest_result) {
-        while ($row = mysqli_fetch_assoc($latest_result)) $latest_documents[] = $row;
-    }
-}
-$page_title = $site_theme === 'siklab' ? 'SIKLAB 2026 | CSPC Supreme Student Council' : 'CSPC ? Supreme Student Council | Home';
-$page_description = $site_theme === 'siklab'
-    ? 'SIKLAB: CSPC Intramurals 2026. Celebrate the spirit of every team and stay connected with the CSPC Supreme Student Council.'
-    : 'Promoting transparency and student welfare through accessible documentation and information sharing.';
+$page_title = 'CSPC — Supreme Student Council | Home';
+$page_description = 'Promoting transparency and student welfare through accessible documentation and information sharing. Empowering students through leadership, service, and advocacy.';
 $current_page = 'home';
 include 'includes/head.php';
 ?>

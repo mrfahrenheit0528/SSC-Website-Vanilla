@@ -1,12 +1,18 @@
 import { ACESFilmicToneMapping, AmbientLight, Color, DirectionalLight, Group, Mesh, MeshPhysicalMaterial,
   PerspectiveCamera, PMREMGenerator, Scene, SphereGeometry, WebGLRenderer } from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { createSiklabTrophy } from './siklab-model.mjs';
+import { loadSiklabModel } from './siklab-model-loader.mjs';
 
 const container = document.querySelector('[data-trophy-scene]');
-if (container) initializeScene(container);
+if (container) initializeScene(container).catch(() => {
+  // A failed model request or unsupported GPU leaves the supplied fallback visible.
+  container.classList.remove('is-ready');
+  container.querySelector('canvas').hidden = true;
+  container.querySelector('img').removeAttribute('aria-hidden');
+  document.querySelector('[data-scene-toggle]').hidden = true;
+});
 
-function initializeScene(container) {
+async function initializeScene(container) {
   const canvas = container.querySelector('canvas');
   const fallback = container.querySelector('img');
   const toggle = document.querySelector('[data-scene-toggle]');
@@ -41,7 +47,12 @@ function initializeScene(container) {
   const fill = new DirectionalLight('#ffbddf', 1.3);
   fill.position.set(-4, .4, 1); scene.add(fill);
 
-  const trophy = createSiklabTrophy();
+  let trophy;
+  try {
+    trophy = await loadSiklabModel(container.dataset.modelUrl);
+  } catch (error) {
+    environment.dispose(); renderer.dispose(); throw error;
+  }
   scene.add(trophy);
   const accents = new Group();
   for (const [radius, color, x, y, z] of [[.1, '#ec36b3', 1.8, 1.55, -.8], [.16, '#ffc61c', -1.75, -.85, .1]]) {
@@ -61,10 +72,11 @@ function initializeScene(container) {
   let disposed = false;
   function draw(now = performance.now()) {
     frame = 0;
-    phase += Math.min((now - previous) / 1000, .05);
+    const delta = Math.min((now - previous) / 1000, .05);
+    if (!paused && !drag) { phase += delta; yaw += delta * .18; }
     previous = now;
-    trophy.rotation.y = yaw + (paused || drag ? 0 : Math.sin(phase * .38) * .36);
-    trophy.position.y = paused ? 0 : Math.sin(phase * .85) * .055;
+    trophy.rotation.y = yaw;
+    trophy.position.y = .28 + Math.sin(phase * .85) * .055;
     accents.rotation.y = Math.sin(phase * .25) * .12;
     renderer.render(scene, camera);
     if (!paused && visible && !document.hidden && !disposed) frame = requestAnimationFrame(draw);
@@ -126,11 +138,17 @@ function initializeScene(container) {
     canvas.hidden = true;
     fallback.removeAttribute('aria-hidden');
     toggle.hidden = true;
-    caption.textContent = 'THE SIKLAB SPIRIT, IN EVERY DIMENSION';
+    caption.textContent = 'SIKLAB 2026';
   });
   addEventListener('pagehide', () => {
     disposed = true; cancelAnimationFrame(frame); visibility.disconnect(); resizer.disconnect();
-    scene.traverse((object) => { object.geometry?.dispose(); if (object.material) object.material.dispose(); });
+    scene.traverse((object) => {
+      object.geometry?.dispose();
+      if (object.material) {
+        const materials = Array.isArray(object.material) ? object.material : [object.material];
+        materials.forEach((material) => material.dispose());
+      }
+    });
     environment.dispose(); renderer.dispose();
   }, { once: true });
   try {

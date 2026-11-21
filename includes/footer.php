@@ -73,7 +73,7 @@
 
         <div class="border-t border-gray-800 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2">
             <p class="text-gray-500 text-sm">&copy; <?php echo date('Y'); ?> CSPC — Supreme Student Council. All rights reserved.</p>
-            <p class="text-gray-600 text-xs"><?php echo ($site_theme ?? 'regular') === 'siklab' ? 'SIKLAB · CSPC Intramurals 2026' : 'Academic Year 2025–2026'; ?></p>
+            <p class="text-gray-600 text-xs">Academic Year 2025–2026</p>
         </div>
     </div>
 </footer>

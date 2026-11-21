@@ -16,7 +16,6 @@ if (!empty($_SESSION['loggedin'])) $nav_links[] = ['dashboard.php','Dashboard','
             <?php foreach ($nav_links as [$href, $label, $page]): ?>
             <a class="navigation-link <?php echo $page === $current_page ? 'is-current' : ''; ?>" href="<?php echo $href; ?>" <?php echo $page === $current_page ? 'aria-current="page"' : ''; ?>><?php echo $label; ?></a>
             <?php endforeach; ?>
-            <details class="theme-picker"><summary><span class="theme-swatch" aria-hidden="true"></span><?php echo $site_theme === 'siklab' ? 'SIKLAB 2026' : 'Regular'; ?><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></summary><div class="theme-options"><a href="<?php echo ssc_theme_url('siklab'); ?>" <?php echo $site_theme === 'siklab' ? 'aria-current="true"' : ''; ?>>SIKLAB 2026<span>Event theme</span></a><a href="<?php echo ssc_theme_url('regular'); ?>" <?php echo $site_theme === 'regular' ? 'aria-current="true"' : ''; ?>>Regular<span>Everyday council</span></a></div></details>
             <?php if (!empty($_SESSION['loggedin'])): ?><a class="navigation-account" href="logout.php">Sign out</a><?php else: ?><a class="navigation-account" href="login.php">Council login</a><?php endif; ?>
         </div>
     </nav>

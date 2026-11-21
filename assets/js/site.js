@@ -11,11 +11,5 @@ document.addEventListener('keydown', (event) => {
     navigationToggle?.setAttribute('aria-expanded', 'false');
     navigationToggle?.setAttribute('aria-label', 'Open navigation');
     navigation?.classList.remove('is-open');
-    document.querySelectorAll('.theme-picker[open]').forEach((picker) => picker.removeAttribute('open'));
   }
-});
-document.addEventListener('click', (event) => {
-  document.querySelectorAll('.theme-picker[open]').forEach((picker) => {
-    if (!picker.contains(event.target)) picker.removeAttribute('open');
-  });
 });

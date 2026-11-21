@@ -106,11 +106,13 @@ they do not reset your persistent development database.
 ## Frontend dependencies
 
 Flowbite's vendored CSS and JavaScript in `assets/` are used by existing pages.
-The SIKLAB trophy is actual Three.js geometry, bundled locally with esbuild:
+The SIKLAB trophy uses the supplied GLB model, rendered with Three.js and bundled
+locally with esbuild:
 
 ```powershell
 npm ci --ignore-scripts
 npm run build
+node tests/model-smoke.mjs
 ```
 
 The generated `assets/js/siklab-scene.bundle.js` is versioned so the PHP preview
@@ -119,18 +121,20 @@ version; deployment also builds it before packaging. Rebuild after editing the
 scene or model source. The Three.js license is retained beside the bundle.
 Tailwind, PDF.js, fonts, and the existing council logo still use their CDNs.
 
-### SIKLAB theme prototype
+### SIKLAB homepage
 
-Open `http://127.0.0.1:8000/?theme=siklab`. The shared navigation has a theme
-picker for **SIKLAB 2026** and **Regular**. The validated preference is stored in
-an HTTP-only SameSite=Lax cookie; it changes presentation, not records. SIKLAB is
-the current default. Regular retains the existing council homepage while its
-redesign remains a later task. Shared navigation, fonts, footer and header colors
-are the first theme foundation; secondary page layouts are not yet overhauled.
+Open `http://127.0.0.1:8000/`. SIKLAB stays active through **December 5, 2026**
+and automatically returns to Regular on **December 6 at 00:00 Asia/Taipei**.
+`includes/theme.php` owns this schedule. There is no visitor theme picker;
+old theme query parameters and preference cookies cannot override the schedule.
+Regular retains its existing homepage while its redesign remains a later task.
+Secondary page layouts are not yet overhauled.
 
-The event homepage uses the supplied palette, wordmark, seven team emblems and
-torch artwork. The new WebGL trophy is a sculptural interpretation of that
-artwork, not an imported 3D model. It gently rotates/floats, supports horizontal
+The homepage keeps the original council text, links, document counts, officer
+rosters, platform information, dialogs, contact details and announcement banner.
+Both themes share `includes/home-content.php`. The event adds its palette,
+wordmark, glass surfaces and the supplied `assets/static/SIKLAB_Trophy.glb`.
+The extra team strip and event slogans have been removed. The trophy rotates/floats, supports horizontal
 dragging and left/right/Home keys, and has an explicit play/pause control.
 Reduced-motion preferences start with a still scene. Rendering stops when the
 scene is outside the viewport or the tab is hidden. If WebGL is unavailable,
@@ -147,7 +151,10 @@ This CLI-only encoder preserves the originals and uses a temporary 512 MB memory
 limit for the large source artwork. It is not run on the hosting server. No event
 dates, match schedules, results or official slogans were invented; existing
 documents, officer rosters and the admin-managed announcement banner remain the
-source of council content. Default theme retirement/scheduling is not automated.
+source of council content. The GLB is self-contained and retains its original
+materials. The model smoke check parses it and checks framing at desktop/mobile
+aspect ratios across rotation angles. PHP tests cover the theme cutoff and
+preservation of homepage content.
 Visual browser QA is pending because the preview browser connection is unavailable.
 
 ## Private files and uploaded records

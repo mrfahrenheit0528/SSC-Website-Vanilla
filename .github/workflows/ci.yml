@@ -44,6 +44,7 @@ jobs:
           composer install --no-dev --prefer-dist --no-interaction --no-progress --no-scripts
           npm ci --ignore-scripts --no-audit --no-fund
           npm run build
+          node tests/model-smoke.mjs
           git diff --exit-code -- assets/js/siklab-scene.bundle.js
       - name: Check PHP syntax
         run: |

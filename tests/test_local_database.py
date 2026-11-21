@@ -22,6 +22,19 @@ from dev import php_command
 
 
 class ConfigurationTests(unittest.TestCase):
+    def test_siklab_schedule_includes_all_of_december_fifth(self):
+        dates = ['2026-12-05T00:00:00+08:00', '2026-12-05T23:59:59+08:00',
+                 '2026-12-06T00:00:00+08:00', '2026-12-05T15:59:59+00:00',
+                 '2026-12-05T16:00:00+00:00']
+        with tempfile.TemporaryDirectory() as directory:
+            script = Path(directory) / 'schedule.php'
+            script.write_text('<?php require $argv[1]; echo json_encode(array_map('
+                'fn($date) => ssc_theme_for_time(new DateTimeImmutable($date)), '
+                'json_decode($argv[2], true)));', encoding='utf-8')
+            result = subprocess.run(php_command() + [str(script), str(ROOT / 'includes/theme.php'), json.dumps(dates)],
+                capture_output=True, text=True, check=True)
+            self.assertEqual(json.loads(result.stdout), ['siklab', 'siklab', 'regular', 'siklab', 'regular'])
+
     def test_settings_defaults_overrides_and_invalid_port(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -133,26 +146,36 @@ class LocalApplicationTests(unittest.TestCase):
         with urllib.request.urlopen(self.base + '/documents.php?section=treasurer&search=Example', timeout=10) as response:
             self.assertIn(b'Example Finance Report', response.read())
 
-    def test_regular_and_siklab_theme_selection_persists_without_changing_records(self):
+    def test_home_preserves_council_content_and_theme_schedule_cannot_be_overridden(self):
         before = self.sql('SELECT COUNT(*) AS total FROM documents')
-        opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
-        with opener.open(self.base + '/?theme=regular', timeout=10) as response:
-            body = response.read()
-            self.assertIn(b'data-theme="regular"', body)
-            self.assertNotIn(b'data-trophy-scene', body)
-        with opener.open(self.base + '/documents.php?section=treasurer&search=Example', timeout=10) as response:
-            body = response.read()
-            self.assertIn(b'data-theme="regular"', body)
-            self.assertIn(b'section=treasurer&amp;search=Example&amp;theme=siklab', body)
-        with opener.open(self.base + '/?theme=siklab', timeout=10) as response:
-            body = response.read()
-            self.assertIn(b'data-theme="siklab"', body)
-            self.assertIn(b'data-trophy-scene', body)
-            self.assertIn(b'assets/img/siklab/trophy.webp', body)
-        with opener.open(self.base + '/?theme%5B%5D=invalid', timeout=10) as response:
-            body = response.read()
-            self.assertIn(b'data-theme="siklab"', body)
-            self.assertNotIn(b'Warning:', body)
+        expected = subprocess.run(self.command + ['-r', 'require "includes/theme.php"; echo $site_theme;'],
+            cwd=ROOT, env=self.env, capture_output=True, text=True, check=True).stdout
+        for path in ('/', '/?theme=regular', '/?theme=siklab', '/?theme%5B%5D=invalid',
+                     '/documents.php?section=treasurer&search=Example'):
+            for cookie_theme in ('regular', 'siklab'):
+                request = urllib.request.Request(self.base + path, headers={'Cookie': 'ssc_theme=' + cookie_theme})
+                with self.subTest(path=path, cookie=cookie_theme), urllib.request.urlopen(request, timeout=10) as response:
+                    body = response.read()
+                    self.assertIn(f'data-theme="{expected}"'.encode(), body)
+                    for removed in (b'theme-picker', b'team-lineup', b'event-frame-note', b'Seven teams. One shared flame.', b'Warning:'):
+                        self.assertNotIn(removed, body)
+                    if path.startswith('/documents.php'):
+                        self.assertIn(b'Example Finance Report', body)
+                        continue
+                    for original in (b'CSPC Supreme Student Council', b'Academic Year 2025-2026',
+                                     b'Promoting transparency and student welfare through accessible documentation and information sharing.',
+                                     b'Empowering students through leadership, service, and advocacy.',
+                                     b'View Officers', b'About Platform', b'Official Documents', b'Executive Officers',
+                                     b'Trixia Kate S. Morata', b'About This Platform', b'Get Involved with CSPC',
+                                     b'id="aboutModal"', b'id="profileModal"', b'No Upcoming Event'):
+                        self.assertIn(original, body)
+                    self.assertEqual(b'data-trophy-scene' in body, expected == 'siklab')
+                    if expected == 'siklab':
+                        self.assertIn(b'data-model-url="assets/static/SIKLAB_Trophy.glb"', body)
+                        self.assertIn(b'assets/img/siklab/trophy.webp', body)
+        with urllib.request.urlopen(self.base + '/assets/static/SIKLAB_Trophy.glb', timeout=10) as response:
+            self.assertEqual(response.status, 200)
+            self.assertEqual(response.read(4), b'glTF')
         self.assertEqual(self.sql('SELECT COUNT(*) AS total FROM documents'), before)
 
     def test_local_router_blocks_private_files(self):

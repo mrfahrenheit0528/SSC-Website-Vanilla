@@ -36,7 +36,7 @@ See README.md for configuration and first-run steps. No live deployment has run.
 
 Modernize the council website's public pages and administration tools while preserving its documents, officer information, and existing PHP/MySQL functionality. Prepare and verify changes locally before updating production.
 
-Approved scope: provide two UI themes: **Regular** for everyday council use and **Intramurals** for the council's intramurals event. Both themes will use the same content, navigation, components, and application features. Theme-specific artwork, colors, typography, and decorative treatments will be developed together. The event branding and how the theme is selected still need to be agreed during phase 4.
+Approved scope: provide two UI themes: **Regular** for everyday council use and **SIKLAB** for the council's intramurals event. Both themes use the same council content and application features. The owner requested SIKLAB through December 5, 2026, followed by Regular from December 6 at 00:00 Asia/Taipei, with no visitor theme selector.
 
 ## Starting point
 
@@ -128,11 +128,15 @@ Apache access rules still require environment-specific testing.
 SIKLAB direction update: the owner supplied the event palette, seven team emblems,
 SIKLAB wordmark/emblem and torch PNGs, plus a reference using a large glass panel,
 soft color fields, bold dark typography and a floating object. A local event
-homepage prototype follows that direction with an original WebGL torch sculpture.
-The default is SIKLAB with a visitor-selectable Regular alternative stored in a
-validated cookie. Regular preserves its earlier homepage for now. The 3D object
+homepage follows that direction using the owner's supplied `SIKLAB_Trophy.glb`.
+SIKLAB stays active through December 5, 2026 and switches to Regular on December
+6 at 00:00 Asia/Taipei. Theme links and preference cookies cannot override the
+schedule. The visitor theme selector and added team/emblem strip are removed.
+Original homepage text, document counts, officer rosters, platform dialogs and
+calls to action are shared by both themes; the announcement banner is retained
+below the trophy hero. Regular preserves its earlier hero for now. The 3D object
 supports drag/keyboard controls, pause, reduced motion and a static-art fallback.
-Event dates and schedules have not been supplied and are not fabricated.
+No match schedules, results or new official slogans are fabricated.
 
 This is an initial homepage/shared-shell review, not approval of the final design
 or a complete redesign of secondary pages. Browser visual inspection is pending
@@ -146,7 +150,7 @@ for review in the user's browser.
 - [ ] Define the primary student journeys: finding a document, identifying an officer, checking announcements, and contacting the council.
 - [ ] Prepare a representative homepage and document-library design at desktop and mobile sizes.
 - [ ] Show both Regular and Intramurals variants in the representative designs. Confirm the intramurals event name, approved artwork, palette, and content dates.
-- [ ] Agree whether the theme is site-wide, visitor-selectable, scheduled, or a combination. Define the default theme, persistence, and return to Regular after the event.
+- [x] Agree theme selection: scheduled SIKLAB through December 5, 2026, then Regular; no visitor selector or preference override.
 - [ ] Review that concrete design with the user before applying it across all pages.
 
 **Suggested starting direction:** A clear institutional style using council-approved navy/blue, white surfaces, strong typography, restrained accents, and real council imagery. Give document access and current announcements more prominence.
