@@ -28,6 +28,8 @@ file references and the event banner are present. Production `.htaccess`
 directives must be preserved during deployment; the uploader now merges its
 managed rules without discarding existing host configuration. The downloaded
 source also includes `diagnostic.php`, which the new access rules deny.
+PR #2 merged the preservation changes, and read-only preflight 44852207312 passed
+against the actual host. No production upload has been performed.
 See README.md for configuration and first-run steps. No live deployment has run.
 
 ## Objective

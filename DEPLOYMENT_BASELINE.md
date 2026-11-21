@@ -176,9 +176,10 @@ The production-only `diagnostic.php` enables error display and queries the
 database; updated repository access rules deny it along with `test.php` and
 `hello.html`. No production file was edited or removed during verification.
 
-Read-only preflight 44782089782 passed before these preservation changes. A
-further read-only run will verify reading the live Apache configuration over the
-encrypted data channel. A full application rollback/recovery exercise on the
+Read-only preflight 44782089782 passed before these preservation changes.
+After PR #2 merged, read-only run 44852207312 also passed, verifying that the
+updated deployer can read the live Apache configuration over the encrypted data
+channel. No uploads were performed. A full application rollback/recovery exercise on the
 host, hosting PHP version/extensions, and visual baseline remain unverified.
 The checks establish the downloaded snapshot's internal consistency; they do not
 prove that no live edits occurred during or after the user's downloads. Refresh
