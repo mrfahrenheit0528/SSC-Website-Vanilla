@@ -128,14 +128,17 @@ Apache access rules still require environment-specific testing.
 SIKLAB direction update: the owner supplied the event palette, seven team emblems,
 SIKLAB wordmark/emblem and torch PNGs, plus a reference using a large glass panel,
 soft color fields, bold dark typography and a floating object. A local event
-homepage follows that direction using the owner's supplied `SIKLAB_Trophy.glb`.
+homepage follows that direction using the owner's original 2D trophy artwork.
 SIKLAB stays active through December 5, 2026 and switches to Regular on December
 6 at 00:00 Asia/Taipei. Theme links and preference cookies cannot override the
 schedule. The visitor theme selector and added team/emblem strip are removed.
 Original homepage text, document counts, officer rosters, platform dialogs and
 calls to action are shared by both themes; the announcement banner is retained
-below the trophy hero. Regular preserves its earlier hero for now. The 3D object
-supports drag/keyboard controls, pause, reduced motion and a static-art fallback.
+below the trophy hero. Regular preserves its earlier hero for now. The owner
+replaced the 3D model with the original 2D trophy, surrounded by the seven college
+logos (BUHI, CAS, CCS, CEA, CHS, CTDE, CTHBM) instead of orbit circles. The hero is
+static and responsive; unused 3D code and build dependencies are removed. Buttons
+use sharp corners and colors sampled from the supplied palette.
 No match schedules, results or new official slogans are fabricated.
 
 This is an initial homepage/shared-shell review, not approval of the final design

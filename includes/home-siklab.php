@@ -11,18 +11,27 @@
                 <button class="button button-gold" type="button" onclick="document.getElementById('aboutModal').classList.remove('hidden')">About Platform</button>
             </div>
         </div>
-        <div class="trophy-stage" aria-label="SIKLAB trophy showcase">
-            <div class="stage-orbit orbit-one" aria-hidden="true"></div>
-            <div class="stage-orbit orbit-two" aria-hidden="true"></div>
-            <span class="stage-spark spark-one" aria-hidden="true"></span>
-            <span class="stage-spark spark-two" aria-hidden="true"></span>
-            <div class="trophy-shadow" aria-hidden="true"></div>
-            <div class="trophy-scene" data-trophy-scene data-model-url="assets/static/SIKLAB_Trophy.glb">
-                <img class="trophy-fallback" src="assets/img/siklab/trophy.webp" width="464" height="900" alt="The multicolored SIKLAB flame on a gold trophy base">
-                <canvas id="siklab-trophy-canvas" class="trophy-canvas" hidden tabindex="0" role="img" aria-label="3D SIKLAB trophy. Drag horizontally or use left and right arrow keys to rotate. Home resets the view."></canvas>
-            </div>
-            <div class="scene-caption"><span data-scene-caption>SIKLAB 2026</span><button class="motion-button" type="button" data-scene-toggle aria-controls="siklab-trophy-canvas" hidden>Pause animation</button></div>
-        </div>
+        <figure class="trophy-stage" aria-label="SIKLAB trophy and the seven participating colleges">
+            <img class="trophy-art" src="assets/img/siklab/trophy.webp" width="464" height="900" alt="The official SIKLAB trophy with seven colorful flames and a gold base" fetchpriority="high">
+            <ul class="college-emblems" aria-label="Participating colleges">
+                <?php
+                $colleges = [
+                    ['BUHI', 'bc', 24, 8],
+                    ['CAS', 'cas', 81, 18],
+                    ['CCS', 'ccs', 88, 53],
+                    ['CEA', 'cea', 77, 85],
+                    ['CHS', 'chs', 23, 86],
+                    ['CTDE', 'ctde', 12, 59],
+                    ['CTHBM', 'cthbm', 12, 27],
+                ];
+                foreach ($colleges as [$name, $asset, $x, $y]): ?>
+                <li class="college-emblem" style="--emblem-x: <?php echo $x; ?>%; --emblem-y: <?php echo $y; ?>%;">
+                    <img src="assets/img/siklab/<?php echo $asset; ?>.webp" width="240" height="240" alt="">
+                    <span><?php echo $name; ?></span>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </figure>
     </section>
 </main>
 </div><!-- event-frame -->

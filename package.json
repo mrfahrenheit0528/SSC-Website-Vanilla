@@ -1,14 +1,7 @@
 {
   "name": "ssc-website-vanilla",
   "private": true,
-  "scripts": {
-    "build": "node scripts/build-frontend.mjs"
-  },
   "dependencies": {
-    "flowbite": "^4.0.1",
-    "three": "0.187.0"
-  },
-  "devDependencies": {
-    "esbuild": "0.28.2"
+    "flowbite": "^4.0.1"
   }
 }

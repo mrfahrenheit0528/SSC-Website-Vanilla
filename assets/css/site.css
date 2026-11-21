@@ -8,7 +8,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 100px; }
 body { margin: 0; font-family: var(--body-font); color: var(--ink); }
 button, input, select { font: inherit; }
 a { color: inherit; }
-a:focus-visible, button:focus-visible, summary:focus-visible, canvas:focus-visible { outline: 3px solid #3253dc; outline-offset: 5px; }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid #3253dc; outline-offset: 5px; }
 [hidden] { display: none !important; }
 .skip-link { position: fixed; top: -100px; left: 20px; z-index: 1000; background: white; padding: 12px 20px; border-radius: 10px; }
 .skip-link:focus { top: 12px; }
@@ -66,23 +66,14 @@ body.event-home {
 .event-home .council-home-content button[role=tab][aria-selected=true] {
   background: var(--siklab-gold); color: #141a2e; border-color: #020593;
 }
-.trophy-stage { position: relative; min-height: 540px; width: 100%; align-self: stretch; }
-.trophy-scene { position: absolute; inset: -10px -26px 25px -18px; z-index: 2; }
-.trophy-canvas { display: block; width: 100%; height: 100%; touch-action: pan-y; cursor: grab; border-radius: 22px; }
-.trophy-canvas:active { cursor: grabbing; }
-.trophy-fallback { position: absolute; height: 92%; max-width: 78%; width: auto; object-fit: contain; left: 50%; top: 1%; transform: translateX(-50%) rotate(8deg); filter: drop-shadow(12px 20px 18px #70495727); transition: opacity .4s; }
-.trophy-scene.is-ready .trophy-fallback { visibility: hidden; opacity: 0; }
-.stage-orbit { border: 1px solid #ffffff9c; border-radius: 50%; position: absolute; pointer-events: none; }
-.orbit-one { width: 93%; height: 54%; top: 23%; left: 2%; transform: rotate(-24deg); }
-.orbit-two { width: 72%; height: 64%; top: 12%; left: 17%; transform: rotate(38deg); border-color: #fff5; }
-.trophy-shadow { position: absolute; width: 46%; height: 24px; left: 28%; bottom: 36px; border-radius: 50%; background: #62548c28; filter: blur(14px); }
-.stage-spark { position: absolute; border-radius: 50%; box-shadow: inset -8px -8px 17px #4e118832, 0 8px 22px #5437a11a; }
-.spark-one { width: 28px; height: 28px; left: 5%; top: 14%; background: linear-gradient(145deg, #fff3a4, #ffb21c); }
-.spark-two { width: 17px; height: 17px; right: 4%; bottom: 27%; background: linear-gradient(145deg, #ffc4ed, #cc36d8); }
-.scene-caption { position: absolute; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; color: #5e5877; font-size: 12px; letter-spacing: .13em; text-align: center; }
-.motion-button { font-size: 14px; letter-spacing: 0; padding: 5px 9px; border: 1px solid #fff9; background: #fff6; border-radius: 7px; color: #454366; cursor: pointer; }
-.motion-button:hover { background: #fffc; }
-.event-home :is(.motion-button, .navigation-toggle) { background: var(--siklab-silver); color: #020593; border-color: #bfc1c3; }
+/* The supplied 2D artwork stays upright, framed by the seven college emblems. */
+.trophy-stage { position: relative; min-height: 540px; width: 100%; align-self: stretch; margin: 0; }
+.trophy-art { position: absolute; height: 84%; width: 54%; object-fit: contain; left: 50%; top: 50%; transform: translate(-50%, -50%); filter: drop-shadow(0 16px 20px #70495720); }
+.college-emblems { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; }
+.college-emblem { position: absolute; left: var(--emblem-x); top: var(--emblem-y); transform: translate(-50%, -50%); display: grid; justify-items: center; width: 100px; }
+.college-emblem img { width: 100%; height: auto; object-fit: contain; filter: drop-shadow(0 5px 8px #30245c12); }
+.college-emblem span { margin-top: -12px; font-size: 11px; line-height: 1.5; font-weight: 600; letter-spacing: .08em; color: #454a72; }
+.event-home .navigation-toggle { background: var(--siklab-silver); color: #020593; border-color: #bfc1c3; }
 
 .content-width { width: calc(100% - 112px); max-width: 1256px; margin-left: auto; margin-right: auto; }
 html[data-theme=siklab] .site-footer { background: #15203c; }
@@ -104,7 +95,7 @@ html[data-theme=siklab] .site-footer .text-gray-600 { color: #8e9bb7; }
   .event-frame { width: calc(100% - 40px); margin-top: 20px; border-radius: 30px; }
   .hero-copy h1 { font-size: 41px; } .hero-description { font-size: 16px; } .event-wordmark { width: 240px; }
   .siklab-hero { padding: 20px 30px 10px; gap: 0; grid-template-columns: 1.08fr 1fr; }
-  .trophy-stage { min-height: 490px; } .trophy-scene { left: -30px; right: -25px; }
+  .trophy-stage { min-height: 490px; } .college-emblem { width: 82px; }
   .event-eyebrow { font-size: 12px; letter-spacing: .14em; } .button { font-size: 14px; padding: 12px 18px; }
 }
 @media (max-width: 680px) {
@@ -116,9 +107,8 @@ html[data-theme=siklab] .site-footer .text-gray-600 { color: #8e9bb7; }
   .event-eyebrow { font-size: 12px; margin-bottom: 23px; } .hero-copy h1 { font-size: clamp(35px, 8.8vw, 49px); }
   .hero-description { font-size: 16px; margin-bottom: 23px; }
   .trophy-stage { min-height: 460px; margin-top: 10px; }
-  .trophy-scene { inset: 0 -10px 26px; } .trophy-fallback { height: 94%; }
-  .orbit-one { top: 20%; height: 50%; } .orbit-two { height: 60%; } .trophy-shadow { bottom: 40px; }
-  .scene-caption { bottom: 1px; font-size: 12px; gap: 8px; letter-spacing: .09em; }
+  .college-emblem { width: clamp(64px, 19vw, 95px); }
+  .college-emblem span { margin-top: -8px; font-size: 10px; }
   .content-width { width: calc(100% - 44px); }
 }
 @media (prefers-reduced-motion: reduce) {

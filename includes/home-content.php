@@ -802,8 +802,5 @@
 
 </div>
 <?php include 'includes/footer.php'; ?>
-<?php if ($site_theme === 'siklab'): ?>
-<script type="module" src="assets/js/siklab-scene.bundle.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/siklab-scene.bundle.js'); ?>"></script>
-<?php endif; ?>
 </body>
 </html>

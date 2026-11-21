@@ -106,19 +106,8 @@ they do not reset your persistent development database.
 ## Frontend dependencies
 
 Flowbite's vendored CSS and JavaScript in `assets/` are used by existing pages.
-The SIKLAB trophy uses the supplied GLB model, rendered with Three.js and bundled
-locally with esbuild:
-
-```powershell
-npm ci --ignore-scripts
-npm run build
-node tests/model-smoke.mjs
-```
-
-The generated `assets/js/siklab-scene.bundle.js` is versioned so the PHP preview
-works without running Node. CI rebuilds it and checks it matches the committed
-version; deployment also builds it before packaging. Rebuild after editing the
-scene or model source. The Three.js license is retained beside the bundle.
+The SIKLAB hero uses static WebP artwork and CSS, with no 3D renderer or frontend
+build step. The unused Three.js code, bundle, and build dependencies are removed.
 Tailwind, PDF.js, fonts, and the existing council logo still use their CDNs.
 
 ### SIKLAB homepage
@@ -133,12 +122,11 @@ Secondary page layouts are not yet overhauled.
 The homepage keeps the original council text, links, document counts, officer
 rosters, platform information, dialogs, contact details and announcement banner.
 Both themes share `includes/home-content.php`. The event adds its palette,
-wordmark, glass surfaces and the supplied `assets/static/SIKLAB_Trophy.glb`.
-The extra team strip and event slogans have been removed. The trophy rotates/floats, supports horizontal
-dragging and left/right/Home keys, and has an explicit play/pause control.
-Reduced-motion preferences start with a still scene. Rendering stops when the
-scene is outside the viewport or the tab is hidden. If WebGL is unavailable,
-the supplied torch artwork remains visible as a lightweight static fallback.
+wordmark, glass surfaces and the supplied 2D trophy artwork. Seven college logos
+(BUHI, CAS, CCS, CEA, CHS, CTDE, CTHBM) surround the upright trophy in place of
+the orbit circles. BUHI uses the supplied `BC.png` artwork. The arrangement is
+static and responsive, with no canvas, animation controls or extra event slogans.
+Buttons have sharp corners and gradients sampled from the supplied palette.
 
 Original PNGs are retained in `assets/static/`. Prepared WebP variants are in
 `assets/img/siklab/`; regenerate them with:
@@ -151,10 +139,9 @@ This CLI-only encoder preserves the originals and uses a temporary 512 MB memory
 limit for the large source artwork. It is not run on the hosting server. No event
 dates, match schedules, results or official slogans were invented; existing
 documents, officer rosters and the admin-managed announcement banner remain the
-source of council content. The GLB is self-contained and retains its original
-materials. The model smoke check parses it and checks framing at desktop/mobile
-aspect ratios across rotation angles. PHP tests cover the theme cutoff and
-preservation of homepage content.
+source of council content. The supplied GLB remains in the source assets for
+future use but is not loaded by the homepage. PHP tests cover the theme cutoff,
+preservation of homepage content, the seven college identities and image delivery.
 Visual browser QA is pending because the preview browser connection is unavailable.
 
 ## Private files and uploaded records
