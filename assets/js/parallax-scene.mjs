@@ -3,6 +3,7 @@ import { sceneProgress, layerDisplacement, copyVisibility } from './parallax-mat
 export function startParallax(scene, view = window) {
   const layers = [...scene.querySelectorAll('[data-scene-layer]')];
   const copy = scene.querySelector('[data-scene-copy]');
+  const motionBounds = scene.querySelector('[data-motion-bounds]');
   const document = view.document;
   const reduced = view.matchMedia('(prefers-reduced-motion: reduce)');
   const finePointer = view.matchMedia('(hover: hover) and (pointer: fine)');
@@ -20,10 +21,11 @@ export function startParallax(scene, view = window) {
     if (reduced.matches) { reset(); return; }
     const rect = scene.getBoundingClientRect();
     const progress = sceneProgress(rect.top, rect.height, view.innerHeight);
+    const travelHeight = Math.min(view.innerHeight, motionBounds?.getBoundingClientRect().height ?? view.innerHeight);
     pointer.x += (target.x - pointer.x) * .12;
     pointer.y += (target.y - pointer.y) * .12;
     for (const layer of layers) {
-      const offset = layerDisplacement(progress, Number(layer.dataset.depth), view.innerHeight, pointer);
+      const offset = layerDisplacement(progress, Number(layer.dataset.depth), travelHeight, pointer);
       layer.style.transform = `translate3d(${offset.x.toFixed(2)}px, ${offset.y.toFixed(2)}px, 0)`;
     }
     if (copy) {
@@ -81,7 +83,28 @@ export function startParallax(scene, view = window) {
   };
 }
 
+export async function preparePhotoScene(scene, view = window) {
+  const assets = [...new Set([...scene.querySelectorAll('[data-photo-asset]')].map((element) => element.dataset.photoAsset))];
+  try {
+    await Promise.all(assets.map((url) => new Promise((resolve, reject) => {
+      const image = new view.Image();
+      image.onload = resolve;
+      image.onerror = reject;
+      image.src = url;
+      if (image.complete && image.naturalWidth > 0) resolve();
+    })));
+  } catch {
+    // Keep the untouched photograph visible if a matte/backplate cannot load.
+    return null;
+  }
+  scene.classList.add('photo-assets-ready');
+  return startParallax(scene, view);
+}
+
 if (typeof document !== 'undefined') {
   const scene = document.querySelector('[data-opening-scene]');
-  if (scene) startParallax(scene);
+  if (scene) {
+    if (scene.hasAttribute('data-photo-scene')) preparePhotoScene(scene);
+    else startParallax(scene);
+  }
 }

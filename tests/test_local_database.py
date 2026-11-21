@@ -2,6 +2,7 @@
 
 import http.cookiejar
 import html
+import hashlib
 import json
 import os
 import re
@@ -24,27 +25,44 @@ from dev import php_command
 
 
 class ConfigurationTests(unittest.TestCase):
-    def test_parallax_webp_layers_preserve_registration_and_transparency(self):
-        source = '''<?php $rows=[]; foreach (['sky','distance','campus','monument','foreground'] as $layer) {
-            $source=$argv[1].'/assets/static/parallax-v3/'.$layer.'.png';
-            $path=$argv[1].'/assets/img/siklab/parallax-'.$layer.'-v3.webp';
-            $image=imagecreatefromwebp($path);
-            $rows[$layer]=['source'=>array_slice(getimagesize($source),0,2),
-                'registered'=>array_slice(getimagesize($argv[1].'/assets/static/parallax-v3/master.png'),0,2),
-                'web'=>[imagesx($image),imagesy($image)],
-                'corner_alpha'=>imagecolorsforindex($image,imagecolorat($image,0,0))['alpha']];
-            imagedestroy($image);
-        } echo json_encode($rows);'''
+    def test_campus_source_is_the_untouched_supplied_photograph(self):
+        metadata = json.loads((ROOT / 'docs/campus-photo-source.json').read_text(encoding='utf-8'))
+        original = (ROOT / 'assets/static/photo-parallax-v1/original.jpg').read_bytes()
+        self.assertEqual(hashlib.sha256(original).hexdigest(), metadata['sha256'])
+        self.assertEqual(metadata['source_dimensions'], [2048, 1150])
+
+    def test_photo_masks_register_and_partition_the_original_without_duplicate_surfaces(self):
+        source = '''<?php $base=$argv[1].'/assets/img/siklab/'; $masks=[]; $rows=[];
+        foreach (['sky','campus','monument','foreground','gap'] as $name) {
+            $masks[$name]=imagecreatefromwebp($base.'photo-'.$name.'-mask-v1.webp');
+            $rows[$name]=[imagesx($masks[$name]),imagesy($masks[$name])];
+        }
+        $violations=0; $seen=[];
+        for($y=7;$y<1078;$y+=19) for($x=7;$x<1920;$x+=19) {
+            $sum=0; $near=0;
+            foreach($masks as $name=>$image) {
+                $color=imagecolorat($image,$x,$y); $opacity=127-(($color>>24)&127);
+                if($opacity!==0 && $opacity!==127) $violations++;
+                if($opacity===127 && ($color & 0xFFFFFF)!==0xFFFFFF) $violations++;
+                if($opacity) $seen[$name]=true;
+                if($name!=='gap') $sum+=$opacity;
+                if($name==='monument'||$name==='foreground') $near+=$opacity;
+            }
+            if($sum!==127) $violations++;
+            $gap=127-((imagecolorat($masks['gap'],$x,$y)>>24)&127);
+            if($near!==$gap) $violations++;
+        }
+        foreach(['campus-photo-v1','photo-sky-fill-v1','photo-campus-fill-v1'] as $name)
+            $rows[$name]=array_slice(getimagesize($base.$name.'.webp'),0,2);
+        echo json_encode(['sizes'=>$rows,'violations'=>$violations,'seen'=>array_keys($seen)]);'''
         with tempfile.TemporaryDirectory() as directory:
             script = Path(directory) / 'layers.php'
             script.write_text(source, encoding='utf-8')
             result = subprocess.run(php_command() + [str(script), str(ROOT)], capture_output=True, text=True, check=True)
-            rows = json.loads(result.stdout)
-            self.assertEqual(len({tuple(row['web']) for row in rows.values()}), 1)
-            for layer, row in rows.items():
-                self.assertEqual(row['registered'], row['web'], layer)
-                self.assertTrue(all(abs(a-b) <= 1 for a, b in zip(row['source'], row['web'])), layer)
-                self.assertEqual(row['corner_alpha'], 0 if layer == 'sky' else 127, layer)
+            result = json.loads(result.stdout)
+            self.assertTrue(all(size == [1920, 1078] for size in result['sizes'].values()))
+            self.assertEqual(result['violations'], 0)
+            self.assertEqual(set(result['seen']), {'sky', 'campus', 'monument', 'foreground', 'gap'})
 
     def test_settings_defaults_overrides_and_invalid_port(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -186,7 +204,10 @@ class LocalApplicationTests(unittest.TestCase):
                         self.assertIn(b'assets/img/siklab/trophy.webp', body)
                         self.assertEqual(body.count(b'data-officer-section'), 8)
                         self.assertEqual(body.count(b'data-document-card'), 3)
-                        self.assertEqual(body.count(b'data-scene-layer'), 5)
+                        self.assertEqual(body.count(b'data-scene-layer'), 4)
+                        self.assertEqual(body.count(b'data-photo-surface'), 4)
+                        self.assertIn(b'data-photo-scene', body)
+                        self.assertIn(b'campus-photo-v1.webp', body)
                         self.assertIn(b'data-parallax-stage', body)
                         self.assertNotIn(b'campus-illustration-v1.webp', body)
                         self.assertNotIn(b'id="aboutModal"', body)
@@ -195,8 +216,9 @@ class LocalApplicationTests(unittest.TestCase):
                         for college in ('BUHI', 'CAS', 'CCS', 'CEA', 'CHS', 'CTDE', 'CTHBM'):
                             self.assertIn(f'<span>{college}</span>'.encode(), body)
         for asset in ('trophy', 'bc', 'cas', 'ccs', 'cea', 'chs', 'ctde', 'cthbm',
-                      'parallax-sky-v3', 'parallax-distance-v3', 'parallax-campus-v3',
-                      'parallax-monument-v3', 'parallax-foreground-v3'):
+                      'campus-photo-v1', 'photo-sky-fill-v1', 'photo-campus-fill-v1',
+                      'photo-sky-mask-v1', 'photo-campus-mask-v1', 'photo-monument-mask-v1',
+                      'photo-foreground-mask-v1', 'photo-gap-mask-v1'):
             with self.subTest(asset=asset), urllib.request.urlopen(self.base + f'/assets/img/siklab/{asset}.webp', timeout=10) as response:
                 self.assertEqual(response.status, 200)
                 header = response.read(12)

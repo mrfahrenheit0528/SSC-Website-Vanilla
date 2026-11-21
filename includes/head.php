@@ -109,7 +109,7 @@ $page_description = $page_description ?? 'Promoting transparency and student wel
     <link href="assets/css/site.css?v=<?php echo filemtime(__DIR__ . '/../assets/css/site.css'); ?>" rel="stylesheet">
     <?php if (($current_page ?? '') === 'home'): ?>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="preload" as="image" href="assets/img/siklab/parallax-sky-v3.webp" fetchpriority="high">
+    <link rel="preload" as="image" href="assets/img/siklab/campus-photo-v1.webp" fetchpriority="high">
     <link href="assets/css/home.css?v=<?php echo filemtime(__DIR__ . '/../assets/css/home.css'); ?>" rel="stylesheet">
     <script src="assets/js/home.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/home.js'); ?>" defer></script>
     <script type="module" src="assets/js/parallax-scene.mjs?v=<?php echo filemtime(__DIR__ . '/../assets/js/parallax-scene.mjs'); ?>"></script>

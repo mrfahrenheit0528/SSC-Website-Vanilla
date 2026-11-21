@@ -1,4 +1,4 @@
-/* SIKLAB: five separately painted depth planes, driven by actual scroll progress. */
+/* SIKLAB: original photograph surfaces, alpha masks and repaired hidden gaps. */
 .event-home { --paper: #130e25; --navy: #f4eaf7; --pink: #f60092; --gold: #eeb70b; --chapter-font: 'Barlow Condensed', Outfit, sans-serif; background: #130e25; color: #f4eaf7; }
 .page-width { width: min(1240px, calc(100% - 96px)); margin-inline: auto; }
 .event-home .site-header { position: fixed; inset: 0 0 auto; background: linear-gradient(#160d29e6, #160d2980); border-bottom: 1px solid #ffffff12; backdrop-filter: blur(8px); }
@@ -14,18 +14,28 @@
 .event-home main { overflow: clip; }
 .section-kicker { font-size: 11px; font-weight: 600; line-height: 1.6; letter-spacing: .18em; margin: 0 0 20px; color: #dfbfdc; }
 .opening-scene { position: relative; min-height: 100svh; background: #130e25; }
-.scene-stage { position: relative; height: 100svh; min-height: 680px; overflow: hidden; isolation: isolate; background: linear-gradient(#082cba, #07165a 55%, #10132d); }
+.scene-stage { position: relative; height: 100svh; min-height: 680px; overflow: hidden; isolation: isolate; background: linear-gradient(#80bceb, #bddbf0 60%, #5d7a8d); }
 .parallax-ready .opening-scene { height: 190svh; min-height: 1250px; }
 .parallax-ready .scene-stage { position: sticky; top: 0; }
-.scene-background { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.scene-background { position: absolute; inset: 0; z-index: 0; pointer-events: none; filter: brightness(1.08) saturate(1.02); }
 .scene-landscape { position: absolute; inset: 0; }
-.parallax-layer { display: block; position: absolute; inset: -3% -5% auto; width: 110%; height: 110%; object-fit: cover; object-position: center bottom; max-width: none; transform: translate3d(0, 0, 0); }
-.layer-sky { z-index: 0; inset: -8%; width: 116%; height: 116%; }
-.layer-distance { z-index: 1; }
+.parallax-layer { display: block; position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; transform: translate3d(0, 0, 0); }
+.layer-sky { z-index: 0; }
+.photo-register { --photo-frame-width: min(132vw, calc(132svh * 1.78)); position: absolute; inset: auto auto -18% calc(34% - var(--photo-frame-width) * .5); width: var(--photo-frame-width); height: auto; aspect-ratio: 1920 / 1078; }
+.sky-backplate { position: absolute; inset: -8%; width: 116%; height: 116%; max-width: none; object-fit: cover; }
+.photo-fallback { z-index: 8; }
+.photo-fallback img, .campus-backplate { display: block; width: 100%; height: 100%; object-fit: fill; }
+.campus-backplate { -webkit-mask: url('../img/siklab/photo-gap-mask-v1.webp') 0 0 / 100% 100% no-repeat; mask: url('../img/siklab/photo-gap-mask-v1.webp') 0 0 / 100% 100% no-repeat; mask-mode: alpha; }
+.photo-surface { position: absolute; inset: 0; background: url('../img/siklab/campus-photo-v1.webp') 0 0 / 100% 100% no-repeat; -webkit-mask-image: var(--photo-mask); mask-image: var(--photo-mask); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; mask-mode: alpha; }
+.mask-sky { --photo-mask: url('../img/siklab/photo-sky-mask-v1.webp'); }
+.mask-campus { --photo-mask: url('../img/siklab/photo-campus-mask-v1.webp'); }
+.mask-monument { --photo-mask: url('../img/siklab/photo-monument-mask-v1.webp'); }
+.mask-foreground { --photo-mask: url('../img/siklab/photo-foreground-mask-v1.webp'); }
+.photo-assets-ready .photo-fallback { opacity: 0; visibility: hidden; }
+.photo-assets-ready .photo-register { -webkit-mask-image: linear-gradient(90deg, transparent, #000 1%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 1%, #000 94%, transparent); }
 .layer-campus { z-index: 2; }
 .layer-monument { z-index: 3; }
 .layer-foreground { z-index: 4; }
-.layer-foreground img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: inherit; }
 .layer-foreground::after { content: ''; position: absolute; top: 94%; left: 0; right: 0; height: 100%; background: linear-gradient(transparent 0%, #130e25 6%, #130e25 100%); }
 .scene-active .parallax-layer, .scene-active [data-scene-copy] { will-change: transform; }
 .scene-shade { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: linear-gradient(90deg, #07142d00 25%, #07142d22 50%, #07142d85 100%), linear-gradient(0deg, #130e25 1%, #130e25d9 10%, #130e2500 35%); }
@@ -175,8 +185,7 @@
   .page-width { width: calc(100% - 40px); }
   .scene-stage { min-height: 780px; }
   .parallax-ready .opening-scene { height: 175svh; min-height: 1280px; }
-  .scene-landscape { top: auto; left: -30%; bottom: -3%; width: 155%; height: 64%; }
-  .scene-landscape .parallax-layer { object-position: left bottom; }
+  .photo-register { --photo-frame-width: 185vw; bottom: -2%; }
   .scene-shade { background: linear-gradient(180deg, #07142d9c, #07142d85 25%, #07142d18 55%, #130e2500 68%, #130e25 100%); }
   .opening-content { display: flex; align-items: flex-start; justify-content: flex-end; padding-block: 120px 90px; }
   .opening-copy { max-width: 400px; width: 100%; margin-left: 0; }

@@ -125,13 +125,16 @@ Apache access rules still require environment-specific testing.
 
 ## 4. Agree on content and visual direction
 
-SIKLAB reference-based homepage rebuild: use the owner's Sakura/Kamui references
-for dark navy/purple sections with a vivid SIKLAB-night opening. The illustration
-uses cobalt blue, magenta, green foliage and orange/gold accents from the supplied
-palette, replacing the afternoon cast. It has five independent source/transparent layers: sky, distant scenery, campus,
-monument, foreground. Native sticky positioning keeps the opening in view while
-actual scroll progress drives distinct layer transforms; fine-pointer movement is
-secondary. The monument is on the left and SIKLAB branding on the right.
+SIKLAB homepage: keep the approved dark UI and replace the cartoon campus with
+an original-photo morning opening. The supplied wide campus JPEG is retained
+byte-for-byte and supplies every visible photo surface through four alpha masks:
+sky, campus, monument and foreground. Generated cutout colors are discarded; only
+transparency guides and hidden-area repair plates are used. Exclusive masks prevent
+duplicate geometry, and the repaired campus plate is restricted to the near-object
+occlusion regions. Source provenance is in `docs/campus-photo-source.json`.
+Native sticky positioning and distinct layer transforms retain scroll parallax;
+mobile travel follows the actual photo height. The plain original photo remains
+visible until all scene assets load, and is retained as the failure fallback.
 Three flipping document cards keep the existing category routes and live
 counts. Eight full-height executive-officer sections use the original AY 2025-2026
 roster in `includes/executive-officers.php`, pending the owner's new order. College
@@ -148,7 +151,7 @@ The footer retains the existing contact information and social links. Existing
 uploaded event artwork opens in an announcement dialog from the hero. No match
 schedules, results or official slogans have been fabricated.
 
-The source/master PNGs are in `assets/static/parallax-v3/`; exact master/layer
+The source photo, alpha guides and repair plates are in `assets/static/photo-parallax-v1/`; exact master/layer
 prompts and WebP encoding details are recorded in `docs/siklab-artwork.txt`. Design-reference videos are excluded from release packages.
 
 This rebuild is ready for the owner's visual review; secondary page layouts are not yet overhauled. Browser visual inspection is pending

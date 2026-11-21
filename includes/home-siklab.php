@@ -1,14 +1,20 @@
 <?php $executive_officers = require __DIR__ . '/executive-officers.php'; ?>
 <main id="main-content" tabindex="-1">
-    <section class="opening-scene" aria-labelledby="hero-heading" data-opening-scene>
+    <section class="opening-scene" aria-labelledby="hero-heading" data-opening-scene data-photo-scene>
         <div class="scene-stage" data-parallax-stage>
             <div class="scene-background" aria-hidden="true">
-                <img class="parallax-layer layer-sky" src="assets/img/siklab/parallax-sky-v3.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.06" fetchpriority="high">
-                <div class="scene-landscape">
-                    <img class="parallax-layer layer-distance" src="assets/img/siklab/parallax-distance-v3.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.18">
-                    <img class="parallax-layer layer-campus" src="assets/img/siklab/parallax-campus-v3.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.38">
-                    <img class="parallax-layer layer-monument" src="assets/img/siklab/parallax-monument-v3.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.68">
-                    <div class="parallax-layer layer-foreground" data-scene-layer data-depth="1"><img src="assets/img/siklab/parallax-foreground-v3.webp" alt="" width="1672" height="941"></div>
+                <div class="photo-fallback photo-register"><img src="assets/img/siklab/campus-photo-v1.webp" alt="" width="1920" height="1078" fetchpriority="high" data-photo-asset="assets/img/siklab/campus-photo-v1.webp"></div>
+                <div class="parallax-layer layer-sky" data-scene-layer data-depth="0.06">
+                    <img class="sky-backplate" src="assets/img/siklab/photo-sky-fill-v1.webp" alt="" width="1920" height="1078" data-photo-asset="assets/img/siklab/photo-sky-fill-v1.webp">
+                    <div class="photo-register"><div class="photo-surface mask-sky" data-photo-surface data-photo-asset="assets/img/siklab/photo-sky-mask-v1.webp"></div></div>
+                </div>
+                <div class="scene-landscape photo-register" data-motion-bounds>
+                    <div class="parallax-layer layer-campus" data-scene-layer data-depth="0.28" data-photo-asset="assets/img/siklab/photo-gap-mask-v1.webp">
+                        <img class="campus-backplate" src="assets/img/siklab/photo-campus-fill-v1.webp" alt="" width="1920" height="1078" data-photo-asset="assets/img/siklab/photo-campus-fill-v1.webp">
+                        <div class="photo-surface mask-campus" data-photo-surface data-photo-asset="assets/img/siklab/photo-campus-mask-v1.webp"></div>
+                    </div>
+                    <div class="parallax-layer layer-monument" data-scene-layer data-depth="0.68"><div class="photo-surface mask-monument" data-photo-surface data-photo-asset="assets/img/siklab/photo-monument-mask-v1.webp"></div></div>
+                    <div class="parallax-layer layer-foreground" data-scene-layer data-depth="1"><div class="photo-surface mask-foreground" data-photo-surface data-photo-asset="assets/img/siklab/photo-foreground-mask-v1.webp"></div></div>
                 </div>
             </div>
             <div class="scene-shade" aria-hidden="true"></div>
