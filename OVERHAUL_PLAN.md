@@ -36,7 +36,7 @@ See README.md for configuration and first-run steps. No live deployment has run.
 
 Modernize the council website's public pages and administration tools while preserving its documents, officer information, and existing PHP/MySQL functionality. Prepare and verify changes locally before updating production.
 
-Approved scope: provide two UI themes: **Regular** for everyday council use and **SIKLAB** for the council's intramurals event. Both themes use the same council content and application features. The owner requested SIKLAB through December 5, 2026, followed by Regular from December 6 at 00:00 Asia/Taipei, with no visitor theme selector.
+Approved scope: provide two UI themes: **Regular** for everyday council use and **SIKLAB** for the council's intramurals event. Both themes use the same council content and application features. SIKLAB stays active until the owner requests a change, with no visitor selector or automatic expiry. The Regular redesign is deferred until after SIKLAB.
 
 ## Starting point
 
@@ -129,9 +129,9 @@ SIKLAB direction update: the owner supplied the event palette, seven team emblem
 SIKLAB wordmark/emblem and torch PNGs, plus a reference using a large glass panel,
 soft color fields, bold dark typography and a floating object. A local event
 homepage follows that direction using the owner's original 2D trophy artwork.
-SIKLAB stays active through December 5, 2026 and switches to Regular on December
-6 at 00:00 Asia/Taipei. Theme links and preference cookies cannot override the
-schedule. The visitor theme selector and added team/emblem strip are removed.
+SIKLAB stays active until the owner requests a change; the December 5 cutoff is
+removed. Theme links and preference cookies cannot override the active theme.
+The visitor theme selector and added team/emblem strip are removed.
 Original homepage text, document counts, officer rosters, platform dialogs and
 calls to action are shared by both themes; the announcement banner is retained
 below the trophy hero. Regular preserves its earlier hero for now. The owner
@@ -140,6 +140,16 @@ logos (BUHI, CAS, CCS, CEA, CHS, CTDE, CTHBM) instead of orbit circles. The hero
 static and responsive; unused 3D code and build dependencies are removed. Buttons
 use sharp corners and colors sampled from the supplied palette.
 No match schedules, results or new official slogans are fabricated.
+
+Reference-based redesign brief (discussion only; not yet implemented):
+
+- Use the bright SIKLAB palette with the layout and motion of `assets/reference/Reference.mp4`.
+- Opening illustration: showcase the SSC and current/upcoming event, with a cartoon treatment of the supplied campus photos as the background and the original 2D trophy in the foreground.
+- Official documents: use flipping category cards with working document-library links.
+- Executive officers: present one full-height scroll section per officer, in order. Use the existing roster with its accurate academic-year label until the owner supplies the current roster/order.
+- Retain the footer shown by the owner, including its council information, links and contact details.
+- Move About This Platform and its developer information to a separate page.
+- Keep college logos separate from the opening trophy; their final placement remains to be settled.
 
 This is an initial homepage/shared-shell review, not approval of the final design
 or a complete redesign of secondary pages. Browser visual inspection is pending
@@ -153,7 +163,7 @@ for review in the user's browser.
 - [ ] Define the primary student journeys: finding a document, identifying an officer, checking announcements, and contacting the council.
 - [ ] Prepare a representative homepage and document-library design at desktop and mobile sizes.
 - [ ] Show both Regular and Intramurals variants in the representative designs. Confirm the intramurals event name, approved artwork, palette, and content dates.
-- [x] Agree theme selection: scheduled SIKLAB through December 5, 2026, then Regular; no visitor selector or preference override.
+- [x] Agree theme selection: SIKLAB without an automatic cutoff; no visitor selector or preference override. Redesign Regular after SIKLAB.
 - [ ] Review that concrete design with the user before applying it across all pages.
 
 **Suggested starting direction:** A clear institutional style using council-approved navy/blue, white surfaces, strong typography, restrained accents, and real council imagery. Give document access and current announcements more prominence.

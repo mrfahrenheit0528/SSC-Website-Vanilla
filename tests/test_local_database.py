@@ -22,19 +22,6 @@ from dev import php_command
 
 
 class ConfigurationTests(unittest.TestCase):
-    def test_siklab_schedule_includes_all_of_december_fifth(self):
-        dates = ['2026-12-05T00:00:00+08:00', '2026-12-05T23:59:59+08:00',
-                 '2026-12-06T00:00:00+08:00', '2026-12-05T15:59:59+00:00',
-                 '2026-12-05T16:00:00+00:00']
-        with tempfile.TemporaryDirectory() as directory:
-            script = Path(directory) / 'schedule.php'
-            script.write_text('<?php require $argv[1]; echo json_encode(array_map('
-                'fn($date) => ssc_theme_for_time(new DateTimeImmutable($date)), '
-                'json_decode($argv[2], true)));', encoding='utf-8')
-            result = subprocess.run(php_command() + [str(script), str(ROOT / 'includes/theme.php'), json.dumps(dates)],
-                capture_output=True, text=True, check=True)
-            self.assertEqual(json.loads(result.stdout), ['siklab', 'siklab', 'regular', 'siklab', 'regular'])
-
     def test_settings_defaults_overrides_and_invalid_port(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -146,10 +133,9 @@ class LocalApplicationTests(unittest.TestCase):
         with urllib.request.urlopen(self.base + '/documents.php?section=treasurer&search=Example', timeout=10) as response:
             self.assertIn(b'Example Finance Report', response.read())
 
-    def test_home_preserves_council_content_and_theme_schedule_cannot_be_overridden(self):
+    def test_home_preserves_council_content_and_siklab_cannot_be_overridden(self):
         before = self.sql('SELECT COUNT(*) AS total FROM documents')
-        expected = subprocess.run(self.command + ['-r', 'require "includes/theme.php"; echo $site_theme;'],
-            cwd=ROOT, env=self.env, capture_output=True, text=True, check=True).stdout
+        expected = 'siklab'
         for path in ('/', '/?theme=regular', '/?theme=siklab', '/?theme%5B%5D=invalid',
                      '/documents.php?section=treasurer&search=Example'):
             for cookie_theme in ('regular', 'siklab'):

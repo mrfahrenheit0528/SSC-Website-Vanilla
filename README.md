@@ -112,11 +112,11 @@ Tailwind, PDF.js, fonts, and the existing council logo still use their CDNs.
 
 ### SIKLAB homepage
 
-Open `http://127.0.0.1:8000/`. SIKLAB stays active through **December 5, 2026**
-and automatically returns to Regular on **December 6 at 00:00 Asia/Taipei**.
-`includes/theme.php` owns this schedule. There is no visitor theme picker;
-old theme query parameters and preference cookies cannot override the schedule.
-Regular retains its existing homepage while its redesign remains a later task.
+Open `http://127.0.0.1:8000/`. SIKLAB stays active until the owner requests a
+theme change. The December 5 cutoff is removed; there is no automatic expiry.
+`includes/theme.php` sets the active theme. There is no visitor theme picker;
+old theme query parameters and preference cookies cannot override it.
+The Regular redesign is deferred until after SIKLAB.
 Secondary page layouts are not yet overhauled.
 
 The homepage keeps the original council text, links, document counts, officer
@@ -140,7 +140,7 @@ limit for the large source artwork. It is not run on the hosting server. No even
 dates, match schedules, results or official slogans were invented; existing
 documents, officer rosters and the admin-managed announcement banner remain the
 source of council content. The supplied GLB remains in the source assets for
-future use but is not loaded by the homepage. PHP tests cover the theme cutoff,
+future use but is not loaded by the homepage. PHP tests cover the active theme,
 preservation of homepage content, the seven college identities and image delivery.
 Visual browser QA is pending because the preview browser connection is unavailable.
 
