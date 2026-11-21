@@ -126,8 +126,9 @@ Apache access rules still require environment-specific testing.
 ## 4. Agree on content and visual direction
 
 SIKLAB reference-based homepage rebuild: use the owner's Sakura/Kamui references
-for a dark navy/purple treatment with a peach/lavender dusk opening. The illustration
-has five independent source/transparent layers: sky, distant scenery, campus,
+for dark navy/purple sections with a vivid SIKLAB-night opening. The illustration
+uses cobalt blue, magenta, green foliage and orange/gold accents from the supplied
+palette, replacing the afternoon cast. It has five independent source/transparent layers: sky, distant scenery, campus,
 monument, foreground. Native sticky positioning keeps the opening in view while
 actual scroll progress drives distinct layer transforms; fine-pointer movement is
 secondary. The monument is on the left and SIKLAB branding on the right.
@@ -147,7 +148,7 @@ The footer retains the existing contact information and social links. Existing
 uploaded event artwork opens in an announcement dialog from the hero. No match
 schedules, results or official slogans have been fabricated.
 
-The source/master PNGs are in `assets/static/parallax-v2/`; exact master/layer
+The source/master PNGs are in `assets/static/parallax-v3/`; exact master/layer
 prompts and WebP encoding details are recorded in `docs/siklab-artwork.txt`. Design-reference videos are excluded from release packages.
 
 This rebuild is ready for the owner's visual review; secondary page layouts are not yet overhauled. Browser visual inspection is pending

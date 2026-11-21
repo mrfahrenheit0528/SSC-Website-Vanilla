@@ -3,12 +3,12 @@
     <section class="opening-scene" aria-labelledby="hero-heading" data-opening-scene>
         <div class="scene-stage" data-parallax-stage>
             <div class="scene-background" aria-hidden="true">
-                <img class="parallax-layer layer-sky" src="assets/img/siklab/parallax-sky-v2.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.06" fetchpriority="high">
+                <img class="parallax-layer layer-sky" src="assets/img/siklab/parallax-sky-v3.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.06" fetchpriority="high">
                 <div class="scene-landscape">
-                    <img class="parallax-layer layer-distance" src="assets/img/siklab/parallax-distance-v2.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.18">
-                    <img class="parallax-layer layer-campus" src="assets/img/siklab/parallax-campus-v2.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.38">
-                    <img class="parallax-layer layer-monument" src="assets/img/siklab/parallax-monument-v2.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.68">
-                    <div class="parallax-layer layer-foreground" data-scene-layer data-depth="1"><img src="assets/img/siklab/parallax-foreground-v2.webp" alt="" width="1672" height="941"></div>
+                    <img class="parallax-layer layer-distance" src="assets/img/siklab/parallax-distance-v3.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.18">
+                    <img class="parallax-layer layer-campus" src="assets/img/siklab/parallax-campus-v3.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.38">
+                    <img class="parallax-layer layer-monument" src="assets/img/siklab/parallax-monument-v3.webp" alt="" width="1672" height="941" data-scene-layer data-depth="0.68">
+                    <div class="parallax-layer layer-foreground" data-scene-layer data-depth="1"><img src="assets/img/siklab/parallax-foreground-v3.webp" alt="" width="1672" height="941"></div>
                 </div>
             </div>
             <div class="scene-shade" aria-hidden="true"></div>

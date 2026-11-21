@@ -26,10 +26,11 @@ from dev import php_command
 class ConfigurationTests(unittest.TestCase):
     def test_parallax_webp_layers_preserve_registration_and_transparency(self):
         source = '''<?php $rows=[]; foreach (['sky','distance','campus','monument','foreground'] as $layer) {
-            $source=$argv[1].'/assets/static/parallax-v2/'.$layer.'.png';
-            $path=$argv[1].'/assets/img/siklab/parallax-'.$layer.'-v2.webp';
+            $source=$argv[1].'/assets/static/parallax-v3/'.$layer.'.png';
+            $path=$argv[1].'/assets/img/siklab/parallax-'.$layer.'-v3.webp';
             $image=imagecreatefromwebp($path);
             $rows[$layer]=['source'=>array_slice(getimagesize($source),0,2),
+                'registered'=>array_slice(getimagesize($argv[1].'/assets/static/parallax-v3/master.png'),0,2),
                 'web'=>[imagesx($image),imagesy($image)],
                 'corner_alpha'=>imagecolorsforindex($image,imagecolorat($image,0,0))['alpha']];
             imagedestroy($image);
@@ -41,7 +42,8 @@ class ConfigurationTests(unittest.TestCase):
             rows = json.loads(result.stdout)
             self.assertEqual(len({tuple(row['web']) for row in rows.values()}), 1)
             for layer, row in rows.items():
-                self.assertEqual(row['source'], row['web'], layer)
+                self.assertEqual(row['registered'], row['web'], layer)
+                self.assertTrue(all(abs(a-b) <= 1 for a, b in zip(row['source'], row['web'])), layer)
                 self.assertEqual(row['corner_alpha'], 0 if layer == 'sky' else 127, layer)
 
     def test_settings_defaults_overrides_and_invalid_port(self):
@@ -193,8 +195,8 @@ class LocalApplicationTests(unittest.TestCase):
                         for college in ('BUHI', 'CAS', 'CCS', 'CEA', 'CHS', 'CTDE', 'CTHBM'):
                             self.assertIn(f'<span>{college}</span>'.encode(), body)
         for asset in ('trophy', 'bc', 'cas', 'ccs', 'cea', 'chs', 'ctde', 'cthbm',
-                      'parallax-sky-v2', 'parallax-distance-v2', 'parallax-campus-v2',
-                      'parallax-monument-v2', 'parallax-foreground-v2'):
+                      'parallax-sky-v3', 'parallax-distance-v3', 'parallax-campus-v3',
+                      'parallax-monument-v3', 'parallax-foreground-v3'):
             with self.subTest(asset=asset), urllib.request.urlopen(self.base + f'/assets/img/siklab/{asset}.webp', timeout=10) as response:
                 self.assertEqual(response.status, 200)
                 header = response.read(12)

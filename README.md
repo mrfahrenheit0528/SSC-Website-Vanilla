@@ -121,7 +121,7 @@ Secondary page layouts are not yet overhauled.
 
 The homepage is rebuilt around the supplied reference video:
 
-- A dark dusk opening with the campus monument on the left and the SIKLAB wordmark
+- A vivid SIKLAB-night opening with the campus monument on the left and the SIKLAB wordmark
   on the right. Five separately painted planes (sky, distance, campus, monument,
   foreground) move at distinct rates during scroll; the stage stays in view for
   the opening sequence. Fine-pointer movement adds secondary depth on desktop.
@@ -147,11 +147,14 @@ natural scrolling. The legacy Regular template remains archived for the later re
 The uploaded event banner is accessible through the opening's announcement dialog;
 when none is uploaded the opening shows a short announcement placeholder.
 
-All five runtime WebP layers total approximately 320 KB. Four have true alpha
+All five runtime WebP layers total approximately 422 KB. Four have true alpha
 transparency, and all retain the same 1672 x 941 registration canvas. Their source
-PNGs and composition master are in `assets/static/parallax-v2/`. The built-in-tool
+PNGs and composition master are in `assets/static/parallax-v3/`. The built-in-tool
 master/layer prompts and encoding provenance are recorded in `docs/siklab-artwork.txt`.
-The superseded daylight composite has been removed.
+The peach/mauve cast has been replaced with cobalt blue, magenta, green foliage
+and orange/gold lighting from the supplied palette. The raw monument export is one
+pixel narrower; the encoder normalizes it to the shared canvas without cropping.
+Previous artwork inputs remain available in Git history (commit 8df0ce3).
 
 Original PNGs are retained in `assets/static/`. Prepared WebP variants are in
 `assets/img/siklab/`; regenerate them with:
