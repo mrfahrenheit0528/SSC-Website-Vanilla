@@ -1,6 +1,7 @@
 """Windows VS Code launcher with a dedicated local database and synthetic data."""
 
 import argparse
+import ctypes
 import hashlib
 import json
 import os
@@ -92,7 +93,7 @@ def start_database(state):
         process = subprocess.Popen([str(binary / 'mysqld.exe'), f'--defaults-file={data / "my.ini"}',
             f'--basedir={binary.parent}', f'--datadir={data}', f'--port={state["port"]}',
             '--bind-address=127.0.0.1', '--skip-log-bin', f'--secure-file-priv={PRIVATE}',
-            f'--log-error={PRIVATE / "server-private.log"}'],
+            f'--log-error={PRIVATE / "server-private.log"}', f'--pid-file={PRIVATE / "database.pid"}'],
             stdout=log, stderr=log, creationflags=HIDDEN)
         for _ in range(40):
             if process.poll() is not None:
@@ -103,6 +104,33 @@ def start_database(state):
             except RuntimeError:
                 time.sleep(0.25)
     raise RuntimeError('Local database did not start; private diagnostics retained.')
+
+
+def stop_database(state):
+    # mysqladmin can return while InnoDB is still closing files. Hold a handle to
+    # this authenticated instance so an immediate restart cannot race shutdown.
+    pid_file = Path(mysql(state, 'SELECT @@pid_file;')).resolve()
+    if not pid_file.is_relative_to(PRIVATE.resolve()):
+        raise RuntimeError('The listening instance is not this workspace\'s database; refusing shutdown.')
+    pid = int(pid_file.read_text().strip())
+    kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+    kernel.OpenProcess.argtypes = [ctypes.c_ulong, ctypes.c_int, ctypes.c_ulong]
+    kernel.OpenProcess.restype = ctypes.c_void_p
+    kernel.WaitForSingleObject.argtypes = [ctypes.c_void_p, ctypes.c_ulong]
+    kernel.WaitForSingleObject.restype = ctypes.c_ulong
+    kernel.CloseHandle.argtypes = [ctypes.c_void_p]
+    handle = kernel.OpenProcess(0x00100000, False, pid)  # SYNCHRONIZE only
+    if not handle:
+        raise RuntimeError('Could not observe the local database process; shutdown cancelled.')
+    try:
+        subprocess.run([str(Path(state['mysql_bin']) / 'mysqladmin.exe'),
+            f'--defaults-file={PRIVATE / "client-private.ini"}', 'shutdown'], check=True,
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, creationflags=HIDDEN)
+        if kernel.WaitForSingleObject(handle, 30000) != 0:
+            raise RuntimeError('Database shutdown is still in progress; wait before restarting.')
+    finally:
+        kernel.CloseHandle(handle)
+    print('Dedicated development database stopped. Port 3306 unchanged.')
 
 
 def php(state, action, seed=False):
@@ -153,11 +181,7 @@ def main():
         (PRIVATE / 'stop-website').touch()
         print('Requested shutdown of this workspace\'s local PHP launcher.')
     elif args.command == 'stop-db':
-        mysql(state, 'SELECT 1;')
-        subprocess.run([str(Path(state['mysql_bin']) / 'mysqladmin.exe'),
-            f'--defaults-file={PRIVATE / "client-private.ini"}', 'shutdown'], check=True,
-            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, creationflags=HIDDEN)
-        print('Dedicated development database stopped. Port 3306 unchanged.')
+        stop_database(state)
     else:
         start_database(state)
         if args.command == 'test':
