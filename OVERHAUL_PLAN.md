@@ -36,7 +36,7 @@ See README.md for configuration and first-run steps. No live deployment has run.
 
 Modernize the council website's public pages and administration tools while preserving its documents, officer information, and existing PHP/MySQL functionality. Prepare and verify changes locally before updating production.
 
-Approved scope: provide two UI themes: **Regular** for everyday council use and **Intramurals** for the council's intramurals event. Both themes will use the same content, navigation, components, and application features. Theme-specific artwork, colors, typography, and decorative treatments will be developed together. The event branding and how the theme is selected still need to be agreed during phase 4.
+Approved scope: provide two UI themes: **Regular** for everyday council use and **SIKLAB** for the council's intramurals event. Both themes use the same council content and application features. SIKLAB stays active until the owner requests a change, with no visitor selector or automatic expiry. The Regular redesign is deferred until after SIKLAB.
 
 ## Starting point
 
@@ -125,13 +125,47 @@ Apache access rules still require environment-specific testing.
 
 ## 4. Agree on content and visual direction
 
+SIKLAB homepage: keep the approved dark UI and replace the cartoon campus with
+an original-photo morning opening. The supplied wide campus JPEG is retained
+byte-for-byte and supplies every visible photo surface through four alpha masks:
+sky, campus, monument and foreground. Generated cutout colors are discarded; only
+transparency guides and hidden-area repair plates are used. Exclusive masks prevent
+duplicate geometry, and the repaired campus plate is restricted to the near-object
+occlusion regions. Source provenance is in `docs/campus-photo-source.json`.
+Native sticky positioning and distinct layer transforms retain scroll parallax;
+mobile travel follows the actual photo height. The plain original photo remains
+visible until all scene assets load, and is retained as the failure fallback.
+Three flipping document cards keep the existing category routes and live
+counts. Eight full-height executive-officer sections use the original AY 2025-2026
+roster in `includes/executive-officers.php`, pending the owner's new order. College
+logos now sit immediately above the existing footer. About This Platform and its
+original developer profiles are on `about.php`.
+
+SIKLAB has no automatic expiry, visitor theme picker or preference override. The
+Regular redesign is deferred. Buttons keep sharp corners and the supplied palette.
+Motion supports reduced-motion preferences, which remove the extended opening
+and restore static planes. Document cards have keyboard controls, focus handling
+and no-JavaScript links. Wheel/touch events are never intercepted; officers retain
+natural scrolling. Faded hero controls become inert and offscreen animation stops.
+The footer retains the existing contact information and social links. Existing
+uploaded event artwork opens in an announcement dialog from the hero. No match
+schedules, results or official slogans have been fabricated.
+
+The source photo, alpha guides and repair plates are in `assets/static/photo-parallax-v1/`; exact master/layer
+prompts and WebP encoding details are recorded in `docs/siklab-artwork.txt`. Design-reference videos are excluded from release packages.
+
+This rebuild is ready for the owner's visual review; secondary page layouts are not yet overhauled. Browser visual inspection is pending
+because the local preview connection is unavailable. No production deployment is
+part of this design iteration; the already running local PHP preview is retained
+for review in the user's browser.
+
 - [ ] Confirm the council's logo, approved colors, fonts, contact details, and available campus/event photography.
 - [ ] Confirm the current academic year and which officer rosters should be current versus archived. Avoid inferring this solely from today's date.
 - [ ] Review homepage copy, document category labels, officer names/roles, and event details for accuracy.
 - [ ] Define the primary student journeys: finding a document, identifying an officer, checking announcements, and contacting the council.
 - [ ] Prepare a representative homepage and document-library design at desktop and mobile sizes.
 - [ ] Show both Regular and Intramurals variants in the representative designs. Confirm the intramurals event name, approved artwork, palette, and content dates.
-- [ ] Agree whether the theme is site-wide, visitor-selectable, scheduled, or a combination. Define the default theme, persistence, and return to Regular after the event.
+- [x] Agree theme selection: SIKLAB without an automatic cutoff; no visitor selector or preference override. Redesign Regular after SIKLAB.
 - [ ] Review that concrete design with the user before applying it across all pages.
 
 **Suggested starting direction:** A clear institutional style using council-approved navy/blue, white surfaces, strong typography, restrained accents, and real council imagery. Give document access and current announcements more prominence.

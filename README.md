@@ -105,11 +105,81 @@ they do not reset your persistent development database.
 
 ## Frontend dependencies
 
-Flowbite's vendored CSS and JavaScript in `assets/` are used by the pages. `npm ci`
-restores the package dependency if needed; there is currently no frontend build
-or asset-copy script. Tailwind, the active PDF.js viewer, fonts, and some other
-libraries still load from CDNs. The unused npm PDF.js dependency and local module
-copies were removed; the existing viewer was retained.
+Flowbite's vendored CSS and JavaScript in `assets/` are used by existing pages.
+The SIKLAB hero uses static WebP artwork and CSS, with no 3D renderer or frontend
+build step. The unused Three.js code, bundle, and build dependencies are removed.
+Tailwind, PDF.js, fonts, and the existing council logo still use their CDNs.
+
+### SIKLAB homepage
+
+Open `http://127.0.0.1:8000/`. SIKLAB stays active until the owner requests a
+theme change. The December 5 cutoff is removed; there is no automatic expiry.
+`includes/theme.php` sets the active theme. There is no visitor theme picker;
+old theme query parameters and preference cookies cannot override it.
+The Regular redesign is deferred until after SIKLAB.
+Secondary page layouts are not yet overhauled.
+
+The homepage is rebuilt around the supplied reference video:
+
+- An original-photo morning opening: the owner's actual campus JPEG is encoded
+  directly for all four visible depth planes (sky, campus, monument, foreground).
+  Alpha masks split the photo without redrawing its buildings, seal or foliage.
+  Hidden-gap repair plates appear only underneath the moving near objects.
+  The dark website sections, official SIKLAB assets and existing content are retained.
+- Three flipping document-category cards (Treasurer, Legislative, Secretary), using
+  live database counts and the existing document-library filters. Click/tap to flip;
+  Escape returns to the front. Hidden faces are inert; without JavaScript both faces
+  and their links remain available.
+- Eight individual executive-officer scroll sections. The existing AY 2025-2026
+  roster/order lives in `includes/executive-officers.php` until the owner supplies
+  the new roster. Portraits and contact details remain the original public content.
+- The seven college emblems above the existing council footer, preserving contact
+  details, social links and copyright information.
+- `about.php` contains About This Platform and the original developer profiles.
+  Profile dialogs use native modal focus handling and keyboard-accessible triggers.
+
+`assets/css/home.css` styles the dark navy/purple homepage. `assets/js/home.js`
+handles document cards and reveals; `assets/js/parallax-scene.mjs` drives the
+independent scene planes using `parallax-math.mjs`. The opening uses native sticky
+positioning, with no intercepted wheel/touch events. On narrow screens, travel is
+bounded by the photograph height. The plain photo remains visible until all masks
+and repair plates load, and stays as a fallback if any asset fails. Motion respects reduced-motion
+preferences, which remove the extended scene and reset every plane. Faded copy
+becomes inert; animation stops offscreen or in hidden tabs. Officer panels keep
+natural scrolling. The legacy Regular template remains archived for the later redesign.
+The uploaded event banner is accessible through the opening's announcement dialog;
+when none is uploaded the opening shows a short announcement placeholder.
+
+The eight photo/matte/backplate WebP assets total approximately 673 KB and
+share a 1920 x 1078 registration canvas. Source assets are in
+`assets/static/photo-parallax-v1/`. `original.jpg` is a byte-for-byte copy of the
+owner's supplied image, verified against `docs/campus-photo-source.json`.
+Generated cutout RGB is never displayed: the encoder extracts alpha guides, builds
+exclusive white masks and derives the campus complement and repair-gap mask.
+The four surface masks cover the source once at rest, preventing duplicate geometry.
+Only sky/campus areas hidden by moving objects use repaired backplates. A modest
+shared CSS exposure lift gives a morning treatment. Exact prompts and provenance
+are recorded in `docs/siklab-artwork.txt`. Previous cartoon artwork has been removed.
+
+Original PNGs are retained in `assets/static/`. Prepared WebP variants are in
+`assets/img/siklab/`; regenerate them with:
+
+```powershell
+php -d extension=gd scripts/prepare-visual-assets.php
+```
+
+This CLI-only encoder preserves the originals and uses a temporary 512 MB memory
+limit for the large source artwork. It is not run on the hosting server. No event
+dates, match schedules, results or official slogans were invented; existing
+documents, officer rosters and the admin-managed announcement banner remain the
+source of council content. The supplied GLB remains in the source assets for
+future use but is not loaded by the homepage. PHP tests cover the active theme,
+the homepage, About page, event-poster branch, college identities and image delivery.
+Run `node --test tests/home-interactions.test.mjs tests/parallax.test.mjs` for card
+focus/inert/Escape checks, depth displacement, scroll-controller wiring and
+reduced-motion resets. PHP tests verify the source-photo checksum, full-canvas registration and non-overlapping photo coverage. Node tests also cover narrow-screen travel and asset-loading fallbacks.
+Visual desktop/mobile browser QA is pending because both browser and native preview connections are unavailable. HTTP, HTML structure, CSS parsing, PHP/JS syntax and interaction-state checks pass.
+Local reference videos under `assets/reference/` are excluded from runtime packages.
 
 ## Private files and uploaded records
 

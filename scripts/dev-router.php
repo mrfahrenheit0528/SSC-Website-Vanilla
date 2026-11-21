@@ -12,7 +12,7 @@ if (str_contains($path, "\0") || str_contains($path, '\\')
     http_response_code(403);
     exit;
 }
-$entrypoints = ['index.php', 'officers.php', 'documents.php', 'login.php',
+$entrypoints = ['index.php', 'about.php', 'officers.php', 'documents.php', 'login.php',
     'logout.php', 'dashboard.php', 'attendance.php', 'pdfviewer.php',
     'view_pdf.php', 'generate_report.php', 'delete_document.php', 'auth/register.php'];
 $relative = $path === '/' ? 'index.php' : ltrim($path, '/');
@@ -31,7 +31,7 @@ if (in_array($relative, $entrypoints, true)) {
 }
 if (preg_match('~^(?:assets|uploads)/~', $relative)
     && in_array(strtolower(pathinfo($relative, PATHINFO_EXTENSION)),
-        ['css', 'js', 'mjs', 'png', 'jpg', 'jpeg', 'webp', 'gif', 'svg', 'ico', 'pdf', 'woff', 'woff2', 'ttf'], true)) {
+        ['css', 'js', 'mjs', 'glb', 'png', 'jpg', 'jpeg', 'webp', 'gif', 'svg', 'ico', 'pdf', 'woff', 'woff2', 'ttf'], true)) {
     return false;
 }
 http_response_code(403);

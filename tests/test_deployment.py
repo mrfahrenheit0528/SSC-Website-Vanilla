@@ -76,7 +76,7 @@ class DeploymentTests(unittest.TestCase):
     def test_package_excludes_private_and_development_files(self):
         for name in ('config/database.local.php', '.env', 'sscwebsite.sql',
                      'uploads/private.pdf', '.git/config', 'node_modules/example.js',
-                     'README.md', 'scripts/private.txt'):
+                     'README.md', 'scripts/private.txt', 'assets/reference/Reference.mp4'):
             file = self.root / name
             file.parent.mkdir(parents=True, exist_ok=True)
             file.write_text('do not publish', encoding='utf-8')

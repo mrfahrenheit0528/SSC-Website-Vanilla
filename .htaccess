@@ -1,6 +1,11 @@
 Options -Indexes
 DirectoryIndex index.php index.html
 
+<IfModule mod_mime.c>
+    AddType model/gltf-binary .glb
+    AddType text/javascript .mjs
+</IfModule>
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
     # These are source/dependency directories, not public routes.

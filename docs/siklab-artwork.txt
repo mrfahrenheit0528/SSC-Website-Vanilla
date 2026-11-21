@@ -1,0 +1,37 @@
+CSPC original-photo parallax — morning treatment
+Source photograph: 696393206_2028469837757907_990590602562653895_n.jpg (owner supplied).
+Untouched source copy: assets/static/photo-parallax-v1/original.jpg
+Source checksum, dimensions and provenance: docs/campus-photo-source.json.
+Display image: assets/img/siklab/campus-photo-v1.webp, encoded directly from original.jpg.
+
+Four visible depth planes sample that ONE original photo: sky / campus / monument / foreground.
+The site does not display the generated cutouts' RGB. Built-in image_gen was used
+only for transparency guides and hidden-area sky/campus repair plates.
+Three alpha guides are normalized and assigned exclusive pixel labels by scripts/prepare-visual-assets.php.
+The campus mask is the complement of the foreground, monument and sky labels.
+All four runtime masks are white RGB with binary alpha, share a 1920 x 1078 frame,
+and cover every original-photo pixel exactly once at rest.
+The separate gap mask permits the repaired campus plate only underneath the original
+monument/foreground locations, so repairs appear when movement exposes hidden regions.
+Browser scaling interpolates matte edges; no generated replacement campus is used as the visible surface.
+
+Sources: assets/static/photo-parallax-v1/{original.jpg,sky-mask.png,monument-mask.png,foreground-mask.png,sky-fill.png,campus-fill.png}
+Runtime assets: assets/img/siklab/{campus-photo-v1,photo-sky-fill-v1,photo-campus-fill-v1,photo-sky-mask-v1,photo-campus-mask-v1,photo-monument-mask-v1,photo-foreground-mask-v1,photo-gap-mask-v1}.webp
+Grade: a shared CSS brightness(1.08) saturate(1.02) treatment, preserving natural blue sky and green foliage.
+Depth rates: 0.06 / 0.28 / 0.68 / 1. Mobile travel is capped by the actual photograph height.
+An unmasked original-photo fallback stays visible until every required image/mask loads.
+
+SKY-MASK PROMPT (built-in image_gen):
+Use case: background-extraction / photographic layer matting. Input 1 is a REAL campus photograph, not an illustration. Return the SAME 2048 x 1150 full landscape frame, with subject placement, proportions, camera and silhouettes precisely preserved. Do not recenter or crop. No cartooning, painting, beautification, invented architecture or color stylization. The result's ALPHA will be used as a mask over the ORIGINAL photo; precise geometry and transparent holes matter more than RGB. True alpha transparency outside the requested plane, no opaque background or painted checkerboard. SKY MATTE: retain ONLY the visible original blue sky and clouds, including real sky visible between branches, flagpole and metal monument bars. Make all buildings, plants, people, ground, monument, flag and trees fully transparent. Preserve the complete sky silhouette along every rooftop/treetop boundary and the original canvas.
+
+MONUMENT-MASK PROMPT (built-in image_gen):
+Use case: background-extraction / photographic layer matting. Input 1 is a REAL campus photograph, not an illustration. Return the SAME 2048 x 1150 full landscape frame, with subject placement, proportions, camera and silhouettes precisely preserved. Do not recenter or crop. No cartooning, painting, beautification, invented architecture or color stylization. The result's ALPHA will be used as a mask over the ORIGINAL photo; precise geometry and transparent holes matter more than RGB. True alpha transparency outside the requested plane, no opaque background or painted checkerboard. MONUMENT MATTE: retain ONLY the central metal globe, upper circular college emblem and flame, connecting structure, and the blue V-shaped support down to its base. EXCLUDE the circular planter, shrubs/flowers, sky, trees, people, buildings, flag and pavement. Preserve the metal bars and real transparent openings THROUGH the globe/rings so the background plane can move behind them. Keep the exact original central placement and full source canvas; do not expand the object or add glow.
+
+FOREGROUND-MASK PROMPT (built-in image_gen):
+Use case: background-extraction / photographic layer matting. Input 1 is a REAL campus photograph, not an illustration. Return the SAME 2048 x 1150 full landscape frame, with subject placement, proportions, camera and silhouettes precisely preserved. Do not recenter or crop. No cartooning, painting, beautification, invented architecture or color stylization. The result's ALPHA will be used as a mask over the ORIGINAL photo; precise geometry and transparent holes matter more than RGB. True alpha transparency outside the requested plane, no opaque background or painted checkerboard. FOREGROUND MATTE: retain ONLY the nearest circular blue planter rim, the flower hedge growing in that planter, and the closest pavement across the bottom edge of the photo. Exclude the blue V support, globe/emblem/flame, all buildings, tall trees, people, flag, distant gardens and sky. The upper boundary should follow the near planter's hedge silhouette/curb and then the lower near pavement; keep the original objects and their source positions, not new rocks or landscaping.
+
+SKY-FILL PROMPT (built-in image_gen):
+Use case: precise-object-edit. Input 1 is the real campus photograph. Create a photographic SKY BACKPLATE for parallax: extend the actual natural blue morning sky and light white clouds to cover the ENTIRE same 2048 x 1150 landscape frame, removing every campus object, building, tree, monument, flag, person and ground. Match the existing photograph's natural daylight exposure, photographic texture and lens appearance. This is gap-filling behind separately masked original-photo layers, not a replacement illustration. No stylized colors, sunset, magenta clouds, stars, sun disk, new scenery or text. Full opaque sky.
+
+CAMPUS-FILL PROMPT (built-in image_gen):
+Use case: precise-object-edit, photographic occlusion repair. Edit this ONE supplied REAL campus photo. Preserve the full original 2048 x 1150 landscape framing and 16:9-like aspect ratio. DO NOT CROP THE CANVAS, including transparent upper sky; keep all original corner coordinates. Make a photographic campus background plate for layering under original-photo cutouts. Remove only the central globe/emblem/flame monument, its blue V support, and its nearest circular blue planter/flower hedge. Inpaint their previously hidden area as a modest natural continuation of the existing plaza paving and real distant campus landscaping. Keep all other actual buildings, palms/trees, flagpole, parked vehicles and people exactly in place. Turn the sky area above the existing rooftop/treetop horizon to genuine alpha transparency; where the removed upper monument was in sky, make that area transparent too. Keep ground/pavement filled right through the entire bottom edge. IMPORTANT: preserve the ENTIRE source frame, do not trim empty transparent rows and do not recompose. Match the source's natural photographic morning light, actual camera texture and colors. This is a hidden gap-repair plate, not an illustration or a redesign. No invented buildings, text, extra people, 3D rendering, painting, posterization, sunset/night lighting or visible duplicate monument.
