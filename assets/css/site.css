@@ -36,7 +36,7 @@ html[data-theme=regular] .theme-swatch { background: #2b58c7; }
 .theme-options span { display: block; margin-top: 2px; font-size: 12px; font-weight: 400; color: #626981; }
 .navigation-toggle { display: none; border: 0; background: #ffffff80; border-radius: 10px; padding: 10px; }
 body:not(.event-home) .site-header { position: sticky; top: 0; background: #fffffff0; backdrop-filter: blur(16px); border-bottom: 1px solid #e9ecf4; }
-html[data-theme=siklab] body:not(.event-home) { background: #f5f7ff; }
+html[data-theme=siklab] body:not(.event-home):not(.gradient-bg) { background: #f5f7ff; }
 html[data-theme=siklab] .gradient-bg { background: linear-gradient(115deg, #252659, #3645b0); }
 body.event-home {
   display: block; min-height: 100vh;
