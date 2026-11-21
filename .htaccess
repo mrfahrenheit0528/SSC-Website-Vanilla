@@ -8,7 +8,7 @@ DirectoryIndex index.php index.html
 </IfModule>
 
 # Keep dumps, private config, manifests and backup files out of public responses.
-<FilesMatch "(?i)(^\.env(?:\.|$)|^\.git|\.local\.php$|\.(?:sql|bak|backup|old|zip|7z|tar|gz|md)$|^(?:test\.php|hello\.html|composer\.(?:json|lock)|package(?:-lock)?\.json)$)">
+<FilesMatch "(?i)(^\.env(?:\.|$)|^\.git|\.local\.php$|\.(?:sql|bak|backup|old|zip|7z|tar|gz|md)$|^(?:diagnostic\.php|test\.php|hello\.html|composer\.(?:json|lock)|package(?:-lock)?\.json)$)">
     Require all denied
 </FilesMatch>
 

@@ -16,7 +16,8 @@ class FakeFTP:
         self.root = '/site/htdocs'
         self.current = self.root
         self.directories = {self.root, self.root + '/config'}
-        self.files = {'index.php': b'old', 'config/database.php': b'old',
+        self.files = {'.htaccess': b'# BEGIN InfinityFree Managed Code\nphp_value date.timezone Asia/Hong_Kong\n# END InfinityFree Managed Code\n',
+                      'index.php': b'old', 'config/database.php': b'old',
                       'config/database.local.php': b'private-config',
                       'uploads/student-record.pdf': b'keep-upload',
                       'production-only.txt': b'keep-extra'}
@@ -46,6 +47,12 @@ class FakeFTP:
         assert self.current == self.root
         self.writes.append(('upload', command[5:]))
         self.files[command[5:]] = source.read()
+
+    def retrbinary(self, command, callback):
+        name = command[5:]
+        if name not in self.files:
+            raise ftplib.error_perm('550 missing file')
+        callback(self.files[name])
 
     def rename(self, source, target):
         self.writes.append(('rename', target))
@@ -105,6 +112,29 @@ class DeploymentTests(unittest.TestCase):
         self.assertEqual(ftp.files['index.php'], b'runtime')
         self.assertEqual(ftp.writes[-1], ('rename', '.htaccess'))
         self.assertFalse(any('.tmp' in name for name in ftp.files))
+
+    def test_host_settings_preserved_and_rule_block_replaced_on_redeploy(self):
+        release, _ = build_release(self.root)
+        ftp = FakeFTP()
+        original = ftp.files['.htaccess'].rstrip()
+        upload_release(ftp, release, ftp.root, dry_run=False)
+        first = ftp.files['.htaccess']
+        self.assertTrue(first.startswith(original))
+        self.assertEqual(first.count(b'# BEGIN SSC DEPLOYMENT RULES'), 1)
+        upload_release(ftp, release, ftp.root, dry_run=False)
+        self.assertEqual(ftp.files['.htaccess'], first)
+
+    def test_unreadable_or_malformed_host_config_blocks_before_writes(self):
+        release, _ = build_release(self.root)
+        for contents in (None, b'', b'# BEGIN SSC DEPLOYMENT RULES\nunfinished'):
+            ftp = FakeFTP()
+            if contents is None:
+                del ftp.files['.htaccess']
+            else:
+                ftp.files['.htaccess'] = contents
+            with self.subTest(contents=contents), self.assertRaises((ValueError, ftplib.error_perm)):
+                upload_release(ftp, release, ftp.root, dry_run=False)
+            self.assertEqual(ftp.writes, [])
 
     def test_missing_remote_config_blocks_before_writes(self):
         release, _ = build_release(self.root)

@@ -137,10 +137,13 @@ gh secret set FTP_PASSWORD --env production --repo mrfahrenheit0528/SSC-Website-
 ```
 
 The hostname and domain directory are confirmed, and both FTP secret names are
-present in the production environment. The first read-only run verified FTPS
-login and the target directory, then stopped because the host's
-`config/database.local.php` is missing or empty. Database configuration, backups,
-and full application verification remain pending. No files were uploaded.
+present in the production environment. Read-only run 44782089782 passed after
+the host's private config was created. The downloaded config passes PHP syntax
+checks and its connection values match the existing deployed bootstrap.
+The production backup was hashed and its SQL restored into a separate temporary
+MariaDB instance; all 47 document references and the event banner were present.
+These checks do not replace testing the updated application on the host. No
+production files have been uploaded by CI/CD.
 No credentials are derived from previously exposed Git
 history or uploaded automatically from this workstation.
 
@@ -176,6 +179,13 @@ workflow artifacts.
 FTPS uses port 21, certificate verification, and encrypted control/data channels.
 There is no plaintext or insecure-certificate fallback. Each file is uploaded to
 a temporary name then renamed; replacements must be supported by the server.
+Before any writes, the script reads the existing `.htaccess` over FTPS and
+preserves its host-specific directives, including InfinityFree's managed block.
+Repository rules are appended in a marked block that is replaced on subsequent
+deployments. An unreadable, empty, or malformed host file blocks deployment.
+The additional rules can override earlier directives (for example error display);
+review the effective settings and any later hosting-panel edits after release.
+
 This is not an atomic whole-site release: a failed job can leave some files
 updated and may leave non-secret temporary files. Use a maintenance window for
 incompatible changes. The script never deletes remote files, overwrites private
