@@ -74,7 +74,7 @@ include __DIR__ . '/includes/head.php';
     <div class="directory-offices directory-width" id="directory-roster-panel" data-directory-content>
         <?php foreach ($groups as $office_id => $office): ?>
         <section class="office-section office-<?php echo $office_id; ?>" id="office-<?php echo $office_id; ?>" aria-labelledby="heading-<?php echo $office_id; ?>" data-office-section <?php if (!$office['visible']): ?>hidden<?php endif; ?>>
-            <header class="office-heading" data-directory-reveal><h2 id="heading-<?php echo $office_id; ?>" aria-label="<?php echo $escape($office['name']); ?>"><span class="office-title-full"><?php echo $escape($office['name']); ?></span><span class="office-title-compact"><?php echo $escape($office['short']); ?></span></h2><span data-office-count><?php echo $office['visible']; ?> <?php echo $office['visible'] === 1 ? 'officer' : 'officers'; ?></span></header>
+            <header class="office-heading" data-directory-reveal><h2 id="heading-<?php echo $office_id; ?>" aria-label="<?php echo $escape($office['name']); ?>"><span class="office-title-full"><?php echo $escape($office['name']); ?></span><span class="office-title-compact"><?php echo $escape($office['mobile_title'] ?? $office['short']); ?></span></h2><span data-office-count><?php echo $office['visible']; ?> <?php echo $office['visible'] === 1 ? 'officer' : 'officers'; ?></span></header>
             <div class="office-grid <?php echo count($office['members']) === 1 ? 'is-solo' : ''; ?>">
                 <?php foreach ($office['members'] as $member):
                     $portrait = $portraits[$member['image']]['path'] ?? null;

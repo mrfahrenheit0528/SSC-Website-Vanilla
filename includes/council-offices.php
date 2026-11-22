@@ -2,8 +2,8 @@
 // Office grouping follows the roles already listed in the public directory.
 return [
     'presidency' => ['name' => 'Office of the President and Student Trustee', 'short' => 'President and Student Trustee'],
-    'internal-affairs' => ['name' => 'Office of the Vice President for Internal Affairs', 'short' => 'Internal Affairs'],
-    'external-affairs' => ['name' => 'Office of the Vice President for External Affairs', 'short' => 'External Affairs'],
+    'internal-affairs' => ['name' => 'Office of the Vice President for Internal Affairs', 'short' => 'Internal Affairs', 'mobile_title' => 'Vice President for Internal Affairs'],
+    'external-affairs' => ['name' => 'Office of the Vice President for External Affairs', 'short' => 'External Affairs', 'mobile_title' => 'Vice President for External Affairs'],
     'secretariat' => ['name' => 'Office of the Secretary', 'short' => 'Secretary'],
     'treasury' => ['name' => 'Office of the Treasurer', 'short' => 'Treasurer'],
     'property' => ['name' => 'Office of the Property Custodian', 'short' => 'Property Custodian'],
