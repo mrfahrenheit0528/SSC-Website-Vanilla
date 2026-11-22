@@ -51,7 +51,7 @@ body.council-page .site-header { background: #ffffffb8; border-bottom: 1px solid
 .workspace-tabs a:hover { border-color: #020593; }
 .workspace-tabs [aria-selected=true] { background: #020593; border-color: #020593; color: white; }
 .workspace-layout > [data-workspace-panel] { scroll-margin-top: 110px; }
-.workspace-sidebar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 24px; }
+.workspace-sidebar { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; gap: 24px; }
 .workspace-sidebar .council-panel { padding: 22px; scroll-margin-top: 110px; }
 .workspace-sidebar .council-muted { font-size: .9375rem; margin: 0 0 20px; }
 .workspace-sidebar .council-form { gap: 16px; }
