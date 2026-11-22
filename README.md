@@ -144,25 +144,13 @@ The current homepage uses a lighter SIKLAB design with four sections:
   the supplied directory's order.
 - The existing council footer, quick links, social links and contact information.
 
-Smooth scroll snapping guides visitors from the document section through
-individual officers and the footer. After actual scroll movement settles for
-10 ms, the page advances to a definite stop with a 750-1050 ms cubic
-ease-in/ease-out. New input cancels the transition immediately.
-The gesture stays pending if the timeout precedes the first rendered scroll
-frame; same-direction wheel tails preserve its original intent, including tiny
-trackpad deltas. Reversing direction starts from the current position.
-Accumulated wheel input projects the landing farther for large gestures, allowing
-several officers or sections to be skipped in either direction. Small gestures
-still advance one stop; wheel line/page units are normalized and animation-driven
-movement does not count as additional wheel input. The video
-opening retains ordinary scrolling. Tall cards have intermediate reading stops;
-form controls, modal dialogs, Home/End and scrollbar dragging remain ordinary.
-The officer rail publishes measured positions to `assets/js/section-snap.mjs`,
-which creates invisible vertical stops for the horizontal cards and updates them
-after layout changes. Header clearance is measured. Wheel/touch listeners are
-passive; the browser's faster native snapping is disabled while explicit easing
-is active. Reduced motion disables snapping,
-and unsupported browsers keep normal scrolling.
+Home uses ordinary page scrolling throughout; there are no automatic section or
+card stops. The horizontal executive rail retains its eased visual movement and
+Previous/Next controls, but never adjusts the page position after a scroll
+settles. The former snapping controller, markers and related CSS are removed.
+Navigation width, link weight and translucent styling match the other SSC pages.
+The document/officer section headings use their compact, blue-bordered panel
+style and shared content width. The event video and SIKLAB wordmark remain.
 
 `about.php` retains About This Platform and the original developer profiles.
 `assets/css/home.css` styles Home and the tally placeholder; `assets/js/home.js`
@@ -208,7 +196,7 @@ pending because the browser connection is unavailable.
 as a stationary viewport background, with separate vertical sections for council offices,
 college/campus representatives and committees. Assistants appear in the same
 section as their corresponding office. Ordinary document flow is used on all
-screens; this page does not load the homepage's horizontal rail or snap modules.
+screens; this page does not load the homepage's horizontal rail.
 
 The original 52 AY 2024-2025 profiles and 51 AY 2025-2026 profiles are preserved
 in `includes/officer-rosters.php`. AY 2026-2027 now includes 53 officers: 49 from

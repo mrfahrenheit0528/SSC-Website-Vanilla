@@ -82,21 +82,17 @@ test('mobile, reduced motion and overflowing content restore normal vertical pro
   }
 });
 
-test('snap positions follow measured rail spacing and clear when the rail becomes vertical', () => {
+test('ordinary scrolling can stop between officers without moving the page to a card boundary', () => {
   const f = fixture();
-  const layouts = [];
-  const unsubscribe = f.controller.onLayout((layout) => layouts.push(layout));
-  assert.deepEqual(layouts[0], { enabled: true, targets: [0, 1215, 2160] });
-  f.track.scrollWidth = 3100;
-  f.panels[1].offsetLeft = 1048;
-  f.panels[2].offsetLeft = 2048;
-  f.controller.measure();
-  assert.deepEqual(layouts[1], { enabled: true, targets: [0, 1350, 2565] });
-  f.desktop.matches = false;
-  f.controller.measure();
-  assert.deepEqual(layouts[2], { enabled: false, targets: [] });
-  unsubscribe(); f.controller.measure();
-  assert.equal(layouts.length, 3);
+  const restingPosition = 2278;
+  f.env.scrollY = restingPosition;
+  f.handlers.get('scroll')();
+  f.flush();
+  assert.equal(f.env.scrollY, restingPosition);
+  const x = -Number(f.track.style.transform.match(/translate3d\(([^p]+)px/)[1]);
+  assert.ok(x > 900 && x < 1600);
+  assert.equal(f.handlers.has('wheel'), false);
+  assert.equal(f.handlers.has('touchmove'), false);
 });
 
 test('officer motion eases into position without overshooting, independent of refresh rate', () => {

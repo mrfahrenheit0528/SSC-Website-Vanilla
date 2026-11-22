@@ -192,6 +192,10 @@ Work in this order so the most important student journeys become reviewable earl
 
 ### 6.1 Homepage
 
+November 22 update: Home uses ordinary scrolling with automatic section/card
+snapping removed. The horizontal executive officer sequence remains. Navigation
+and section-heading styles now match the other SSC public pages.
+
 - [ ] Introduce a clearer council identity, concise purpose, and prominent document-library link.
 - [ ] Present the current event or announcement with an appropriate empty state. Confirm whether the existing banner-only model is sufficient before adding new content fields.
 - [ ] Simplify document-category summaries and officer previews.

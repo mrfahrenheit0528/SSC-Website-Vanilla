@@ -1,5 +1,3 @@
-import { initSectionSnapping } from './section-snap.mjs?v=7';
-
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 export const RAIL_SCROLL_SCALE = 1.35;
 
@@ -33,9 +31,6 @@ export function initOfficerRail(root, env = window) {
   const desktop = env.matchMedia('(min-width: 1024px) and (min-height: 700px)');
   let enabled = false, travel = 0, targets = [], active = 0, frame = 0, measureFrame = 0;
   let displayedX = 0, lastTime = 0;
-  const layoutListeners = new Set();
-  const layout = () => ({ enabled, targets: enabled ? targets.map((target) => target * RAIL_SCROLL_SCALE) : [] });
-  const publishLayout = () => layoutListeners.forEach((listener) => listener(layout()));
 
   const start = () => root.getBoundingClientRect().top + env.scrollY - (header?.getBoundingClientRect().height || 0);
   function render(time = 0, immediate = false) {
@@ -72,7 +67,7 @@ export function initOfficerRail(root, env = window) {
   function measure() {
     measureFrame = 0;
     reset();
-    if (!desktop.matches || reduced.matches || panels.length < 2) { publishLayout(); return; }
+    if (!desktop.matches || reduced.matches || panels.length < 2) return;
     const top = header?.getBoundingClientRect().height || 0;
     const height = env.innerHeight - top;
     root.style.setProperty('--rail-top', `${top}px`);
@@ -80,14 +75,13 @@ export function initOfficerRail(root, env = window) {
     root.classList.add('is-horizontal');
     controls.hidden = false;
     // At zoomed/short sizes, keep readable vertical profiles instead of clipping text.
-    if (panels.some((panel) => panel.scrollHeight > panel.clientHeight + 2)) { reset(); publishLayout(); return; }
+    if (panels.some((panel) => panel.scrollHeight > panel.clientHeight + 2)) { reset(); return; }
     travel = Math.max(0, track.scrollWidth - rail.clientWidth);
-    if (!travel) { reset(); publishLayout(); return; }
+    if (!travel) { reset(); return; }
     targets = panels.map((panel) => clamp(panel.offsetLeft - panels[0].offsetLeft, 0, travel));
     root.style.height = `${height + travel * RAIL_SCROLL_SCALE}px`;
     enabled = true;
     render(0, true);
-    publishLayout();
   }
   function scheduleMeasure() {
     if (!measureFrame) measureFrame = env.requestAnimationFrame(measure);
@@ -125,20 +119,10 @@ export function initOfficerRail(root, env = window) {
   env.document.fonts?.ready.then(scheduleMeasure);
   measure();
   followHash();
-  return {
-    measure, goTo, render,
-    onLayout(listener) {
-      layoutListeners.add(listener);
-      listener(layout());
-      return () => layoutListeners.delete(listener);
-    },
-  };
+  return { measure, goTo, render };
 }
 
 if (typeof document !== 'undefined') {
   const root = document.querySelector('[data-officer-scroll]');
-  if (root) {
-    const officers = initOfficerRail(root);
-    initSectionSnapping(root, officers);
-  }
+  if (root) initOfficerRail(root);
 }
