@@ -16,7 +16,7 @@ if (!empty($_SESSION['loggedin'])) $nav_links[] = ['dashboard.php','Dashboard','
             <?php foreach ($nav_links as [$href, $label, $page]): ?>
             <a class="navigation-link <?php echo $page === $current_page ? 'is-current' : ''; ?>" href="<?php echo $href; ?>" <?php echo $page === $current_page ? 'aria-current="page"' : ''; ?>><?php echo $label; ?></a>
             <?php endforeach; ?>
-            <?php if (!empty($_SESSION['loggedin'])): ?><a class="navigation-account" href="logout.php">Sign out</a><?php else: ?><a class="navigation-account" href="login.php">Council login</a><?php endif; ?>
+            <?php if (!empty($_SESSION['loggedin'])): ?><a class="navigation-account" href="logout.php">Sign out</a><?php endif; ?>
         </div>
     </nav>
 </header>
