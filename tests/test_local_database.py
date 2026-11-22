@@ -390,6 +390,7 @@ class LocalApplicationTests(unittest.TestCase):
             with self.subTest(year=year), urllib.request.urlopen(self.base + '/officers.php?year=' + year, timeout=10) as response:
                 body = response.read()
                 self.assertEqual(body.count(b'data-directory-card'), profiles)
+                self.assertEqual(body.count(b'class="directory-card is-executive"'), 8)
                 self.assertEqual(body.count(b'data-office-section'), 19)
                 self.assertIn(b'assets/css/officers.css', body)
                 self.assertIn(b'assets/js/officers.js', body)

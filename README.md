@@ -151,6 +151,11 @@ settles. The former snapping controller, markers and related CSS are removed.
 Navigation width, link weight and translucent styling match the other SSC pages.
 The document/officer section headings use their compact, blue-bordered panel
 style and shared content width. The event video and SIKLAB wordmark remain.
+On phones, the wordmark has additional side gutters and top spacing.
+The shared mobile menu animates its hamburger into a close icon and reveals the
+navigation panel with a short fade/slide. Closed links are inert; Escape, an
+outside tap or choosing a link dismisses it. Reduced motion removes transitions.
+Large page-intro SSC crests are hidden on phones; the navigation crest remains.
 
 `about.php` retains About This Platform and the original developer profiles.
 `assets/css/home.css` styles Home and the tally placeholder; `assets/js/home.js`
@@ -225,10 +230,17 @@ also through `?q=...` without JavaScript. Nonmatching offices, cards and jump
 options are hidden together. The Jump to an office control uses ordinary page
 anchors. Styling is scoped to `assets/css/officers.css` and the Officers page.
 The supplied `assets/static/SSC LOGO.png` replaces the event wordmark. Academic
-years, search and the office selector share one desktop row and wrap on smaller
-screens. The overall results count is removed. Multi-officer cards share a
+years, search and the office selector share one desktop row. On phones, year
+tabs remain while search and the office selector are hidden; entering this layout
+clears any search so hidden controls cannot leave officers filtered out. Office
+headings use shorter labels while retaining their full accessible names.
+The overall results count is removed. Desktop multi-officer cards share a
 measured content height across offices; solo-office cards retain their wider
 layout. Heights recalculate after filtering, fonts load and viewport changes.
+Mobile cards use their natural content height: ordinary cards are vertical,
+while the eight executive roles use a compact portrait/name row, tighter details
+and contact controls below. `includes/executive-roles.php` supplies the same role
+list to the directory and homepage.
 Entry reveals and hover feedback respect reduced-motion preferences.
 Program, Hometown and Birthday labels remain visible for every officer, with
 "Not provided" placeholders for missing values. Call officer and Send email

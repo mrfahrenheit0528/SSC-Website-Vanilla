@@ -1,5 +1,6 @@
 (() => {
   // This page deliberately has no scroll controller or snapping behavior.
+  const mobile = window.matchMedia?.('(max-width: 680px)');
   function setupPortraits(scope = document) {
     scope.querySelectorAll('.directory-portrait img').forEach((image) => {
       const unavailable = () => image.closest('.directory-portrait').classList.add('is-unavailable');
@@ -11,11 +12,12 @@
   let sizeFrame = 0;
   function sizeCards() {
     sizeFrame = 0;
-    const contents = [...document.querySelectorAll('.office-grid:not(.is-solo) .directory-card-content')];
-    if (!contents.length) return;
     const html = document.documentElement;
     html.classList.remove('directory-sizing-ready');
     html.style.removeProperty('--directory-content-height');
+    if (mobile?.matches) return;
+    const contents = [...document.querySelectorAll('.office-grid:not(.is-solo) .directory-card-content')];
+    if (!contents.length) return;
     // Measure real content, including long roles/addresses, rather than crop
     // names or force a fixed height that would clip at a different font size.
     const height = Math.ceil(Math.max(...contents.map((content) => content.scrollHeight)));
@@ -93,6 +95,12 @@
     window.history.replaceState({ directoryYear: yearField.value }, '', url.href);
   }
   function onSearch() { filter(); updateSearchURL(); }
+  function updateMobileControls() {
+    if (mobile?.matches) { search.value = ''; filter(); updateSearchURL(); }
+    scheduleSizing();
+  }
+  mobile?.addEventListener('change', updateMobileControls);
+  updateMobileControls();
   search.addEventListener('input', onSearch);
   search.addEventListener('search', onSearch);
   document.querySelector('.directory-search')?.addEventListener('submit', (event) => { event.preventDefault(); onSearch(); });
@@ -150,6 +158,7 @@
   }
   async function switchYear(href, pushHistory = true) {
     const url = new URL(href, window.location.href);
+    if (mobile?.matches) url.searchParams.delete('q');
     const year = url.searchParams.get('year') || initialYear;
     if (url.origin !== window.location.origin || !yearLinks.some((link) => link.dataset.directoryYear === year)) return;
     if (year === yearField.value && (url.searchParams.get('q') || '') === search.value) {

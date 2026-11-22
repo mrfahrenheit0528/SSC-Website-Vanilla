@@ -50,6 +50,7 @@ body.officers-page .site-header { background: #ffffffb8; border-bottom: 1px soli
 .office-cthbm, .office-environment { --office-accent: #276327; --office-tint: #ebf7e9; }
 .office-heading { display: flex; justify-content: space-between; align-items: center; gap: 28px; margin-bottom: 24px; padding: 15px 20px; border-left: 5px solid var(--office-accent); background: #ffffffda; box-shadow: 0 3px 14px #14214507; }
 .office-heading h2 { font: 600 clamp(1.7rem, 2.5vw, 2.2rem)/1.15 var(--office-font); margin: 0; text-wrap: balance; }
+.office-title-compact { display: none; }
 .office-heading > span { flex-shrink: 0; font-size: .875rem; color: #52607a; }
 .office-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; align-items: stretch; gap: 24px; }
 .directory-card { min-width: 0; height: 100%; display: grid; grid-template-rows: var(--directory-photo-height) minmax(0, 1fr); background: #fffffff2; border: 2px solid #b9c5dd; border-top: 4px solid var(--office-accent); box-shadow: 0 10px 25px #14214512; transition: box-shadow .25s, border-color .25s; }
@@ -111,16 +112,31 @@ body.officers-page .site-header { background: #ffffffb8; border-bottom: 1px soli
   .directory-brand img { width: 115px; }
   .directory-kicker { font-size: .875rem; letter-spacing: .06em; }
   .directory-year-link { padding-inline: 6px; font-size: .875rem; }
-  .directory-filters { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .directory-filters, .directory-index { display: none; }
   .office-section { margin-bottom: 45px; }
-  .office-heading { gap: 16px; padding: 13px 15px; align-items: start; }
-  .office-heading h2 { font-size: 1.7rem; }
-  .office-heading > span { padding-top: 5px; }
-  .office-grid { grid-template-columns: minmax(0, 1fr); gap: 22px; }
-  .is-solo .directory-card { grid-template-columns: minmax(0, 1fr); }
-  .is-solo .directory-portrait { min-height: 0; height: var(--directory-photo-height); }
-  .directory-card-content, .is-solo .directory-card-content { padding: 25px; }
-  .is-solo .directory-card h3 { font-size: 2rem; }
+  .office-heading { gap: 12px; padding: 12px 14px; align-items: start; }
+  .office-heading h2 { min-width: 0; flex: 1; font-size: clamp(1.2rem, 5vw, 1.4rem); line-height: 1.15; text-wrap: pretty; }
+  .office-title-full { display: none; }
+  .office-title-compact { display: inline; }
+  .office-heading > span { padding: 0; }
+  .office-grid { grid-template-columns: minmax(0, 1fr); grid-auto-rows: auto; gap: 20px; }
+  .office-grid .directory-card, .directory-sizing-ready .office-grid:not(.is-solo) .directory-card { height: auto; grid-template-columns: minmax(0, 1fr); grid-template-rows: var(--directory-photo-height) auto; }
+  .office-grid .directory-portrait { min-height: 0; height: var(--directory-photo-height); }
+  .office-grid .directory-card-content { padding: 18px; }
+  .office-grid .directory-card h3 { font-size: 1.8rem; margin-bottom: 16px; }
+  .office-grid .directory-details { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .directory-contacts { margin-top: 0; padding-top: 18px; gap: 12px 20px; }
+  .office-grid .directory-card.is-executive, .directory-sizing-ready .office-grid .directory-card.is-executive { align-self: start; grid-template-columns: minmax(72px, 26%) minmax(0, 1fr); grid-template-rows: auto auto auto auto; gap: 10px 14px; padding: 14px; }
+  .directory-card.is-executive .directory-portrait { grid-column: 1; grid-row: 1 / span 2; height: 100%; min-height: 110px; aspect-ratio: auto; }
+  .directory-card.is-executive .directory-card-content { display: contents; }
+  .directory-card.is-executive .directory-role { grid-column: 2; grid-row: 1; align-self: end; margin: 0; line-height: 1.4; }
+  .directory-card.is-executive h3 { grid-column: 2; grid-row: 2; align-self: start; margin: 0; font-size: clamp(1.4rem, 6vw, 1.7rem); line-height: 1.08; }
+  .directory-card.is-executive .directory-details { grid-column: 1 / -1; grid-row: 3; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px 12px; padding-top: 4px; }
+  .directory-card.is-executive .directory-details > div:nth-child(1) { grid-column: 1; grid-row: 1; }
+  .directory-card.is-executive .directory-details > div:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+  .directory-card.is-executive .directory-details > div:nth-child(3) { grid-column: 2; grid-row: 1; }
+  .directory-card.is-executive .directory-details dd { font-size: .875rem; line-height: 1.45; }
+  .directory-card.is-executive .directory-contacts { grid-column: 1 / -1; grid-row: 4; margin: 0; padding-top: 4px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .directory-introduction { animation: none; }

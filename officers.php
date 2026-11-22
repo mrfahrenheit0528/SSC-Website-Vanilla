@@ -4,6 +4,7 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/current-academic-year.php';
 $rosters = require __DIR__ . '/includes/officer-rosters.php';
 $offices = require __DIR__ . '/includes/council-offices.php';
+$executive_roles = require __DIR__ . '/includes/executive-roles.php';
 $portrait_manifest = __DIR__ . '/assets/img/officers/manifest.json';
 $portraits = is_file($portrait_manifest) ? (json_decode(file_get_contents($portrait_manifest), true) ?? []) : [];
 $year = is_string($_GET['year'] ?? null) && isset($rosters[$_GET['year']]) ? $_GET['year'] : SSC_CURRENT_ACADEMIC_YEAR;
@@ -73,7 +74,7 @@ include __DIR__ . '/includes/head.php';
     <div class="directory-offices directory-width" id="directory-roster-panel" data-directory-content>
         <?php foreach ($groups as $office_id => $office): ?>
         <section class="office-section office-<?php echo $office_id; ?>" id="office-<?php echo $office_id; ?>" aria-labelledby="heading-<?php echo $office_id; ?>" data-office-section <?php if (!$office['visible']): ?>hidden<?php endif; ?>>
-            <header class="office-heading" data-directory-reveal><h2 id="heading-<?php echo $office_id; ?>"><?php echo $escape($office['name']); ?></h2><span data-office-count><?php echo $office['visible']; ?> <?php echo $office['visible'] === 1 ? 'officer' : 'officers'; ?></span></header>
+            <header class="office-heading" data-directory-reveal><h2 id="heading-<?php echo $office_id; ?>" aria-label="<?php echo $escape($office['name']); ?>"><span class="office-title-full"><?php echo $escape($office['name']); ?></span><span class="office-title-compact"><?php echo $escape($office['short']); ?></span></h2><span data-office-count><?php echo $office['visible']; ?> <?php echo $office['visible'] === 1 ? 'officer' : 'officers'; ?></span></header>
             <div class="office-grid <?php echo count($office['members']) === 1 ? 'is-solo' : ''; ?>">
                 <?php foreach ($office['members'] as $member):
                     $portrait = $portraits[$member['image']]['path'] ?? null;
@@ -82,7 +83,7 @@ include __DIR__ . '/includes/head.php';
                     $phone = array_values(array_filter($member['contacts'], static fn($contact) => str_starts_with($contact, 'tel:')))[0] ?? null;
                     $email = array_values(array_filter($member['contacts'], static fn($contact) => str_starts_with($contact, 'mailto:')))[0] ?? null;
                 ?>
-                <article class="directory-card" data-directory-card data-directory-reveal data-search-text="<?php echo $escape($member['search_text']); ?>" <?php if (!$member['matches']): ?>hidden<?php endif; ?>>
+                <article class="directory-card<?php if (in_array($member['role'], $executive_roles, true)): ?> is-executive<?php endif; ?>" data-directory-card data-directory-reveal data-search-text="<?php echo $escape($member['search_text']); ?>" <?php if (!$member['matches']): ?>hidden<?php endif; ?>>
                     <div class="directory-portrait <?php echo $has_portrait ? '' : 'is-unavailable'; ?>"><span class="directory-photo-fallback" aria-hidden="true"><svg viewBox="0 0 200 240" fill="currentColor"><circle cx="100" cy="69" r="43"/><path d="M100 123c-49 0-81 31-81 81v25h162v-25c0-50-32-81-81-81Z"/></svg></span><?php if ($has_portrait): ?><img src="<?php echo $escape($portrait); ?>" alt="<?php echo $escape($member['name']); ?>" width="640" height="800" loading="lazy" decoding="async"><?php endif; ?></div>
                     <div class="directory-card-content">
                         <p class="directory-role"><?php echo $escape($member['role']); ?></p>

@@ -4,12 +4,13 @@ import test from 'node:test';
 import vm from 'node:vm';
 
 const source = readFileSync(new URL('../assets/js/officers.js', import.meta.url), 'utf8');
-function fixture({ contents = [], images = [], animate = false, reduced = false } = {}) {
+function fixture({ contents = [], images = [], animate = false, reduced = false, mobile = false, initialSearch = '' } = {}) {
   const classes = new Set(), properties = {}, windowEvents = new Map();
   const preference = { matches: reduced, addEventListener(name, handler) { this[name] = handler; } };
+  const compact = { matches: mobile, addEventListener(name, handler) { this[name] = handler; } };
   const observed = [], retired = [];
   let observeEntries, disconnected = false;
-  const search = { value: '', addEventListener(name, handler) { this[name] = handler; } };
+  const search = { value: initialSearch, addEventListener(name, handler) { this[name] = handler; } };
   const cards = ['Ann President Office of the President', 'Maria Secretary Office of the President', 'Jessil Treasurer Office of the Treasurer'].map((text) => ({ hidden: true, dataset: { searchText: text }, classList: { add(name) { this[name] = true; } } }));
   const countA = {}, countB = {};
   const sections = [[cards[0], cards[1]], [cards[2]]].map((members, i) => ({
@@ -31,7 +32,7 @@ function fixture({ contents = [], images = [], animate = false, reduced = false 
     querySelector: (selector) => nodes[selector],
     querySelectorAll: (selector) => selector === '[data-office-section]' ? sections : selector === '[data-directory-card]' || selector === '[data-directory-reveal]' ? cards : selector === '.office-grid:not(.is-solo) .directory-card-content' ? contents : selector === '.directory-portrait img' ? images : [],
   };
-  const window = { location: {}, addEventListener: (name, handler) => windowEvents.set(name, handler), matchMedia: () => preference };
+  const window = { location: {}, addEventListener: (name, handler) => windowEvents.set(name, handler), matchMedia: (query) => query.includes('max-width') ? compact : preference };
   if (animate) window.IntersectionObserver = class {
     constructor(callback) { observeEntries = callback; }
     observe(element) { observed.push(element); }
@@ -39,7 +40,7 @@ function fixture({ contents = [], images = [], animate = false, reduced = false 
     disconnect() { disconnected = true; }
   };
   vm.runInNewContext(source, { document, window });
-  return { search, cards, sections, jump, empty, navigation, window, countA, countB, classes, properties, windowEvents, preference, observed, retired, reveal: () => observeEntries([{ target: cards[0], isIntersecting: true }]), disconnected: () => disconnected };
+  return { search, cards, sections, jump, empty, navigation, window, countA, countB, classes, properties, windowEvents, preference, compact, observed, retired, reveal: () => observeEntries([{ target: cards[0], isIntersecting: true }]), disconnected: () => disconnected };
 }
 
 test('live directory search filters office sections, their members and jump options together', () => {
@@ -84,6 +85,23 @@ test('shared card sizing uses the tallest content and recalculates when the view
   contents[0].scrollHeight = 510;
   f.windowEvents.get('resize')();
   assert.equal(f.properties['--directory-content-height'], '510px');
+});
+
+test('mobile clears hidden search state and uses content height instead of the desktop card height', () => {
+  const f = fixture({ contents: [{ scrollHeight: 500 }] });
+  f.search.value = 'secretary'; f.search.input();
+  assert.equal(f.cards.filter((card) => !card.hidden).length, 1);
+  f.compact.matches = true; f.compact.change();
+  assert.equal(f.search.value, '');
+  assert.ok(f.cards.every((card) => !card.hidden));
+  assert.equal(f.properties['--directory-content-height'], undefined);
+  assert.equal(f.classes.has('directory-sizing-ready'), false);
+  f.compact.matches = false; f.compact.change();
+  assert.equal(f.properties['--directory-content-height'], '500px');
+  const loaded = fixture({ mobile: true, initialSearch: 'missing', contents: [{ scrollHeight: 600 }] });
+  assert.equal(loaded.search.value, '');
+  assert.ok(loaded.cards.every((card) => !card.hidden));
+  assert.equal(loaded.classes.has('directory-sizing-ready'), false);
 });
 
 test('failed and already-broken images reveal the silhouette state', () => {
