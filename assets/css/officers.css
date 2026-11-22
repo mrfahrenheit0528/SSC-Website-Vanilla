@@ -126,17 +126,18 @@ body.officers-page .site-header { background: #ffffffb8; border-bottom: 1px soli
   .office-grid .directory-card h3 { font-size: 1.8rem; margin-bottom: 16px; }
   .office-grid .directory-details { grid-template-columns: minmax(0, 1fr); gap: 10px; }
   .directory-contacts { margin-top: 0; padding-top: 18px; gap: 12px 20px; }
-  .office-grid .directory-card.is-executive, .directory-sizing-ready .office-grid .directory-card.is-executive { align-self: start; grid-template-columns: minmax(72px, 26%) minmax(0, 1fr); grid-template-rows: auto auto auto auto; gap: 10px 14px; padding: 14px; }
-  .directory-card.is-executive .directory-portrait { grid-column: 1; grid-row: 1 / span 2; height: 100%; min-height: 110px; aspect-ratio: auto; }
-  .directory-card.is-executive .directory-card-content { display: contents; }
-  .directory-card.is-executive .directory-role { grid-column: 2; grid-row: 1; align-self: end; margin: 0; line-height: 1.4; }
-  .directory-card.is-executive h3 { grid-column: 2; grid-row: 2; align-self: start; margin: 0; font-size: clamp(1.4rem, 6vw, 1.7rem); line-height: 1.08; }
-  .directory-card.is-executive .directory-details { grid-column: 1 / -1; grid-row: 3; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px 12px; padding-top: 4px; }
-  .directory-card.is-executive .directory-details > div:nth-child(1) { grid-column: 1; grid-row: 1; }
-  .directory-card.is-executive .directory-details > div:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
-  .directory-card.is-executive .directory-details > div:nth-child(3) { grid-column: 2; grid-row: 1; }
-  .directory-card.is-executive .directory-details dd { font-size: .875rem; line-height: 1.45; }
-  .directory-card.is-executive .directory-contacts { grid-column: 1 / -1; grid-row: 4; margin: 0; padding-top: 4px; }
+  /* Executives keep the large portrait above their details; other officers are compact. */
+  .office-grid .directory-card:not(.is-executive), .directory-sizing-ready .office-grid .directory-card:not(.is-executive) { align-self: start; grid-template-columns: minmax(72px, 26%) minmax(0, 1fr); grid-template-rows: auto auto auto auto; gap: 10px 14px; padding: 14px; }
+  .directory-card:not(.is-executive) .directory-portrait { grid-column: 1; grid-row: 1 / span 2; height: 100%; min-height: 110px; aspect-ratio: auto; }
+  .directory-card:not(.is-executive) .directory-card-content { display: contents; }
+  .directory-card:not(.is-executive) .directory-role { grid-column: 2; grid-row: 1; align-self: end; margin: 0; line-height: 1.4; }
+  .directory-card:not(.is-executive) h3 { grid-column: 2; grid-row: 2; align-self: start; margin: 0; font-size: clamp(1.4rem, 6vw, 1.7rem); line-height: 1.08; }
+  .directory-card:not(.is-executive) .directory-details { grid-column: 1 / -1; grid-row: 3; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px 12px; padding-top: 4px; }
+  .directory-card:not(.is-executive) .directory-details > div:nth-child(1) { grid-column: 1; grid-row: 1; }
+  .directory-card:not(.is-executive) .directory-details > div:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+  .directory-card:not(.is-executive) .directory-details > div:nth-child(3) { grid-column: 2; grid-row: 1; }
+  .directory-card:not(.is-executive) .directory-details dd { font-size: .875rem; line-height: 1.45; }
+  .directory-card:not(.is-executive) .directory-contacts { grid-column: 1 / -1; grid-row: 4; margin: 0; padding-top: 4px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .directory-introduction { animation: none; }

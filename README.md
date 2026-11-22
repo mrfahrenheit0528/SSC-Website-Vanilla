@@ -237,9 +237,10 @@ headings use shorter labels while retaining their full accessible names.
 The overall results count is removed. Desktop multi-officer cards share a
 measured content height across offices; solo-office cards retain their wider
 layout. Heights recalculate after filtering, fonts load and viewport changes.
-Mobile cards use their natural content height: ordinary cards are vertical,
-while the eight executive roles use a compact portrait/name row, tighter details
-and contact controls below. `includes/executive-roles.php` supplies the same role
+Mobile cards use their natural content height: the eight executive roles have
+larger cards with a full-width portrait above their details. Other officers use
+a compact portrait/name row, tighter details and contact controls below.
+`includes/executive-roles.php` supplies the same role
 list to the directory and homepage.
 Entry reveals and hover feedback respect reduced-motion preferences.
 Program, Hometown and Birthday labels remain visible for every officer, with
