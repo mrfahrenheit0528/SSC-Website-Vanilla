@@ -18,14 +18,16 @@
     image.src = profile.image;
     image.alt = profile.name;
     document.getElementById('profileName').textContent = profile.name;
+    document.getElementById('profileTerm').textContent = profile.isCurrent ? 'Current council officer' : 'Previous council term';
     document.getElementById('profileCurrentRole').textContent = profile.currentRole;
     document.getElementById('profileProject').textContent = profile.project;
     const history = profile.history.map((position) => {
       const item = document.createElement('li');
+      item.className = position.current ? 'is-current' : '';
       const role = document.createElement('strong');
       role.textContent = position.position;
       const year = document.createElement('span');
-      year.textContent = `Academic Year ${position.year}`;
+      year.textContent = `${position.current ? 'Current · ' : ''}Academic Year ${position.year}`;
       item.append(role, year);
       return item;
     });

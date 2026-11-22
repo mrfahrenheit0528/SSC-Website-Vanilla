@@ -17,7 +17,7 @@ function fixture({ supported = true, overflow = '', broken = false } = {}) {
     };
   }
   const profiles = {
-    jeriel: { name: 'Jeriel Agua', image: 'assets/img/officers/jeriel.webp', currentRole: 'P.R.O. AY 2025-2026', project: 'TransFormation', history: [{ year: '2025-2026', position: 'P.R.O.' }, { year: '2024-2025', position: 'Assistant P.R.O.' }] },
+    jeriel: { name: 'Jeriel Agua', image: 'assets/img/officers/jeriel.webp', isCurrent: true, currentRole: 'Sports and Cultural Committee Director · AY 2026–2027', project: 'TransFormation', history: [{ year: '2026–2027', position: 'Sports and Cultural Committee Director', current: true }, { year: '2025-2026', position: 'P.R.O.' }, { year: '2024-2025', position: 'Assistant P.R.O.' }] },
     jessil: { name: 'Jessil <Martinez>', image: 'assets/img/officers/jessil.webp', currentRole: 'Treasurer AY 2025-2026', project: 'FinTech', history: [{ year: '2025-2026', position: 'Treasurer' }] },
   };
   const portrait = element({ src: 'assets/img/officers/jeriel.webp', complete: broken, naturalWidth: broken ? 0 : 800, getAttribute() { return this.src; } });
@@ -29,7 +29,7 @@ function fixture({ supported = true, overflow = '', broken = false } = {}) {
   if (supported) dialog.showModal = function () { this.open = true; this.opens = (this.opens || 0) + 1; };
   const nodes = {
     profileModal: dialog, 'platform-profiles': { textContent: JSON.stringify(profiles) },
-    profileImage, profileName: {}, profileCurrentRole: {}, profileProject: {}, profileHistory: element(),
+    profileImage, profileName: {}, profileTerm: {}, profileCurrentRole: {}, profileProject: {}, profileHistory: element(),
   };
   const document = {
     body, getElementById: (id) => nodes[id], createElement: () => element(),
@@ -47,11 +47,16 @@ test('native profile buttons populate the selected developer and their complete 
   assert.equal(f.dialog.open, true);
   assert.equal(f.nodes.profileName.textContent, 'Jeriel Agua');
   assert.equal(f.profileImage.alt, 'Jeriel Agua');
-  assert.equal(f.nodes.profileHistory.children.length, 2);
-  assert.equal(f.nodes.profileHistory.children[1].children[1].textContent, 'Academic Year 2024-2025');
+  assert.equal(f.nodes.profileTerm.textContent, 'Current council officer');
+  assert.equal(f.nodes.profileCurrentRole.textContent, 'Sports and Cultural Committee Director · AY 2026–2027');
+  assert.equal(f.nodes.profileHistory.children.length, 3);
+  assert.equal(f.nodes.profileHistory.children[0].className, 'is-current');
+  assert.equal(f.nodes.profileHistory.children[0].children[1].textContent, 'Current · Academic Year 2026–2027');
+  assert.equal(f.nodes.profileHistory.children[2].children[1].textContent, 'Academic Year 2024-2025');
   f.buttons[1].emit('click');
   assert.equal(f.nodes.profileName.textContent, 'Jessil <Martinez>');
   assert.equal(f.nodes.profileProject.textContent, 'FinTech');
+  assert.equal(f.nodes.profileTerm.textContent, 'Previous council term');
   assert.equal(f.nodes.profileHistory.children.length, 1);
   assert.equal(f.dialog.opens, 1);
 });

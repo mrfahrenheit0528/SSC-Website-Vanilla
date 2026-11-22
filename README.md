@@ -310,6 +310,12 @@ introduces the platform's existing purpose, with links to council records and th
 officer directory. The five original proposers/developers retain their project
 credits and position histories, clearly labeled as the AY 2025-2026 platform team.
 Their portraits use the validated local officer images with silhouette fallback.
+Current positions and portraits are derived from the shared current-year roster
+using explicit officer identities. Jeriel Agua, Jessil Martinez and Ralph Abonal
+have AY 2026-2027 entries added above their existing service histories. Jancee
+Abonita and Joberth Iballar retain their recorded previous-term positions. Cards
+and profiles distinguish current service from previous terms without changing
+the original platform credits or project descriptions.
 
 `includes/about-content.php` holds the preserved credit data and renders compact
 cards, a native profile dialog and inline position histories. With JavaScript and
@@ -320,6 +326,8 @@ outside the dialog close it. Styles and behavior are scoped to `assets/css/about
 and `assets/js/about.js`. Intro/hover effects respect reduced motion. Automated
 checks cover profile selection, history replacement, dismissal/scroll restoration,
 image failure and the fallback experience. Visual browser QA remains pending.
+The dialog is explicitly centered in the viewport, has a responsive portrait/title
+header and a separate contribution panel, and scrolls internally on short screens.
 
 ### Council sign in
 

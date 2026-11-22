@@ -466,6 +466,20 @@ class LocalApplicationTests(unittest.TestCase):
             self.assertEqual(list(profiles), ['jeriel', 'jessil', 'ralph', 'jancee', 'joberth'])
             self.assertEqual(len(profiles['joberth']['history']), 3)
             self.assertEqual(profiles['jessil']['project'], 'FinTech: Empowering Financial Transparency')
+            expected_current = {'jeriel': 'Sports and Cultural Committee Director',
+                                'jessil': 'Vice President for External Affairs',
+                                'ralph': 'Vice President for Internal Affairs'}
+            for identifier, position in expected_current.items():
+                profile = profiles[identifier]
+                self.assertTrue(profile['isCurrent'])
+                self.assertEqual(profile['role'], position)
+                self.assertIn('2026\u20132027', profile['currentRole'])
+                self.assertEqual(profile['history'][0], {'year': '2026\u20132027', 'position': position, 'current': True})
+                self.assertTrue(profile['history'][1]['year'].startswith('2025'))
+            for identifier in ('jancee', 'joberth'):
+                self.assertFalse(profiles[identifier]['isCurrent'])
+                self.assertIn('2025-2026', profiles[identifier]['currentRole'])
+                self.assertFalse(any(position.get('current') for position in profiles[identifier]['history']))
             self.assertTrue(all(profile['image'].startswith('assets/img/officers/') for profile in profiles.values()))
             self.assertNotIn(b'onclick=', body)
 
