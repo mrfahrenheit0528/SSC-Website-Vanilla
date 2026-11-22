@@ -184,3 +184,32 @@ host, hosting PHP version/extensions, and visual baseline remain unverified.
 The checks establish the downloaded snapshot's internal consistency; they do not
 prove that no live edits occurred during or after the user's downloads. Refresh
 or reconcile the backup immediately before a future release if data has changed.
+
+## First SIKLAB production release — November 22, 2026
+
+At the owner's deployment request, PR #5 was merged into `main` as
+`0c25ded834e2bd2929acec28fc5a82f8715ac2f2`. All 70 JavaScript tests and 40
+Python/integration tests passed locally, and GitHub CI passed before deployment.
+All 2,487 files in the private November 21 backup and the original database
+export were rehashed successfully; its successful restore verification remains
+available. The live library showed the same 47 document references before release.
+
+- Read-only FTPS preflight: [45035394003](https://github.com/mrfahrenheit0528/SSC-Website-Vanilla/actions/runs/45035394003).
+- Successful upload: [45035544631](https://github.com/mrfahrenheit0528/SSC-Website-Vanilla/actions/runs/45035544631), completed at 15:06 UTC.
+- Uploaded 469 runtime files. Private config, live uploads and the database were
+  preserved. Host-specific Apache settings were retained. No migrations or remote
+  deletions were performed, and production account passwords were not changed.
+- Read-only public HTTP checks passed for the main pages, current 53-officer
+  roster, eight executives, document categories/pagination, tally placeholder and
+  PDF viewer. All 47 existing PDF links were accessible. A sampled PDF matched its
+  pre-deployment SHA-256; selected CSS, JavaScript, wordmark and video bytes matched
+  the release's Git blobs (rather than Windows checkout line endings).
+- Private config, diagnostic, SQL and CLI routes returned HTTP 403. Guest dashboard
+  and report requests reached the login page. These are access checks, not tests
+  of signed-in dashboard operations or report generation on production.
+- Browser visual QA and signed-in production checks remain outstanding. The CUA
+  browser connection is unavailable, and no production website login was used.
+
+The local HTTP verification report is in ignored
+`build/live-release-verification.json`. Recovery still uses the private backup
+identified above; preserve newer uploads and database records before any rollback.

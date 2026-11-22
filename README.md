@@ -394,13 +394,23 @@ history and other copies of the original repository.
 
 ## Deployment status
 
-This repository is a fork. The owner currently has InfinityFree account
-credentials; FTP details, database access, and the exact deployed directory have
-not yet been verified. The original deployment does not use GitHub Actions.
-Workflows are prepared in `.github/workflows/`; hosting connection verification
-and the first deployment remain pending. No production files have been changed.
+The SIKLAB overhaul was deployed to **https://cspcssc.ct.ws/** on November 22,
+2026 from `main` commit `0c25ded834e2bd2929acec28fc5a82f8715ac2f2` (PR #5).
+[Deployment run 45035544631](https://github.com/mrfahrenheit0528/SSC-Website-Vanilla/actions/runs/45035544631)
+passed CI and uploaded 469 runtime files over explicit FTPS. The private config,
+live uploads, database and host-specific Apache settings were preserved; no
+database migrations or remote deletions ran.
 
-Before deploying this configuration change:
+Public HTTP checks passed for Home, Officers, Documents, About, tally placeholder,
+login, document categories/pagination and the PDF viewer. All 47 existing PDF
+links remain accessible, and a sampled PDF retained its pre-release SHA-256.
+Selected CSS, JavaScript, wordmark and video bytes match the committed release.
+Private config, diagnostics, SQL and CLI routes return 403. Guest dashboard and
+report requests reach login. Visual desktop/mobile checks and signed-in
+production dashboard/report actions remain unverified because browser access
+and production website credentials are unavailable in this session.
+
+For subsequent deployments:
 
 1. Back up the live application, database, and uploads.
 2. Prepare `config/database.local.php` on the host with its database settings,
@@ -425,8 +435,8 @@ use PHP 8.3 and Node 22. Verify the hosting PHP version/extensions before releas
 The `Deploy to InfinityFree` workflow is manual and only deploys from this
 fork's `main` branch. A `production` environment has been created on GitHub and
 restricted to `main`. The deployment is a **read-only preview by default**.
-The workflow must be merged into the default branch before GitHub offers its
-manual Run workflow button.
+The workflow is installed on the default branch and available through GitHub's
+manual Run workflow button. Pushes and merges run CI without deploying.
 
 Under this fork's **Settings → Environments → production**, configure:
 
@@ -452,8 +462,9 @@ the host's private config was created. The downloaded config passes PHP syntax
 checks and its connection values match the existing deployed bootstrap.
 The production backup was hashed and its SQL restored into a separate temporary
 MariaDB instance; all 47 document references and the event banner were present.
-These checks do not replace testing the updated application on the host. No
-production files have been uploaded by CI/CD.
+Read-only run 45035394003 passed immediately before the first upload. The first
+production upload and public verification are recorded above; earlier backup
+checks do not replace post-release checks for later deployments.
 No credentials are derived from previously exposed Git
 history or uploaded automatically from this workstation.
 
