@@ -98,7 +98,7 @@ body.documents-page .site-header { background: #ffffffb8; border-bottom: 1px sol
 .library-empty-icon { display: inline-block; color: #687da8; font-size: 2.2rem; margin-bottom: 20px; }
 .library-empty h3 { font: 600 2.4rem/1.1 var(--library-font); margin: 0 0 14px; }
 .library-empty p { font-size: 1rem; line-height: 1.7; color: #52607a; margin: 0 0 24px; }
-.library-qr-dialog { width: min(440px, calc(100% - 32px)); max-height: calc(100dvh - 40px); padding: 28px; border: 2px solid #aebbd4; background: #fff; color: #142145; box-shadow: 0 30px 90px #14214540; text-align: center; overflow-y: auto; }
+.library-qr-dialog { position: fixed; inset: 0; margin: auto; width: min(440px, calc(100% - 32px)); height: fit-content; max-height: calc(100dvh - 40px); padding: 28px; border: 2px solid #aebbd4; background: #fff; color: #142145; box-shadow: 0 30px 90px #14214540; text-align: center; overflow-y: auto; }
 .library-qr-dialog::backdrop { background: #111827b3; backdrop-filter: blur(5px); }
 .library-qr-heading { display: flex; justify-content: space-between; align-items: center; gap: 20px; text-align: left; }
 .library-qr-heading h2 { font: 600 1.8rem/1.1 'Barlow Condensed', Outfit, sans-serif; margin: 0; }
