@@ -573,6 +573,9 @@ class LocalApplicationTests(unittest.TestCase):
             self.assertIn('assets/js/dashboard.js', body)
             self.assertIn('data-workspace-document', body)
             self.assertNotIn('delete_document.php?id=', body)
+            self.assertNotIn('View website', body)
+            self.assertEqual(body.count('data-workspace-tab='), 2)
+            self.assertIn('data-default-panel="uploaded-documents"', body)
         form = urllib.parse.urlencode({'bulk_action': 'delete', 'doc_ids[]': before[0]['id']}).encode()
         with self.assertRaises(urllib.error.HTTPError) as error:
             opener.open(self.base + '/dashboard.php', form)
@@ -626,30 +629,33 @@ class LocalApplicationTests(unittest.TestCase):
                 self.assertTrue(path.resolve().is_relative_to((ROOT / 'uploads').resolve()))
                 path.unlink(missing_ok=True)
 
-    def test_dashboard_event_replacement_failure_preserves_published_banner(self):
+    def test_dashboard_event_controls_are_paused_for_siklab(self):
         opener = self.login(); token = self.csrf(opener)
         previous = self.sql("SELECT setting_value FROM site_settings WHERE setting_key='event_photo'")
         png = subprocess.check_output(self.command + ['-r', '$i=imagecreatetruecolor(20,20);imagepng($i);'])
-        path = None
+        stored = 'assets/img/siklab/wordmark.webp'
+        digest = hashlib.sha256((ROOT / stored).read_bytes()).hexdigest()
+        before = set((ROOT / 'uploads/events').glob('*'))
+        self.sql("INSERT INTO site_settings(setting_key,setting_value) VALUES('event_photo','assets/img/siklab/wordmark.webp') ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)")
         try:
-            with self.multipart(opener, {'csrf_token': token, 'upload_event_photo': '1'}, [('event_photo', 'fixture.png', 'image/png', png)]) as response:
-                self.assertIn('event_photo=success', response.url)
-            stored = self.sql("SELECT setting_value FROM site_settings WHERE setting_key='event_photo'")[0]['setting_value']
-            path = ROOT / stored
-            self.assertTrue(path.is_file())
-            with self.multipart(opener, {'csrf_token': token, 'upload_event_photo': '1'}, [('event_photo', 'bad.jpg', 'image/jpeg', b'not an image')]) as response:
-                self.assertIn(b'Use a JPG', response.read())
+            with opener.open(self.base + '/dashboard.php') as response:
+                body = response.read().decode('utf-8')
+                self.assertIn('disabled aria-describedby="announcement-paused"', body)
+                self.assertIn('Paused while the SIKLAB theme is active.', body)
+            with self.assertRaises(urllib.error.HTTPError) as error:
+                self.multipart(opener, {'csrf_token': token, 'upload_event_photo': '1'}, [('event_photo', 'fixture.png', 'image/png', png)])
+            self.assertEqual(error.exception.code, 403)
+            with self.assertRaises(urllib.error.HTTPError) as error:
+                opener.open(self.base + '/dashboard.php', urllib.parse.urlencode({'csrf_token': token, 'remove_event_photo': '1'}).encode())
+            self.assertEqual(error.exception.code, 403)
             self.assertEqual(self.sql("SELECT setting_value FROM site_settings WHERE setting_key='event_photo'")[0]['setting_value'], stored)
-            self.assertTrue(path.is_file())
-            with opener.open(self.base + '/dashboard.php', urllib.parse.urlencode({'csrf_token': token, 'remove_event_photo': '1'}).encode()) as response:
-                self.assertIn('event_photo=removed', response.url)
-            self.assertFalse(path.exists())
+            self.assertEqual(hashlib.sha256((ROOT / stored).read_bytes()).hexdigest(), digest)
+            self.assertEqual(set((ROOT / 'uploads/events').glob('*')), before)
         finally:
             self.sql("DELETE FROM site_settings WHERE setting_key='event_photo'")
             if previous:
                 value = previous[0]['setting_value'].encode().hex()
                 self.sql(f"INSERT INTO site_settings(setting_key,setting_value) VALUES('event_photo',CONVERT(0x{value} USING utf8mb4))")
-            if path: path.unlink(missing_ok=True)
 
     def test_dashboard_deleting_one_record_preserves_a_shared_upload(self):
         opener = self.login(); token = self.csrf(opener)

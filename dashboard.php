@@ -4,7 +4,9 @@ if (($_SESSION['loggedin'] ?? false) !== true) { header('Location: login.php'); 
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/form-security.php';
 require_once __DIR__ . '/includes/document-storage.php';
+require_once __DIR__ . '/includes/theme.php';
 $is_admin = ($_SESSION['role'] ?? '') === 'admin';
+$event_announcements_paused = $site_theme === 'siklab';
 $section_names = ['treasurer' => 'Treasurer Files', 'legislative' => 'Legislative Files', 'secretary' => 'Secretary Files'];
 $escape = static fn($value) => htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $text = static fn($key) => is_string($_POST[$key] ?? null) ? trim($_POST[$key]) : '';
@@ -14,6 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         http_response_code(403);
         $upload_err = !$is_admin ? 'Only council administrators can change records.' : 'Your session expired. Refresh the page and try again.';
     } else try {
+        if ($event_announcements_paused && (isset($_POST['upload_event_photo']) || isset($_POST['remove_event_photo']))) {
+            http_response_code(403);
+            throw new RuntimeException('Event announcements are paused while the SIKLAB theme is active.');
+        }
         if (isset($_POST['upload'])) {
             $category = $text('section');
             if (!isset($section_names[$category])) throw new RuntimeException('Choose a document category.');
@@ -100,18 +106,20 @@ elseif (($_GET['event_photo'] ?? '') === 'removed') $notice = 'Event announcemen
 $page_title = 'Council Dashboard | CSPC Supreme Student Council';
 $page_description = 'Manage official council documents and event announcements.';
 $current_page = 'dashboard';
+$workspace_panel = $is_admin && (isset($_POST['upload']) || isset($_POST['upload_event_photo']) || isset($_POST['remove_event_photo']) || isset($_GET['upload']) || isset($_GET['event_photo'])) ? 'publishing-tools' : 'uploaded-documents';
 include __DIR__ . '/includes/head.php';
 ?>
 <body class="council-page dashboard-page min-h-screen flex flex-col">
 <?php include __DIR__ . '/includes/nav.php'; ?>
 <main id="main-content" class="workspace-main council-width" tabindex="-1">
-    <header class="workspace-heading"><div><p class="council-kicker">CSPC SUPREME STUDENT COUNCIL</p><h1>COUNCIL DASHBOARD</h1><p>Welcome back, <?php echo $escape($_SESSION['username']); ?>. <span class="workspace-role"><?php echo $is_admin ? 'Administrator' : 'Member'; ?></span></p></div><div class="workspace-heading-actions"><?php if ($is_admin): ?><a class="council-button" href="#upload-documents">Upload documents</a><?php endif; ?><a class="council-button is-secondary" href="index.php">View website</a></div></header>
+    <header class="workspace-heading"><div><p class="council-kicker">CSPC SUPREME STUDENT COUNCIL</p><h1>COUNCIL DASHBOARD</h1><p>Welcome back, <?php echo $escape($_SESSION['username']); ?>. <span class="workspace-role"><?php echo $is_admin ? 'Administrator' : 'Member'; ?></span></p></div></header>
     <?php if ($upload_err): ?><div class="council-alert is-error" role="alert"><?php echo $escape($upload_err); ?></div><?php endif; ?>
     <?php if ($notice): ?><div class="council-alert" role="status"><?php echo $escape($notice); ?></div><?php endif; ?>
     <?php if (!$is_admin): ?><p class="council-alert">You have read-only access. Contact a council administrator to manage documents or announcements.</p><?php endif; ?>
     <section class="workspace-stats" aria-label="Document statistics"><div><span>All documents</span><strong><?php echo count($documents); ?></strong></div><?php foreach ($section_names as $key => $label): ?><div class="stat-<?php echo $key; ?>"><span><?php echo $label; ?></span><strong><?php echo $counts[$key]; ?></strong></div><?php endforeach; ?></section>
-    <div class="workspace-layout<?php if (!$is_admin): ?> is-readonly<?php endif; ?>">
-        <section class="council-panel workspace-library" aria-labelledby="workspace-documents-title"><header class="workspace-panel-heading"><div><h2 id="workspace-documents-title">Uploaded documents</h2><p class="council-muted">Find a record or manage its details.</p></div><a class="council-text-link" href="generate_report.php">Export PDF report</a></header>
+    <nav class="workspace-tabs" aria-label="Dashboard sections" data-workspace-tabs><a id="workspace-tab-documents" href="#uploaded-documents" data-workspace-tab="uploaded-documents">Uploaded documents</a><?php if ($is_admin): ?><a id="workspace-tab-publishing" href="#publishing-tools" data-workspace-tab="publishing-tools">Upload &amp; announcements</a><?php endif; ?></nav>
+    <div class="workspace-layout" data-workspace-layout data-default-panel="<?php echo $workspace_panel; ?>">
+        <section class="council-panel workspace-library" id="uploaded-documents" aria-labelledby="workspace-documents-title" data-workspace-panel><header class="workspace-panel-heading"><div><h2 id="workspace-documents-title">Uploaded documents</h2><p class="council-muted">Find a record or manage its details.</p></div><a class="council-text-link" href="generate_report.php">Export PDF report</a></header>
             <div class="workspace-filters council-form" data-workspace-filters hidden><div><label for="workspace-search">Find a document</label><input id="workspace-search" type="search" placeholder="Search by title or publisher" data-document-search></div><div><label for="workspace-category">Category</label><select id="workspace-category" data-document-category><option value="all">All categories</option><?php foreach ($section_names as $key => $label): ?><option value="<?php echo $key; ?>"><?php echo $label; ?></option><?php endforeach; ?></select></div></div>
             <?php if ($is_admin): ?><form id="bulkForm" method="post" action="dashboard.php" class="workspace-bulk" data-bulk-form><?php echo council_csrf_field(); ?><span data-selected-count>0 selected</span><label class="visually-hidden" for="bulk-action">Action for selected documents</label><select id="bulk-action" name="bulk_action" required><option value="">Choose action</option><option value="treasurer">Move to Treasurer</option><option value="legislative">Move to Legislative</option><option value="secretary">Move to Secretary</option><option value="delete">Delete selected</option></select><button class="council-button is-secondary" type="submit" data-bulk-apply>Apply</button></form><?php endif; ?>
             <div class="workspace-table-wrap" tabindex="0" role="region" aria-label="Uploaded documents table"><table class="workspace-table"><thead><tr><?php if ($is_admin): ?><th class="workspace-check"><input type="checkbox" aria-label="Select all visible documents" data-select-all hidden></th><?php endif; ?><th scope="col">Document</th><th scope="col">Category</th><th scope="col">Published by</th><th scope="col">Uploaded</th><th scope="col">Actions</th></tr></thead><tbody>
@@ -124,9 +132,15 @@ include __DIR__ . '/includes/head.php';
             </tbody></table></div><p class="workspace-empty" data-workspace-empty <?php if ($documents): ?>hidden<?php endif; ?>><?php echo $documents ? 'No documents match your search. Try another title or category.' : 'No documents uploaded yet.'; ?></p><p class="workspace-result-count" data-workspace-count aria-live="polite"><?php echo count($documents); ?> documents</p>
         </section>
         <?php if ($is_admin): ?>
-        <aside class="workspace-sidebar" aria-label="Publishing tools">
+        <aside class="workspace-sidebar" id="publishing-tools" aria-label="Publishing tools" data-workspace-panel>
             <section class="council-panel" id="upload-documents" aria-labelledby="upload-title"><h2 id="upload-title">Upload documents</h2><p class="council-muted">Publish PDFs to the official document library.</p><form method="post" action="dashboard.php" enctype="multipart/form-data" class="council-form"><?php echo council_csrf_field(); ?><input type="hidden" name="upload" value="1"><div><label for="upload-category">Category</label><select id="upload-category" name="section" required><option value="">Choose a category</option><?php foreach ($section_names as $key => $label): ?><option value="<?php echo $key; ?>"><?php echo $label; ?></option><?php endforeach; ?></select></div><div><label for="upload-publisher">Published by</label><input id="upload-publisher" name="display_name" maxlength="255" placeholder="<?php echo $escape($_SESSION['username']); ?>"><p class="workspace-field-help">Leave blank to use your account name.</p></div><div><label for="upload-files">PDF files</label><input id="upload-files" type="file" name="files[]" accept=".pdf,application/pdf" multiple required data-file-input><p class="workspace-field-help" data-file-summary>PDF files only. Multiple selection supported.</p></div><button class="council-button" type="submit">Upload documents</button></form></section>
-            <section class="council-panel workspace-event" aria-labelledby="event-title"><h2 id="event-title">Event announcement</h2><p class="council-muted">Shown through the event-announcement button on Home.</p><?php if ($current_event_photo): ?><img class="workspace-event-preview" src="<?php echo $escape($current_event_photo); ?>" alt="Current event announcement"><form method="post" action="dashboard.php" data-confirm="Remove the current event announcement?"><?php echo council_csrf_field(); ?><button type="submit" class="council-button is-danger" name="remove_event_photo" value="1">Remove announcement</button></form><?php else: ?><p class="workspace-event-empty">No announcement published yet.</p><?php endif; ?><form method="post" action="dashboard.php" enctype="multipart/form-data" class="council-form"><?php echo council_csrf_field(); ?><input type="hidden" name="upload_event_photo" value="1"><div><label for="event-photo">Announcement image</label><input type="file" id="event-photo" name="event_photo" accept="image/jpeg,image/png,image/gif,image/webp,image/bmp" required data-file-input><p class="workspace-field-help" data-file-summary>Images are center-cropped to a square.</p></div><button type="submit" class="council-button is-secondary"><?php echo $current_event_photo ? 'Replace announcement' : 'Publish announcement'; ?></button></form></section>
+            <section class="council-panel workspace-event<?php if ($event_announcements_paused): ?> is-paused<?php endif; ?>" aria-labelledby="event-title"><h2 id="event-title">Event announcement</h2>
+                <?php if ($event_announcements_paused): ?><p class="workspace-event-paused" id="announcement-paused">Paused while the SIKLAB theme is active. Home currently uses its custom event presentation.</p><?php else: ?><p class="council-muted">Shown through the event-announcement button on Home.</p><?php endif; ?>
+                <fieldset class="workspace-event-content" <?php if ($event_announcements_paused): ?>disabled aria-describedby="announcement-paused"<?php endif; ?>>
+                    <?php if ($current_event_photo): ?><img class="workspace-event-preview" src="<?php echo $escape($current_event_photo); ?>" alt="Current event announcement"><form method="post" action="dashboard.php" data-confirm="Remove the current event announcement?"><?php echo council_csrf_field(); ?><button type="submit" class="council-button is-danger" name="remove_event_photo" value="1">Remove announcement</button></form><?php else: ?><p class="workspace-event-empty">No announcement published yet.</p><?php endif; ?>
+                    <form method="post" action="dashboard.php" enctype="multipart/form-data" class="council-form"><?php echo council_csrf_field(); ?><input type="hidden" name="upload_event_photo" value="1"><div><label for="event-photo">Announcement image</label><input type="file" id="event-photo" name="event_photo" accept="image/jpeg,image/png,image/gif,image/webp,image/bmp" required data-file-input><p class="workspace-field-help" data-file-summary>Images are center-cropped to a square.</p></div><button type="submit" class="council-button is-secondary"><?php echo $current_event_photo ? 'Replace announcement' : 'Publish announcement'; ?></button></form>
+                </fieldset>
+            </section>
         </aside>
         <?php endif; ?>
     </div>

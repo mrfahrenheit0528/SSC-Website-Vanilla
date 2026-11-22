@@ -1,4 +1,53 @@
 (() => {
+  const tabs = [...document.querySelectorAll('[data-workspace-tab]')];
+  const panels = [...document.querySelectorAll('[data-workspace-panel]')];
+  if (tabs.length && panels.length) {
+    document.querySelector('[data-workspace-tabs]').setAttribute('role', 'tablist');
+    function showPanel(id, updateURL = false) {
+      if (!panels.some((panel) => panel.id === id)) id = panels[0].id;
+      tabs.forEach((tab) => {
+        const selected = tab.dataset.workspaceTab === id;
+        tab.setAttribute('role', 'tab');
+        tab.setAttribute('aria-controls', tab.dataset.workspaceTab);
+        tab.setAttribute('aria-selected', String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+      });
+      panels.forEach((panel) => {
+        panel.hidden = panel.id !== id;
+        panel.setAttribute('role', 'tabpanel');
+        panel.setAttribute('tabindex', '0');
+        panel.setAttribute('aria-labelledby', tabs.find((tab) => tab.dataset.workspaceTab === panel.id).id);
+      });
+      if (updateURL) window.history?.replaceState(null, '', '#' + id);
+    }
+    function panelFromHash() {
+      const hash = window.location?.hash;
+      if (hash === '#publishing-tools' || hash === '#upload-documents') return 'publishing-tools';
+      if (hash === '#uploaded-documents') return 'uploaded-documents';
+      return document.querySelector('[data-workspace-layout]').dataset.defaultPanel;
+    }
+    showPanel(panelFromHash());
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', (event) => {
+        if (event.button > 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        showPanel(tab.dataset.workspaceTab, true);
+      });
+      tab.addEventListener('keydown', (event) => {
+        let next;
+        if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = tabs.length - 1;
+        else if (event.key === ' ') next = index;
+        else return;
+        event.preventDefault();
+        tabs[next].focus({ preventScroll: true });
+        showPanel(tabs[next].dataset.workspaceTab, true);
+      });
+    });
+    window.addEventListener('hashchange', () => showPanel(panelFromHash()));
+  }
   const rows = [...document.querySelectorAll('[data-workspace-document]')];
   const search = document.querySelector('[data-document-search]');
   const category = document.querySelector('[data-document-category]');

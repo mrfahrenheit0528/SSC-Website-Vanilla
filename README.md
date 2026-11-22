@@ -323,8 +323,13 @@ workspace styles are in `assets/css/council.css`, with sign-in behavior in
 `dashboard.php` shares the sign-in page's SSC styling and presents live category
 totals, a searchable/filterable document table, and separate PDF upload and event
 announcement tools. Existing PDF viewing, metadata editing, bulk moves/deletion,
-report export and event image publishing/removal remain available. Mobile layouts
-stack the publishing panels and keep wide tables inside a labeled scroll region.
+and report export remain available. Administrators switch in place between
+Uploaded documents and Upload & announcements tabs. The table occupies its own
+full-width panel; publishing tools share the second panel. Keyboard navigation,
+direct/legacy anchors and post-upload feedback select the appropriate panel,
+without discarding search or file selections. The View website header button is
+removed. Members retain the read-only documents panel. Mobile layouts stack the
+publishing panels and keep wide tables inside a labeled scroll region.
 The native edit dialog and selection controls are handled by `assets/js/dashboard.js`.
 Filtering clears hidden selections so bulk actions only affect visible selections.
 
@@ -333,10 +338,13 @@ session form tokens and deletion uses POST, including `delete_document.php`.
 Uploads validate PDFs and use unique stored filenames to preserve existing files;
 public downloads retain their original names. Record deletions commit before
 unreferenced upload files are removed, with shared document/banner references
-preserved. Event replacements save successfully before retiring the old banner,
-and failed validation leaves the existing announcement intact. No production
+preserved. While SIKLAB is active, the announcement panel is greyed out with a
+disabled fieldset and an explanation of the custom Home presentation. Both image
+publishing and removal are also rejected server-side, preserving saved banner
+data and files. The pause follows the active server theme. The underlying event
+replacement flow is retained for later use. No production
 accounts or data were changed. Automated checks cover admin/member access,
-tokens, complete document workflows, upload collisions, banner replacement and
+tokens, complete document workflows, upload collisions, the announcement pause and
 UI interactions; visual browser QA remains pending.
 
 ## Private files and uploaded records
