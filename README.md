@@ -279,7 +279,10 @@ results heading shows the filtered count. Results use 12 records per page and
 retain category/search parameters between pages. Office-holder panels derive all three
 academic years from the shared roster and identify AY 2026-2027 as current.
 Compact office-holder cards run from oldest to newest, with the current year on
-the right. Former officers are faded, and the cards have no links. Icon-only list
+the right. Former officers retain their colors with opacity-only fading, and the
+cards have no links. File grids use up to five compact columns; list rows have
+separate borders and spacing. File actions use small, single-line View document
+buttons. Icon-only list
 and grid controls beside the results heading switch document layouts without
 checkmarks. The chosen layout persists across filtering/pagination and is saved
 in local storage when available; blocked storage does not prevent switching.
