@@ -318,6 +318,27 @@ login flow; passwords are not displayed on the page or committed. The shared
 workspace styles are in `assets/css/council.css`, with sign-in behavior in
 `assets/js/login.js`.
 
+### Council dashboard
+
+`dashboard.php` shares the sign-in page's SSC styling and presents live category
+totals, a searchable/filterable document table, and separate PDF upload and event
+announcement tools. Existing PDF viewing, metadata editing, bulk moves/deletion,
+report export and event image publishing/removal remain available. Mobile layouts
+stack the publishing panels and keep wide tables inside a labeled scroll region.
+The native edit dialog and selection controls are handled by `assets/js/dashboard.js`.
+Filtering clears hidden selections so bulk actions only affect visible selections.
+
+Administrators can change records; members get read-only access. Mutations require
+session form tokens and deletion uses POST, including `delete_document.php`.
+Uploads validate PDFs and use unique stored filenames to preserve existing files;
+public downloads retain their original names. Record deletions commit before
+unreferenced upload files are removed, with shared document/banner references
+preserved. Event replacements save successfully before retiring the old banner,
+and failed validation leaves the existing announcement intact. No production
+accounts or data were changed. Automated checks cover admin/member access,
+tokens, complete document workflows, upload collisions, banner replacement and
+UI interactions; visual browser QA remains pending.
+
 ## Private files and uploaded records
 
 - `vendor/` and `node_modules/` are generated dependencies and are not tracked.

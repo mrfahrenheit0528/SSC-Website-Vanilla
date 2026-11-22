@@ -227,12 +227,20 @@ and section-heading styles now match the other SSC public pages.
 
 ## 7. Redesign administration
 
-- [ ] Give the dashboard a clear hierarchy for documents, uploads, event management, and reports.
-- [ ] Improve bulk actions, document editing, selection states, and deletion confirmation.
+November 22 progress: Login and Dashboard now share the SSC visual system. The
+generated local administrator credentials were verified without changing accounts.
+Dashboard mutations and the direct delete endpoint require an administrator and
+a form token; deletion uses POST. Session IDs regenerate on login. Unique PDF
+uploads, safe upload cleanup, and failed event-replacement preservation are covered
+by disposable-database checks. Registration and remaining PDF-serving policy work
+are separate follow-ups under section 3; browser visual QA remains pending.
+
+- [x] Give the dashboard a clear hierarchy for documents, uploads, event management, and reports.
+- [x] Improve bulk actions, document editing, selection states, and deletion confirmation.
 - [ ] Show useful upload limits, validation messages, partial-success results, and recovery options.
-- [ ] Improve event-banner previews and explain any crop behavior before saving.
+- [x] Improve event-banner previews and explain any crop behavior before saving.
 - [ ] Align report category names with the document library and verify generated PDF contents.
-- [ ] Check that interface visibility and backend permissions agree for every supported role.
+- [x] Check that interface visibility and backend permissions agree for every supported role.
 
 **Checkpoint:** An authorized administrator can complete each management workflow using the redesigned interface, including failure and cancellation paths.
 

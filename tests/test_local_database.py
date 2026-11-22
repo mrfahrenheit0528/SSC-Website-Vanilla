@@ -208,11 +208,25 @@ class LocalApplicationTests(unittest.TestCase):
         cls.log.close()
         cls.directory.cleanup()
 
-    def login(self):
+    def csrf(self, opener, page='/dashboard.php'):
+        with opener.open(self.base + page) as response:
+            return re.search(r'name="csrf_token" value="([a-f0-9]+)"', response.read().decode()).group(1)
+
+    def multipart(self, opener, fields, files):
+        boundary = 'ssc-' + uuid.uuid4().hex
+        data = b''
+        for name, value in fields.items():
+            data += f'--{boundary}\r\nContent-Disposition: form-data; name="{name}"\r\n\r\n{value}\r\n'.encode()
+        for field, filename, mime, content in files:
+            data += f'--{boundary}\r\nContent-Disposition: form-data; name="{field}"; filename="{filename}"\r\nContent-Type: {mime}\r\n\r\n'.encode() + content + b'\r\n'
+        data += f'--{boundary}--\r\n'.encode()
+        return opener.open(urllib.request.Request(self.base + '/dashboard.php', data=data, headers={'Content-Type': 'multipart/form-data; boundary=' + boundary}), timeout=15)
+
+    def login(self, member=False):
         opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
         with opener.open(self.base + '/login.php') as response:
             token = re.search(r'name="csrf_token" value="([a-f0-9]+)"', response.read().decode()).group(1)
-        data = urllib.parse.urlencode({'username': 'admin@example.test', 'password': self.credentials['admin_password'], 'csrf_token': token}).encode()
+        data = urllib.parse.urlencode({'username': 'member@example.test' if member else 'admin@example.test', 'password': self.credentials['member_password' if member else 'admin_password'], 'csrf_token': token}).encode()
         response = opener.open(self.base + '/login.php', data=data, timeout=10)
         self.assertIn('/dashboard.php', response.url)
         return opener
@@ -530,7 +544,7 @@ class LocalApplicationTests(unittest.TestCase):
         filename = 'integration-' + uuid.uuid4().hex + '.pdf'
         boundary = 'ssc-' + uuid.uuid4().hex
         data = b''
-        for name, value in {'upload': '1', 'section': 'treasurer', 'display_name': 'Synthetic Test'}.items():
+        for name, value in {'upload': '1', 'section': 'treasurer', 'display_name': 'Synthetic Test', 'csrf_token': self.csrf(opener)}.items():
             data += f'--{boundary}\r\nContent-Disposition: form-data; name="{name}"\r\n\r\n{value}\r\n'.encode()
         fixture = ROOT / 'uploads/development' / os.environ['DB_NAME'] / 'treasurer.pdf'
         data += f'--{boundary}\r\nContent-Disposition: form-data; name="files[]"; filename="{filename}"\r\nContent-Type: application/pdf\r\n\r\n'.encode()
@@ -543,5 +557,116 @@ class LocalApplicationTests(unittest.TestCase):
             rows = self.sql("SELECT title FROM documents WHERE original_name='" + filename + "'")
             self.assertEqual(rows, [{'title': filename}])
         finally:
+            paths = self.sql("SELECT file_path FROM documents WHERE original_name='" + filename + "'")
             self.sql("DELETE FROM documents WHERE original_name='" + filename + "'")
-            (ROOT / 'uploads' / filename).unlink(missing_ok=True)
+            for row in paths:
+                path = (ROOT / row['file_path']).resolve()
+                self.assertTrue(path.is_relative_to((ROOT / 'uploads').resolve()))
+                path.unlink(missing_ok=True)
+
+    def test_dashboard_permissions_and_csrf_reject_changes(self):
+        opener = self.login()
+        before = self.sql('SELECT id,original_name,category FROM documents ORDER BY id')
+        with opener.open(self.base + '/dashboard.php') as response:
+            body = response.read().decode()
+            self.assertIn('COUNCIL DASHBOARD', body)
+            self.assertIn('assets/js/dashboard.js', body)
+            self.assertIn('data-workspace-document', body)
+            self.assertNotIn('delete_document.php?id=', body)
+        form = urllib.parse.urlencode({'bulk_action': 'delete', 'doc_ids[]': before[0]['id']}).encode()
+        with self.assertRaises(urllib.error.HTTPError) as error:
+            opener.open(self.base + '/dashboard.php', form)
+        self.assertEqual(error.exception.code, 403)
+        with self.assertRaises(urllib.error.HTTPError) as error:
+            opener.open(self.base + '/delete_document.php?id=' + str(before[0]['id']))
+        self.assertEqual(error.exception.code, 405)
+        member = self.login(member=True)
+        with member.open(self.base + '/dashboard.php') as response:
+            body = response.read().decode()
+            self.assertIn('read-only access', body)
+            self.assertNotIn('data-edit-document', body)
+            self.assertNotIn('id="upload-documents"', body)
+        with self.assertRaises(urllib.error.HTTPError) as error:
+            member.open(self.base + '/dashboard.php', form)
+        self.assertEqual(error.exception.code, 403)
+        self.assertEqual(self.sql('SELECT id,original_name,category FROM documents ORDER BY id'), before)
+
+    def test_dashboard_upload_edit_bulk_and_delete_workflow(self):
+        opener = self.login(); token = self.csrf(opener)
+        prefix = 'workspace-' + uuid.uuid4().hex
+        fixture = ROOT / 'uploads/development' / os.environ['DB_NAME'] / 'treasurer.pdf'
+        paths = []
+        try:
+            for _ in range(2):
+                with self.multipart(opener, {'csrf_token': token, 'upload': '1', 'section': 'treasurer', 'display_name': 'Workspace fixture'}, [('files[]', prefix + '.pdf', 'application/pdf', fixture.read_bytes())]) as response:
+                    self.assertIn('upload=success', response.url)
+            rows = self.sql(f"SELECT id,file_path FROM documents WHERE original_name='{prefix}.pdf' ORDER BY id")
+            self.assertEqual(len(rows), 2)
+            paths = [ROOT / row['file_path'] for row in rows]
+            self.assertNotEqual(paths[0], paths[1])
+            self.assertTrue(all(path.read_bytes() == fixture.read_bytes() for path in paths))
+            form = {'csrf_token': token, 'edit_doc': '1', 'edit_id': rows[0]['id'], 'edit_name': prefix + '-renamed.pdf', 'edit_display': 'Updated publisher', 'edit_category': 'secretary'}
+            with opener.open(self.base + '/dashboard.php', urllib.parse.urlencode(form).encode()) as response:
+                self.assertIn('edit=success', response.url)
+            updated = self.sql(f"SELECT original_name,display_name,category FROM documents WHERE id={rows[0]['id']}")[0]
+            self.assertEqual(updated, {'original_name': prefix + '-renamed.pdf', 'display_name': 'Updated publisher', 'category': 'secretary'})
+            form = {'csrf_token': token, 'bulk_action': 'legislative', 'doc_ids[]': [row['id'] for row in rows]}
+            with opener.open(self.base + '/dashboard.php', urllib.parse.urlencode(form, doseq=True).encode()) as response:
+                self.assertIn('bulk=success', response.url)
+            self.assertEqual(int(self.sql(f"SELECT COUNT(*) AS total FROM documents WHERE original_name LIKE '{prefix}%' AND category='legislative'")[0]['total']), 2)
+            with opener.open(self.base + '/delete_document.php', urllib.parse.urlencode({'csrf_token': token, 'id': rows[0]['id']}).encode()) as response:
+                self.assertIn('bulk=success', response.url)
+            with opener.open(self.base + '/dashboard.php', urllib.parse.urlencode({'csrf_token': token, 'bulk_action': 'delete', 'doc_ids[]': rows[1]['id']}).encode()) as response:
+                self.assertIn('bulk=success', response.url)
+            self.assertTrue(all(not path.exists() for path in paths))
+        finally:
+            remaining = self.sql(f"SELECT file_path FROM documents WHERE original_name LIKE '{prefix}%'")
+            self.sql(f"DELETE FROM documents WHERE original_name LIKE '{prefix}%'")
+            for path in set(paths + [ROOT / row['file_path'] for row in remaining]):
+                self.assertTrue(path.resolve().is_relative_to((ROOT / 'uploads').resolve()))
+                path.unlink(missing_ok=True)
+
+    def test_dashboard_event_replacement_failure_preserves_published_banner(self):
+        opener = self.login(); token = self.csrf(opener)
+        previous = self.sql("SELECT setting_value FROM site_settings WHERE setting_key='event_photo'")
+        png = subprocess.check_output(self.command + ['-r', '$i=imagecreatetruecolor(20,20);imagepng($i);'])
+        path = None
+        try:
+            with self.multipart(opener, {'csrf_token': token, 'upload_event_photo': '1'}, [('event_photo', 'fixture.png', 'image/png', png)]) as response:
+                self.assertIn('event_photo=success', response.url)
+            stored = self.sql("SELECT setting_value FROM site_settings WHERE setting_key='event_photo'")[0]['setting_value']
+            path = ROOT / stored
+            self.assertTrue(path.is_file())
+            with self.multipart(opener, {'csrf_token': token, 'upload_event_photo': '1'}, [('event_photo', 'bad.jpg', 'image/jpeg', b'not an image')]) as response:
+                self.assertIn(b'Use a JPG', response.read())
+            self.assertEqual(self.sql("SELECT setting_value FROM site_settings WHERE setting_key='event_photo'")[0]['setting_value'], stored)
+            self.assertTrue(path.is_file())
+            with opener.open(self.base + '/dashboard.php', urllib.parse.urlencode({'csrf_token': token, 'remove_event_photo': '1'}).encode()) as response:
+                self.assertIn('event_photo=removed', response.url)
+            self.assertFalse(path.exists())
+        finally:
+            self.sql("DELETE FROM site_settings WHERE setting_key='event_photo'")
+            if previous:
+                value = previous[0]['setting_value'].encode().hex()
+                self.sql(f"INSERT INTO site_settings(setting_key,setting_value) VALUES('event_photo',CONVERT(0x{value} USING utf8mb4))")
+            if path: path.unlink(missing_ok=True)
+
+    def test_dashboard_deleting_one_record_preserves_a_shared_upload(self):
+        opener = self.login(); token = self.csrf(opener)
+        name = 'shared-' + uuid.uuid4().hex
+        file = ROOT / 'uploads/development' / os.environ['DB_NAME'] / (name + '.pdf')
+        file.write_bytes((file.parent / 'treasurer.pdf').read_bytes())
+        paths = [file.relative_to(ROOT).as_posix(), 'C:\\xampp\\htdocs\\sscwebsite\\' + str(file.relative_to(ROOT)).replace('/', '\\')]
+        ids = []
+        try:
+            for stored in paths:
+                value = stored.encode().hex()
+                self.sql(f"INSERT INTO documents(title,original_name,category,file_path,uploaded_by,created_at) SELECT '{name}','{name}.pdf','treasurer',CONVERT(0x{value} USING utf8mb4),uploaded_by,NOW() FROM documents ORDER BY id LIMIT 1")
+            ids = [row['id'] for row in self.sql(f"SELECT id FROM documents WHERE title='{name}' ORDER BY id")]
+            for index, id in enumerate(ids):
+                with opener.open(self.base + '/delete_document.php', urllib.parse.urlencode({'csrf_token': token, 'id': id}).encode()) as response:
+                    self.assertIn('bulk=success', response.url)
+                self.assertEqual(file.exists(), index == 0)
+        finally:
+            self.sql(f"DELETE FROM documents WHERE title='{name}'")
+            file.unlink(missing_ok=True)

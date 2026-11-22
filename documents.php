@@ -146,7 +146,7 @@ include __DIR__ . '/includes/head.php';
                     <?php if ($file): ?>
                     <a class="library-button" href="pdfviewer.php?file=<?php echo rawurlencode($file['path']); ?>" aria-label="<?php echo $escape('View ' . $doc['original_name']); ?>">View document</a>
                     <button class="library-icon-button" type="button" data-document-qr="<?php echo $escape($download_url); ?>" data-document-name="<?php echo $escape($doc['original_name']); ?>" aria-label="<?php echo $escape('QR code for ' . $doc['original_name']); ?>" title="Show QR code" hidden><i class="fas fa-qrcode" aria-hidden="true"></i></button>
-                    <a class="library-icon-button" href="<?php echo $escape($download_url); ?>" download aria-label="<?php echo $escape('Download ' . $doc['original_name']); ?>" title="Download PDF"><i class="fas fa-download" aria-hidden="true"></i></a>
+                    <a class="library-icon-button" href="<?php echo $escape($download_url); ?>" download="<?php echo $escape($doc['original_name']); ?>" aria-label="<?php echo $escape('Download ' . $doc['original_name']); ?>" title="Download PDF"><i class="fas fa-download" aria-hidden="true"></i></a>
                     <?php else: ?><span class="library-unavailable">Document link unavailable</span><?php endif; ?>
                 </div>
             </article>
