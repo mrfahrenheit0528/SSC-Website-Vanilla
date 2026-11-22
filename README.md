@@ -117,7 +117,7 @@ theme change. The December 5 cutoff is removed; there is no automatic expiry.
 `includes/theme.php` sets the active theme. There is no visitor theme picker;
 old theme query parameters and preference cookies cannot override it.
 The Regular redesign is deferred until after SIKLAB.
-The Officers directory and Documents library are also overhauled; the other secondary pages retain their existing layouts.
+The Officers directory, Documents library and About page are also overhauled; the other secondary pages retain their existing layouts.
 
 The current homepage uses a lighter SIKLAB design with four sections:
 
@@ -295,6 +295,25 @@ office-holder portraits fall back to the local silhouette. Automated checks cove
 filters, malformed inputs, escaping, current roster selection, special filenames,
 request races/history, portrait fallback and QR errors. Visual browser QA remains
 pending while the browser connection is unavailable.
+
+### About the platform
+
+`about.php` uses the same fixed SSC background, translucent navigation, condensed
+headings and sharp controls as Officers and Documents. A TransFormation overview
+introduces the platform's existing purpose, with links to council records and the
+officer directory. The five original proposers/developers retain their project
+credits and position histories, clearly labeled as the AY 2025-2026 platform team.
+Their portraits use the validated local officer images with silhouette fallback.
+
+`includes/about-content.php` holds the preserved credit data and renders compact
+cards, a native profile dialog and inline position histories. With JavaScript and
+dialog support, accessible View profile buttons open the dialog and the inline
+histories are hidden; otherwise the inline details remain available. Profile text
+is inserted as text, native dismissal restores scrolling, and backdrop clicks
+outside the dialog close it. Styles and behavior are scoped to `assets/css/about.css`
+and `assets/js/about.js`. Intro/hover effects respect reduced motion. Automated
+checks cover profile selection, history replacement, dismissal/scroll restoration,
+image failure and the fallback experience. Visual browser QA remains pending.
 
 ## Private files and uploaded records
 

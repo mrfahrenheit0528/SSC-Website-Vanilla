@@ -438,11 +438,19 @@ class LocalApplicationTests(unittest.TestCase):
             body = response.read()
             for value in (b'About This Platform', b'Jeriel Agua', b'Jessil C. Martinez',
                           b'Ralph Abonal', b'Jancee Kenn Abonita', b'Joberth Iballar',
-                          b'id="profileModal"', b'function openProfileModal', b'function closeProfileModal'):
+                          b'id="profileModal"', b'assets/css/about.css', b'assets/js/about.js'):
                 self.assertIn(value, body)
             self.assertNotIn(b'id="aboutModal"', body)
             self.assertIn(b'<dialog id="profileModal"', body)
-            self.assertEqual(body.count(b'role="button" tabindex="0"'), 5)
+            self.assertEqual(body.count(b'data-profile-open='), 5)
+            self.assertEqual(body.count(b'data-profile-fallback'), 5)
+            payload = re.search(r'<script id="platform-profiles" type="application/json">(.*?)</script>', body.decode('utf-8'), re.S)
+            profiles = json.loads(payload.group(1))
+            self.assertEqual(list(profiles), ['jeriel', 'jessil', 'ralph', 'jancee', 'joberth'])
+            self.assertEqual(len(profiles['joberth']['history']), 3)
+            self.assertEqual(profiles['jessil']['project'], 'FinTech: Empowering Financial Transparency')
+            self.assertTrue(all(profile['image'].startswith('assets/img/officers/') for profile in profiles.values()))
+            self.assertNotIn(b'onclick=', body)
 
     def test_uploaded_event_announcement_is_available_from_opening(self):
         original = self.sql("SELECT setting_value FROM site_settings WHERE setting_key='event_photo'")

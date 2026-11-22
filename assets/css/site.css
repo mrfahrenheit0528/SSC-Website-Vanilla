@@ -54,15 +54,6 @@ body.event-home {
 .event-home .navigation-toggle { background: var(--siklab-silver); color: #020593; }
 html[data-theme=siklab] .site-footer { background: #111827; }
 html[data-theme=siklab] .site-footer .text-gray-600 { color: #8e9bb7; }
-.about-main { padding: 65px 20px 85px; }
-.about-introduction { max-width: 780px; margin: 0 auto 32px; text-align: center; }
-.about-introduction .section-kicker { font-size: 11px; letter-spacing: .15em; color: #59637e; margin-bottom: 18px; }
-.about-introduction h1 { font: 600 clamp(36px, 5vw, 58px)/1.1 var(--display-font); letter-spacing: -.04em; margin: 0 0 20px; }
-.about-introduction > p:not(.section-kicker) { font-size: 16px; line-height: 1.8; color: #59637e; }
-.about-introduction > a { display: inline-block; margin-top: 20px; font-size: 13px; color: #020593; }
-.about-page #profileModal { z-index: 100; width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; overflow-y: auto; }
-.about-page #profileModal::backdrop { background: #111638bd; }
-.about-page [role=button]:focus-visible { outline: 3px solid #3253dc; outline-offset: 4px; }
 @media (max-width: 1150px) {
   .site-navigation { padding: 24px 32px; gap: 15px; }
   .navigation-links { gap: 19px; }
