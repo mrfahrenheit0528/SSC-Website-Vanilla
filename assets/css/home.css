@@ -148,8 +148,8 @@ html[data-page=home] { scroll-snap-type: none; }
   .page-width, .officer-track { width: calc(100% - 40px); }
   .event-home .site-navigation { padding: 16px 20px; }
   .event-hero { min-height: max(720px, 100svh); }
-  .hero-center { padding-block: 155px 240px; }
-  .hero-wordmark { width: 100%; margin-bottom: 20px; }
+  .hero-center { padding-block: 175px 240px; }
+  .hero-wordmark { width: calc(100% - 48px); margin: 0 auto 24px; }
   .hero-subtitle { font-size: 1.5rem; letter-spacing: .08em; }
   .hero-dates { font-size: 1rem; }
   .hero-bottom { bottom: 22px; gap: 20px 10px; }
