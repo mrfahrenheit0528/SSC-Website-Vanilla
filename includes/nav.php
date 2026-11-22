@@ -11,7 +11,7 @@ if (!empty($_SESSION['loggedin'])) $nav_links[] = ['dashboard.php','Dashboard','
             <img src="https://i.ibb.co/Cp38FdLC/logo.png" width="42" height="42" alt="">
             <span><strong>CSPC <span class="brand-slash">-</span> SSC</strong><small>Supreme Student Council</small></span>
         </a>
-        <button class="navigation-toggle" type="button" aria-label="Open navigation" aria-controls="site-navigation-links" aria-expanded="false" data-navigation-toggle><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+        <button class="navigation-toggle" type="button" aria-label="Open navigation" aria-controls="site-navigation-links" aria-expanded="false" data-navigation-toggle><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path class="navigation-line-top" d="M4 6h16"/><path class="navigation-line-middle" d="M4 12h16"/><path class="navigation-line-bottom" d="M4 18h16"/></svg></button>
         <div class="navigation-links" id="site-navigation-links" data-navigation>
             <?php foreach ($nav_links as [$href, $label, $page]): ?>
             <a class="navigation-link <?php echo $page === $current_page ? 'is-current' : ''; ?>" href="<?php echo $href; ?>" <?php echo $page === $current_page ? 'aria-current="page"' : ''; ?>><?php echo $label; ?></a>
