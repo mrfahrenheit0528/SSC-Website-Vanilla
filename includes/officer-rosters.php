@@ -162,6 +162,6 @@ return [
         ['name' => 'Ma. Vianney B. Morillo', 'role' => 'Assistant Public Relations Officer (Publication)', 'course' => 'BSIS 4A', 'location' => '', 'birthday' => '', 'image' => '', 'contacts' => [], 'office' => 'public-relations'],
         ['name' => 'Chloe Ysabelle T. Peñones', 'role' => 'BUHI Campus Representative', 'course' => '', 'location' => '', 'birthday' => '', 'image' => '', 'contacts' => [], 'office' => 'buhi'],
         ['name' => 'Ma. Socorro B. Igana', 'role' => 'BUHI Campus Representative', 'course' => '', 'location' => '', 'birthday' => '', 'image' => '', 'contacts' => [], 'office' => 'buhi'],
-        ['name' => 'Janelle Sallena', 'role' => 'CTDE Representative', 'course' => '', 'location' => '', 'birthday' => '', 'image' => '', 'contacts' => [], 'office' => 'ctde'],
+        ['name' => 'Janelle Sallena', 'role' => 'College of Technological and Developmental Education (CTDE) Representative', 'course' => '', 'location' => '', 'birthday' => '', 'image' => '', 'contacts' => [], 'office' => 'ctde'],
     ],
 ];
