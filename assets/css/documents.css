@@ -123,6 +123,7 @@ body.documents-page .site-header { background: #ffffffb8; border-bottom: 1px sol
   .library-holder-grid { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 680px) {
+  .library-holders, .library-view-controls { display: none; }
   .library-width { width: calc(100% - 40px); }
   .documents-page .site-navigation { padding: 16px 20px; }
   .library-introduction { display: block; padding-block: 45px 30px; }
@@ -130,12 +131,20 @@ body.documents-page .site-header { background: #ffffffb8; border-bottom: 1px sol
   .library-crest { width: 100px; margin: 25px 0 0; }
   .library-kicker { letter-spacing: .06em; }
   .library-categories { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .library-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .library-results .library-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .library-results-heading { padding: 16px; gap: 16px; flex-wrap: wrap; }
   .library-heading-actions { margin-left: auto; }
   .library-results-heading h2 { font-size: 1.8rem; }
+  /* Force the list presentation on phones, including without JavaScript. */
+  .library-results .library-card { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: 'kind' 'name' 'meta' 'actions'; align-items: center; gap: 12px; min-height: 0; padding: 12px 16px; border: 1px solid #b9c5dd; border-left: 4px solid var(--file-accent); box-shadow: 0 4px 12px #14214509; }
   .library-results[data-view=list] .library-card { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'kind' 'name' 'meta' 'actions'; gap: 12px; }
-  .library-results[data-view=list] .library-file-actions { justify-content: start; }
+  .library-results .library-card-top { grid-area: kind; justify-content: start; margin: 0; }
+  .library-results .library-file-icon svg { width: 18px; height: 22px; }
+  .library-results .library-file-category { padding: 0; background: transparent; }
+  .library-results .library-card h3 { grid-area: name; font-size: 1.3rem; margin: 0; }
+  .library-results .library-file-meta { grid-area: meta; grid-template-columns: minmax(0, 1fr); gap: 4px; margin: 0; }
+  .library-results .library-file-meta dt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .library-results .library-file-actions, .library-results[data-view=list] .library-file-actions { grid-area: actions; justify-content: start; border: 0; padding: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .library-introduction { animation: none; }

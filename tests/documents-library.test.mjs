@@ -5,7 +5,7 @@ import vm from 'node:vm';
 
 const source = readFileSync(new URL('../assets/js/documents.js', import.meta.url), 'utf8');
 const settle = () => new Promise(setImmediate);
-function fixture({ enhanced = true, brokenPortrait = false, savedView = 'grid', blockedStorage = false } = {}) {
+function fixture({ enhanced = true, brokenPortrait = false, savedView = 'grid', blockedStorage = false, mobile = false } = {}) {
   function element(extra = {}) {
     const classes = new Set(), handlers = new Map();
     return {
@@ -47,7 +47,8 @@ function fixture({ enhanced = true, brokenPortrait = false, savedView = 'grid', 
     querySelectorAll: () => categories,
     createElement() { const image = element(); images.push(image); return image; },
   };
-  const window = { location, addEventListener: (name, handler) => windowEvents.set(name, handler) };
+  const compact = element({ matches: mobile });
+  const window = { location, addEventListener: (name, handler) => windowEvents.set(name, handler), matchMedia: (query) => query.includes('max-width') ? compact : { matches: false } };
   if (blockedStorage) Object.defineProperty(window, 'localStorage', { get() { throw new Error('Storage blocked'); } });
   else window.localStorage = storage;
   if (enhanced) Object.assign(window, {
@@ -63,7 +64,7 @@ function fixture({ enhanced = true, brokenPortrait = false, savedView = 'grid', 
   const click = (category, extra) => { const e = event(null, extra); categories.find((link) => link.dataset.libraryCategory === category).emit('click', e); return e; };
   const openQR = () => results.emit('click', event({ closest: (selector) => selector === '[data-document-qr]' ? qr : null }));
   const chooseView = (view) => results.emit('click', event({ closest: (selector) => selector === '[data-library-view]' ? viewButtons.find((button) => button.dataset.libraryView === view) : null }));
-  return { results, dialog, fields, field, section, status, portrait, qr, requests, pushes, replaces, images, window, document, categories, windowEvents, form, event, click, openQR, chooseView, viewControls, viewButtons, storage };
+  return { results, dialog, fields, field, section, status, portrait, qr, requests, pushes, replaces, images, window, document, categories, windowEvents, form, event, click, openQR, chooseView, viewControls, viewButtons, storage, compact };
 }
 
 test('category changes load in place with the typed search and update selected links', async () => {
@@ -223,4 +224,36 @@ test('view switching works when storage or asynchronous navigation is unavailabl
   f.chooseView('list');
   assert.equal(f.results.dataset.view, 'list');
   assert.equal(fixture({ savedView: 'invalid' }).results.dataset.view, 'grid');
+});
+
+test('mobile stays in list view across filtering without overwriting the desktop preference', async () => {
+  const f = fixture({ mobile: true, savedView: 'grid' });
+  assert.equal(f.results.dataset.view, 'list');
+  assert.equal(f.viewControls.hidden, true);
+  assert.deepEqual(f.viewButtons.map((button) => button.attributes['aria-pressed']), ['true', 'false']);
+  f.chooseView('grid');
+  assert.equal(f.results.dataset.view, 'list');
+  assert.equal(f.storage.value, 'grid');
+  f.click('treasurer');
+  f.viewControls.hidden = false;
+  f.requests[0].resolve('treasurer'); await settle();
+  assert.equal(f.results.dataset.view, 'list');
+  assert.equal(f.viewControls.hidden, true);
+  f.compact.matches = false; f.compact.emit('change');
+  assert.equal(f.results.dataset.view, 'grid');
+  assert.equal(f.viewControls.hidden, false);
+});
+
+test('resizing temporarily locks the list and restores the last desktop selection', () => {
+  const f = fixture();
+  f.chooseView('list');
+  f.compact.matches = true; f.compact.emit('change');
+  f.chooseView('grid');
+  assert.equal(f.viewControls.hidden, true);
+  assert.equal(f.storage.value, 'list');
+  f.compact.matches = false; f.compact.emit('change');
+  assert.equal(f.results.dataset.view, 'list');
+  assert.equal(f.viewControls.hidden, false);
+  f.chooseView('grid');
+  assert.equal(f.results.dataset.view, 'grid');
 });

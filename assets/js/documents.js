@@ -2,15 +2,19 @@
   const results = document.querySelector('[data-library-results]');
   if (!results) return;
   const dialog = document.querySelector('[data-library-qr]');
+  const mobile = window.matchMedia?.('(max-width: 680px)');
   let qrVersion = 0;
   let view = 'grid';
   try { if (window.localStorage?.getItem('ssc.documents.view') === 'list') view = 'list'; } catch { /* Storage can be unavailable in private browsing. */ }
   function applyView() {
-    results.dataset.view = view;
-    results.querySelectorAll('[data-library-view]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.libraryView === view)));
+    // Keep the desktop preference while phones always use the compact list.
+    const activeView = mobile?.matches ? 'list' : view;
+    results.dataset.view = activeView;
+    results.querySelectorAll('[data-library-view]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.libraryView === activeView)));
     const controls = results.querySelector('[data-library-view-controls]');
-    if (controls) controls.hidden = false;
+    if (controls) controls.hidden = Boolean(mobile?.matches);
   }
+  mobile?.addEventListener('change', applyView);
   function prepareResults() {
     applyView();
     results.querySelectorAll('[data-holder-portrait]').forEach((image) => {
@@ -26,7 +30,7 @@
   prepareResults();
   results.addEventListener('click', (event) => {
     const button = event.target.closest('[data-library-view]');
-    if (!button || !['list', 'grid'].includes(button.dataset.libraryView)) return;
+    if (mobile?.matches || !button || !['list', 'grid'].includes(button.dataset.libraryView)) return;
     view = button.dataset.libraryView;
     applyView();
     try { window.localStorage?.setItem('ssc.documents.view', view); } catch { /* The selected view still works without persistence. */ }

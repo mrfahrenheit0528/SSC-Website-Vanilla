@@ -286,6 +286,10 @@ buttons. Icon-only list
 and grid controls beside the results heading switch document layouts without
 checkmarks. The chosen layout persists across filtering/pagination and is saved
 in local storage when available; blocked storage does not prevent switching.
+On phones (680px and below), office holders and the view toggle are hidden and
+documents always use the list layout, including without JavaScript. Filtering
+and pagination retain this mobile layout. Returning to desktop restores the
+saved desktop view without overwriting it with the mobile list requirement.
 
 PDF and download links normalize legacy Windows upload paths and encode filename
 segments so spaces, apostrophes and hash characters remain usable. QR sharing uses
