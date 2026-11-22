@@ -1,0 +1,38 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "SSC: Set up local environment",
+      "type": "process",
+      "command": "python",
+      "args": ["scripts/dev.py", "setup"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "SSC: Start local website",
+      "type": "process",
+      "command": "python",
+      "args": ["scripts/dev.py", "serve"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "SSC: Stop local website",
+      "type": "process",
+      "command": "python",
+      "args": ["scripts/dev.py", "stop-web"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "SSC: Stop development database",
+      "type": "process",
+      "command": "python",
+      "args": ["scripts/dev.py", "stop-db"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    }
+  ]
+}

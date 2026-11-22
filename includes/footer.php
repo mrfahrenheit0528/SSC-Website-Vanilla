@@ -1,4 +1,4 @@
-<footer class="bg-gray-900 text-white py-12 mt-auto">
+<footer class="site-footer bg-gray-900 text-white py-12 mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
@@ -34,6 +34,7 @@
                         ['href' => 'index.php',     'label' => 'Home'],
                         ['href' => 'officers.php',  'label' => 'Officers'],
                         ['href' => 'documents.php', 'label' => 'Documents'],
+                        ['href' => 'about.php',     'label' => 'About This Platform'],
                         ['href' => 'login.php',     'label' => 'Login'],
                     ];
                     foreach ($footer_links as $lnk): ?>
@@ -73,7 +74,7 @@
 
         <div class="border-t border-gray-800 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2">
             <p class="text-gray-500 text-sm">&copy; <?php echo date('Y'); ?> CSPC — Supreme Student Council. All rights reserved.</p>
-            <p class="text-gray-600 text-xs">Academic Year 2025–2026</p>
+            <p class="text-gray-600 text-xs">Academic Year <?php echo SSC_CURRENT_ACADEMIC_YEAR_LABEL; ?></p>
         </div>
     </div>
 </footer>

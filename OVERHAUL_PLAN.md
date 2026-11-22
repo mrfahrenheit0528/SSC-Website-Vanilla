@@ -36,7 +36,7 @@ See README.md for configuration and first-run steps. No live deployment has run.
 
 Modernize the council website's public pages and administration tools while preserving its documents, officer information, and existing PHP/MySQL functionality. Prepare and verify changes locally before updating production.
 
-Approved scope: provide two UI themes: **Regular** for everyday council use and **Intramurals** for the council's intramurals event. Both themes will use the same content, navigation, components, and application features. Theme-specific artwork, colors, typography, and decorative treatments will be developed together. The event branding and how the theme is selected still need to be agreed during phase 4.
+Approved scope: provide two UI themes: **Regular** for everyday council use and **SIKLAB** for the council's intramurals event. Both themes use the same council content and application features. SIKLAB stays active until the owner requests a change, with no visitor selector or automatic expiry. The Regular redesign is deferred until after SIKLAB.
 
 ## Starting point
 
@@ -54,6 +54,7 @@ Approved scope: provide two UI themes: **Regular** for everyday council use and 
 - Use synthetic data for local testing where possible. Keep credentials, private backups, and production database exports out of Git.
 - Complete each phase's checkpoint before moving to work that depends on it.
 - Record design decisions and any scope changes here as work proceeds.
+- Commit each edited page after its implementation and relevant checks are complete, before starting the next page (owner request, November 22, 2026).
 
 ## 1. Establish the deployment baseline and recovery path
 
@@ -75,14 +76,21 @@ for evidence and remaining work.
 
 ## 2. Make local development reproducible
 
-- [ ] Enable mysqli and GD in local PHP and verify the other extensions required by Composer and existing features.
-- [ ] Set up a local MySQL or MariaDB database using a sanitized fixture.
+- [x] Enable mysqli and GD for the project PHP process and verify required extensions/dependencies. The launcher leaves global php.ini unchanged.
+- [x] Set up a dedicated local MariaDB instance with synthetic fixtures. It binds to 127.0.0.1:33079, uses ssc_dev, and leaves the existing port-3306 server alone.
 - [x] Move database credentials into an untracked configuration mechanism and provide an example with placeholders. The bootstrap now reads ignored `config/database.local.php` or environment variables; actual hosting compatibility still needs verification.
 - [ ] Arrange rotation of any active credentials tracked in Git. Coordinate the configuration update so rotation does not leave production disconnected.
-- [ ] Compare the SQL export, application queries, and live schema. Resolve the missing `documents.display_name`, the required `title` column, and any other differences.
-- [ ] Add explicit, versioned database migration scripts. Move table creation out of normal page requests once the migration path is established.
-- [ ] Install locked dependencies and document local setup, startup, asset build, and database initialization in README.md.
-- [ ] Start the site locally and verify that public pages load and a test account can sign in.
+- [x] Compare the SQL export, queries, and backed-up live schema. A migration adds missing documents.display_name to older schemas, and uploads now supply the required title value. The production schema/data have not been changed.
+- [x] Add versioned migrations with checksums and remove table creation from normal page requests. Local-only CLI guards prevent migration/seed commands from connecting to hosting.
+- [x] Install locked dependencies and document local setup, startup, dependency handling, and initialization. VS Code tasks are included; frontend assets still have no build pipeline until the UI phase.
+- [x] Verify public pages and test-account sign-in through a local HTTP server. Integration checks also cover uploads, reports, PDF viewing, filters, repeat migrations/seeding, and private-file restrictions.
+
+Local setup progress: synthetic credentials are in ignored config/dev.local.json.
+The old workstation connection config was preserved outside Git before switching
+to the dedicated development database. Repeating setup keeps development data and
+passwords. Tests use separate disposable ssc_test_* databases, never the persistent
+development database or production. The existing admin-role/CSRF/upload-hardening
+work remains phase 3. Credential rotation is still an external pre-release task.
 
 **Checkpoint:** A fresh local setup can run the application using documented steps without production credentials or a production database connection.
 
@@ -118,13 +126,47 @@ Apache access rules still require environment-specific testing.
 
 ## 4. Agree on content and visual direction
 
+SIKLAB homepage: keep the approved dark UI and replace the cartoon campus with
+an original-photo morning opening. The supplied wide campus JPEG is retained
+byte-for-byte and supplies every visible photo surface through four alpha masks:
+sky, campus, monument and foreground. Generated cutout colors are discarded; only
+transparency guides and hidden-area repair plates are used. Exclusive masks prevent
+duplicate geometry, and the repaired campus plate is restricted to the near-object
+occlusion regions. Source provenance is in `docs/campus-photo-source.json`.
+Native sticky positioning and distinct layer transforms retain scroll parallax;
+mobile travel follows the actual photo height. The plain original photo remains
+visible until all scene assets load, and is retained as the failure fallback.
+Three flipping document cards keep the existing category routes and live
+counts. Eight full-height executive-officer sections use the original AY 2025-2026
+roster in `includes/executive-officers.php`, pending the owner's new order. College
+logos now sit immediately above the existing footer. About This Platform and its
+original developer profiles are on `about.php`.
+
+SIKLAB has no automatic expiry, visitor theme picker or preference override. The
+Regular redesign is deferred. Buttons keep sharp corners and the supplied palette.
+Motion supports reduced-motion preferences, which remove the extended opening
+and restore static planes. Document cards have keyboard controls, focus handling
+and no-JavaScript links. Wheel/touch events are never intercepted; officers retain
+natural scrolling. Faded hero controls become inert and offscreen animation stops.
+The footer retains the existing contact information and social links. Existing
+uploaded event artwork opens in an announcement dialog from the hero. No match
+schedules, results or official slogans have been fabricated.
+
+The source photo, alpha guides and repair plates are in `assets/static/photo-parallax-v1/`; exact master/layer
+prompts and WebP encoding details are recorded in `docs/siklab-artwork.txt`. Design-reference videos are excluded from release packages.
+
+This rebuild is ready for the owner's visual review; secondary page layouts are not yet overhauled. Browser visual inspection is pending
+because the local preview connection is unavailable. No production deployment is
+part of this design iteration; the already running local PHP preview is retained
+for review in the user's browser.
+
 - [ ] Confirm the council's logo, approved colors, fonts, contact details, and available campus/event photography.
 - [ ] Confirm the current academic year and which officer rosters should be current versus archived. Avoid inferring this solely from today's date.
 - [ ] Review homepage copy, document category labels, officer names/roles, and event details for accuracy.
 - [ ] Define the primary student journeys: finding a document, identifying an officer, checking announcements, and contacting the council.
 - [ ] Prepare a representative homepage and document-library design at desktop and mobile sizes.
 - [ ] Show both Regular and Intramurals variants in the representative designs. Confirm the intramurals event name, approved artwork, palette, and content dates.
-- [ ] Agree whether the theme is site-wide, visitor-selectable, scheduled, or a combination. Define the default theme, persistence, and return to Regular after the event.
+- [x] Agree theme selection: SIKLAB without an automatic cutoff; no visitor selector or preference override. Redesign Regular after SIKLAB.
 - [ ] Review that concrete design with the user before applying it across all pages.
 
 **Suggested starting direction:** A clear institutional style using council-approved navy/blue, white surfaces, strong typography, restrained accents, and real council imagery. Give document access and current announcements more prominence.
@@ -150,6 +192,10 @@ Work in this order so the most important student journeys become reviewable earl
 
 ### 6.1 Homepage
 
+November 22 update: Home uses ordinary scrolling with automatic section/card
+snapping removed. The horizontal executive officer sequence remains. Navigation
+and section-heading styles now match the other SSC public pages.
+
 - [ ] Introduce a clearer council identity, concise purpose, and prominent document-library link.
 - [ ] Present the current event or announcement with an appropriate empty state. Confirm whether the existing banner-only model is sufficient before adding new content fields.
 - [ ] Simplify document-category summaries and officer previews.
@@ -158,9 +204,9 @@ Work in this order so the most important student journeys become reviewable earl
 
 ### 6.2 Documents and PDF viewing
 
-- [ ] Improve search, category filters, result counts, and mobile layouts while preserving shareable query parameters.
-- [ ] Present consistent document titles, categories, dates, and preview/download/share actions.
-- [ ] Add pagination and meaningful empty/error states. Only add academic-year filters if reliable year metadata is available or a migration is included.
+- [x] Improve search, category filters, result counts, and mobile layouts while preserving shareable query parameters. Category/search updates run in place with browser history support.
+- [x] Present consistent document titles, categories, dates, and preview/download/share actions. Office holders derive from the shared current and archived rosters.
+- [x] Add pagination and meaningful empty/error states. Twelve documents per page; query parameters persist. No academic-year document filter was added because reliable document-year metadata is unavailable.
 - [ ] Standardize the PDF.js version and asset loading after checking compatibility with the current viewer.
 - [ ] Verify PDF viewing, downloads, QR links, and browser back navigation on mobile and desktop.
 
@@ -181,12 +227,20 @@ Work in this order so the most important student journeys become reviewable earl
 
 ## 7. Redesign administration
 
-- [ ] Give the dashboard a clear hierarchy for documents, uploads, event management, and reports.
-- [ ] Improve bulk actions, document editing, selection states, and deletion confirmation.
+November 22 progress: Login and Dashboard now share the SSC visual system. The
+generated local administrator credentials were verified without changing accounts.
+Dashboard mutations and the direct delete endpoint require an administrator and
+a form token; deletion uses POST. Session IDs regenerate on login. Unique PDF
+uploads, safe upload cleanup, and failed event-replacement preservation are covered
+by disposable-database checks. Registration and remaining PDF-serving policy work
+are separate follow-ups under section 3; browser visual QA remains pending.
+
+- [x] Give the dashboard a clear hierarchy for documents, uploads, event management, and reports.
+- [x] Improve bulk actions, document editing, selection states, and deletion confirmation.
 - [ ] Show useful upload limits, validation messages, partial-success results, and recovery options.
-- [ ] Improve event-banner previews and explain any crop behavior before saving.
+- [x] Improve event-banner previews and explain any crop behavior before saving.
 - [ ] Align report category names with the document library and verify generated PDF contents.
-- [ ] Check that interface visibility and backend permissions agree for every supported role.
+- [x] Check that interface visibility and backend permissions agree for every supported role.
 
 **Checkpoint:** An authorized administrator can complete each management workflow using the redesigned interface, including failure and cancellation paths.
 
