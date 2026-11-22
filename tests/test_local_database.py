@@ -277,7 +277,56 @@ class LocalApplicationTests(unittest.TestCase):
                 self.assertEqual(header[8:12], b'WEBP')
         self.assertEqual(self.sql('SELECT COUNT(*) AS total FROM documents'), before)
 
+    def test_officer_directory_preserves_rosters_and_groups_them_by_office(self):
+        for year, profiles in (('2024', 52), ('2025', 51), ('2026', 53)):
+            with self.subTest(year=year), urllib.request.urlopen(self.base + '/officers.php?year=' + year, timeout=10) as response:
+                body = response.read()
+                self.assertEqual(body.count(b'data-directory-card'), profiles)
+                self.assertEqual(body.count(b'data-office-section'), 19)
+                self.assertIn(b'assets/css/officers.css', body)
+                self.assertIn(b'assets/js/officers.js', body)
+                self.assertIn(b'assets/static/SSC%20LOGO.png', body)
+                self.assertEqual(body.count(b'class="directory-photo-fallback"'), profiles)
+                self.assertNotIn(b'data-directory-status', body)
+                self.assertNotIn(b'assets/img/siklab/wordmark.webp', body)
+                for excluded in (b'assets/css/home.css', b'officer-scroll.mjs', b'section-snap.mjs', b'data-officer-scroll', b'data-parallax-stage'):
+                    self.assertNotIn(excluded, body)
+        with urllib.request.urlopen(self.base + '/officers.php', timeout=10) as response:
+            body = response.read()
+            self.assertNotIn(b'Coming Soon', body)
+            self.assertEqual(body.count(b'data-directory-card'), 53)
+            self.assertIn(b'Jester Carl SJ. Sumpay', body)
+            self.assertIn('Chloe Ysabelle T. Peñones'.encode('utf-8'), body)
+            self.assertIn(b'href="officers.php?year=2026" aria-current="page"', body)
+        with urllib.request.urlopen(self.base + '/assets/static/BACKGROUND%20%281%29.png', timeout=10) as response:
+            self.assertEqual(response.status, 200)
+            self.assertEqual(response.read(8), b'\x89PNG\r\n\x1a\n')
 
+    def test_officer_directory_search_works_without_javascript_and_handles_invalid_inputs(self):
+        class VisibleProfiles(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.count = 0
+
+            def handle_starttag(self, tag, attrs):
+                attrs = dict(attrs)
+                if 'data-directory-card' in attrs and 'hidden' not in attrs:
+                    self.count += 1
+
+        cases = [('year=2025&q=Aquiler', 2, 51), ('year=2025&q=secretary', 6, 51),
+                 ('year=2025&q=Office+of+the+Property+Custodian', 7, 51),
+                 ('year=2025&q=no-such-officer', 0, 51), ('year%5B%5D=2024&q%5B%5D=bad', 53, 53),
+                 ('year=bad&q=%3Cscript%3Ealert(1)%3C%2Fscript%3E', 0, 53),
+                 ('q=publication', 2, 53), ('q=BUHI', 2, 53), ('q=secretary', 8, 53)]
+        for query, count, total in cases:
+            with self.subTest(query=query), urllib.request.urlopen(self.base + '/officers.php?' + query, timeout=10) as response:
+                body = response.read().decode('utf-8')
+                parser = VisibleProfiles()
+                parser.feed(body)
+                self.assertEqual(parser.count, count)
+                self.assertNotIn('Warning:', body)
+                self.assertNotIn('<script>alert(1)</script>', body)
+                self.assertEqual(body.count('data-directory-card'), total)
 
     def test_tally_placeholder_and_event_video_are_public(self):
         with urllib.request.urlopen(self.base + '/tally.php', timeout=10) as response:

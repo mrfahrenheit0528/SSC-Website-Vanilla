@@ -117,5 +117,10 @@ $page_description = $page_description ?? 'Promoting transparency and student wel
     <script src="assets/js/home.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/home.js'); ?>" defer></script>
     <script type="module" src="assets/js/officer-scroll.mjs?v=<?php echo filemtime(__DIR__ . '/../assets/js/officer-scroll.mjs'); ?>"></script>
     <?php endif; ?>
+    <?php if (($current_page ?? '') === 'officers'): ?>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="assets/css/officers.css?v=<?php echo filemtime(__DIR__ . '/../assets/css/officers.css'); ?>" rel="stylesheet">
+    <script src="assets/js/officers.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/officers.js'); ?>" defer></script>
+    <?php endif; ?>
     <script src="assets/js/site.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/site.js'); ?>" defer></script>
 </head>

@@ -117,7 +117,7 @@ theme change. The December 5 cutoff is removed; there is no automatic expiry.
 `includes/theme.php` sets the active theme. There is no visitor theme picker;
 old theme query parameters and preference cookies cannot override it.
 The Regular redesign is deferred until after SIKLAB.
-The secondary pages retain their existing layouts.
+The Officers directory is also overhauled; the other secondary pages retain their existing layouts.
 
 The current homepage uses a lighter SIKLAB design with four sections:
 
@@ -201,6 +201,64 @@ for card hover/focus/Escape, video preferences/playback, officer scroll bounds,
 keyboard navigation and responsive/reduced-motion resets. The retained photo
 module tests also continue to run. Visual desktop/mobile browser QA remains
 pending because the browser connection is unavailable.
+
+### Officers directory
+
+`officers.php` uses the owner's original `assets/static/BACKGROUND (1).png`
+as a stationary viewport background, with separate vertical sections for council offices,
+college/campus representatives and committees. Assistants appear in the same
+section as their corresponding office. Ordinary document flow is used on all
+screens; this page does not load the homepage's horizontal rail or snap modules.
+
+The original 52 AY 2024-2025 profiles and 51 AY 2025-2026 profiles are preserved
+in `includes/officer-rosters.php`. AY 2026-2027 now includes 53 officers: 49 from
+the supplied directory and four from the supplemental note, grouped into 19
+offices. The 46 supplied portraits are encoded for web delivery; seven entries
+without a matched photo use silhouettes. Contact details for the four supplemental
+entries remain blank because none were provided. The owner's confirmed birthday
+correction and Acbang portrait assignment are recorded in
+`docs/officers-2026-source.json` alongside source provenance.
+Current-year hometowns use barangay, town/city and province only; house numbers,
+zones, streets and smaller locality details are omitted. Missing hometowns keep
+their placeholders.
+`includes/council-offices.php` defines office groups. Year links use `?year=2024`,
+`?year=2025` or `?year=2026`; the default is now 2026-2027.
+
+With JavaScript enabled, academic-year tabs fetch and replace the roster in place
+without reloading the page. Visited rosters are cached for the current page session;
+search and office navigation apply to the newly selected roster. The URL and browser
+Back/Forward history track the selected year and search. Tabs support arrow keys,
+Home/End and Space; ordinary links and server-side search remain available without
+JavaScript. Failed requests preserve the displayed roster and offer a retry.
+`includes/current-academic-year.php` supplies the shared current year for the
+directory, homepage executives and footer. Older roster records remain intact.
+Search by name, role or office works live through `assets/js/officers.js` and
+also through `?q=...` without JavaScript. Nonmatching offices, cards and jump
+options are hidden together. The Jump to an office control uses ordinary page
+anchors. Styling is scoped to `assets/css/officers.css` and the Officers page.
+The supplied `assets/static/SSC LOGO.png` replaces the event wordmark. Academic
+years, search and the office selector share one desktop row and wrap on smaller
+screens. The overall results count is removed. Multi-officer cards share a
+measured content height across offices; solo-office cards retain their wider
+layout. Heights recalculate after filtering, fonts load and viewport changes.
+Entry reveals and hover feedback respect reduced-motion preferences.
+Program, Hometown and Birthday labels remain visible for every officer, with
+"Not provided" placeholders for missing values. Call officer and Send email
+controls remain visible and are disabled when the corresponding contact is missing.
+
+Directory portraits are validated local WebP copies in `assets/img/officers/`,
+so an image host outage cannot substitute a provider error graphic at runtime.
+The manifest maps original roster URLs to prepared files or silhouette fallbacks;
+original roster fields stay unchanged. Missing assets and browser image errors
+also reveal the silhouette. Supplied local JPEGs use the same encoder as cached
+historical portraits; the original high-resolution files remain intact.
+Refresh them with `python scripts/prepare-officer-portraits.py`; add `--refresh`
+to refetch already-cached sources. Raw downloads stay in ignored `build/`.
+New roster reference PDFs and the `assets/static/2026-2027 officers/` source
+folder are preserved locally and excluded from runtime packaging; prepared
+portrait assets in `assets/img/officers/` are included.
+The CLI encoder rejects invalid files and the provider's cyan error graphics,
+including those returned with HTTP 200.
 
 ## Private files and uploaded records
 

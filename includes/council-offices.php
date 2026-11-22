@@ -1,0 +1,25 @@
+<?php
+// Office grouping follows the roles already listed in the public directory.
+return [
+    'presidency' => ['name' => 'Office of the President and Student Trustee', 'short' => 'President and Student Trustee'],
+    'internal-affairs' => ['name' => 'Office of the Vice President for Internal Affairs', 'short' => 'Internal Affairs'],
+    'external-affairs' => ['name' => 'Office of the Vice President for External Affairs', 'short' => 'External Affairs'],
+    'secretariat' => ['name' => 'Office of the Secretary', 'short' => 'Secretary'],
+    'treasury' => ['name' => 'Office of the Treasurer', 'short' => 'Treasurer'],
+    'property' => ['name' => 'Office of the Property Custodian', 'short' => 'Property Custodian'],
+    'audit' => ['name' => 'Office of the Auditor', 'short' => 'Auditor'],
+    'business-management' => ['name' => 'Business Managers', 'short' => 'Business Managers'],
+    'public-relations' => ['name' => 'Office of the Public Relations Officer', 'short' => 'Public Relations'],
+    'buhi' => ['name' => 'Buhi Campus Representatives', 'short' => 'Buhi Campus'],
+    'cas' => ['name' => 'College of Arts and Sciences Representatives', 'short' => 'CAS Representatives'],
+    'ccs' => ['name' => 'College of Computer Studies Representatives', 'short' => 'CCS Representatives'],
+    'cea' => ['name' => 'College of Engineering and Architecture Representatives', 'short' => 'CEA Representatives'],
+    'chs' => ['name' => 'College of Health Sciences Representatives', 'short' => 'CHS Representatives'],
+    'ctde' => ['name' => 'College of Technological and Developmental Education Representatives', 'short' => 'CTDE Representatives'],
+    'cthbm' => ['name' => 'College of Tourism, Hospitality, and Business Management Representatives', 'short' => 'CTHBM Representatives'],
+    'rights-welfare-gender' => ['name' => "Students' Rights, Welfare, and Gender and Development Committee", 'short' => 'Rights, Welfare and Gender'],
+    'student-rights' => ['name' => 'Student Rights and Welfare Committee', 'short' => 'Student Rights and Welfare'],
+    'gender-development' => ['name' => 'Gender and Development Committee', 'short' => 'Gender and Development'],
+    'sports-cultural' => ['name' => 'Sports and Cultural Committee', 'short' => 'Sports and Cultural'],
+    'environment' => ['name' => 'Environmental Concerns Committee', 'short' => 'Environmental Concerns'],
+];
