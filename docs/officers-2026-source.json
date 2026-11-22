@@ -1,0 +1,34 @@
+{
+  "academic_year": "2026-2027",
+  "directory_file": "assets/static/CSPC-Supreme-Student-Council-AY-2026-2027-Officers-Directory (2).pdf",
+  "directory_sha256": "d90f00d250b478e0facc570015e929aaee6cfe8e8b3d4bfe38b0ef61bb49f30a",
+  "directory_profiles": 49,
+  "supplement_file": "assets/static/2026-2027 officers/Officers not on directory.txt",
+  "supplement_profiles": 4,
+  "total_profiles": 53,
+  "portrait_files": 46,
+  "silhouette_profiles": [
+    "Ron Avery Ystelle C. Baldovia",
+    "Remier Rave O. Acbang",
+    "Faith Meca T. Puyawan",
+    "Ma. Vianney B. Morillo",
+    "Chloe Ysabelle T. Peñones",
+    "Ma. Socorro B. Igana",
+    "Janelle Sallena"
+  ],
+  "confirmed_corrections": {
+    "Trisha Mae E. Abonita": "Birthday confirmed by owner: April 30, 2008; source prints 3008.",
+    "acbang.jpg": "Owner confirmed this photo is Carl Anthony S. Acbang; Remier Rave O. Acbang retains a silhouette.",
+    "Ma. Vianney B. Morillo": "Owner confirmed role matches Faith Meca T. Puyawan: Assistant Public Relations Officer (Publication); program is BSIS 4A.",
+    "Janelle Sallena": "Owner confirmed role matches Shemaiah B. Buita: College of Technological and Developmental Education (CTDE) Representative; use the full title."
+  },
+  "format_normalization": [
+    "Wrapped emails and phone numbers joined without spaces.",
+    "Table group roles made singular for individual profiles.",
+    "Leading spreadsheet apostrophe removed from Christian Gabrielle B. Pa-ac birthday.",
+    "Public hometowns limited to barangay, town/city, province; house numbers, zones, streets and sub-barangay localities removed at owner request.",
+    "Missing Camarines Sur province labels added for Iriga City addresses; Camille C. Salvadora city retained from her AY 2025-2026 entry.",
+    "Compound barangay names San Antonio Ogbon and Sta. Elena Baras retained as a single locality; missing hometowns remain blank."
+  ],
+  "order": "PDF order, with supplementary names appended; office grouping retains matching office membership."
+}

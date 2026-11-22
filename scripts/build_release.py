@@ -4,7 +4,7 @@ from pathlib import Path
 import shutil
 
 ROOT_FILES = (
-    '.htaccess', 'LICENSE', 'index.php', 'officers.php', 'documents.php',
+    '.htaccess', 'LICENSE', 'index.php', 'about.php', 'tally.php', 'officers.php', 'documents.php',
     'dashboard.php', 'login.php', 'logout.php', 'attendance.php',
     'delete_document.php', 'generate_report.php', 'pdfviewer.php', 'view_pdf.php',
     'config/database.php', 'config/database-settings.php', 'config/.htaccess',
@@ -20,6 +20,13 @@ def release_files(root):
         if not directory.is_dir() or directory.is_symlink():
             raise ValueError(f'Missing or invalid runtime directory: {name}')
         for path in directory.rglob('*'):
+            relative = path.relative_to(root)
+            if relative.parts[:2] == ('assets', 'reference'):
+                continue  # Local design references are not website runtime assets.
+            if relative.parts[:2] == ('assets', 'static') and (
+                    path.suffix.lower() in {'.mp4', '.webm', '.mov', '.mkv', '.pdf'}
+                    or relative.parts[2:3] == ('2026-2027 officers',)):
+                continue  # Reference masters stay local; publish prepared runtime assets.
             if path.is_symlink():
                 raise ValueError('Symlinks are not permitted in a release')
             if path.is_file():

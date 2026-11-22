@@ -105,11 +105,271 @@ they do not reset your persistent development database.
 
 ## Frontend dependencies
 
-Flowbite's vendored CSS and JavaScript in `assets/` are used by the pages. `npm ci`
-restores the package dependency if needed; there is currently no frontend build
-or asset-copy script. Tailwind, the active PDF.js viewer, fonts, and some other
-libraries still load from CDNs. The unused npm PDF.js dependency and local module
-copies were removed; the existing viewer was retained.
+Flowbite's vendored CSS and JavaScript in `assets/` are used by existing pages.
+The SIKLAB hero uses an optimized MP4 loop with a WebP poster, with no 3D
+renderer or frontend build step. The unused Three.js code, bundle, and build dependencies are removed.
+Tailwind, PDF.js, fonts, and the existing council logo still use their CDNs.
+
+### SIKLAB homepage
+
+Open `http://127.0.0.1:8000/`. SIKLAB stays active until the owner requests a
+theme change. The December 5 cutoff is removed; there is no automatic expiry.
+`includes/theme.php` sets the active theme. There is no visitor theme picker;
+old theme query parameters and preference cookies cannot override it.
+The Regular redesign is deferred until after SIKLAB.
+The Officers directory, Documents library and About page are also overhauled; the other secondary pages retain their existing layouts.
+
+The current homepage uses a lighter SIKLAB design with four sections:
+
+- A centered, full-width video hero for **SIKLAB: CSPC Intramurals 2026**, dated
+  **November 23-28, 2026**. The official tally-board button opens `tally.php`, which
+  displays "The official tally board is underway" until the real board is ready.
+  The seven college logos sit inside the opening, with names provided only as alt text.
+- Three redesigned document cards (Treasurer, Legislative, Secretary), using live
+  database counts and the existing library filters. Mouse hover reveals a card;
+  click/tap and keyboard activation work too. Escape returns to its front. Hover
+  does not move focus. Hidden faces are inert; without JavaScript both faces and
+  document links remain available.
+- A desktop officer sequence that moves horizontally as the visitor scrolls down.
+  Native sticky positioning and normal page scrolling drive it; wheel and touch
+  events are not intercepted. Previous/Next controls, direct officer anchors and
+  keyboard focus reveal the corresponding panel. The heading, cards and controls
+  share one viewport-height sticky stage beneath the fixed navigation, so the
+  Executive Officers heading stays visible throughout the horizontal sequence.
+  Frame-based easing softens wheel/trackpad motion; 1.35 vertical pixels move the
+  rail one horizontal pixel. Keyboard focus and direct anchors remain immediate.
+  Mobile, reduced motion and
+  short/zoomed layouts use vertical profiles. `includes/executive-officers.php`
+  derives the eight current executives from the shared AY 2026-2027 roster in
+  the supplied directory's order.
+- The existing council footer, quick links, social links and contact information.
+
+Home uses ordinary page scrolling throughout; there are no automatic section or
+card stops. The horizontal executive rail retains its eased visual movement and
+Previous/Next controls, but never adjusts the page position after a scroll
+settles. The former snapping controller, markers and related CSS are removed.
+Navigation width, link weight and translucent styling match the other SSC pages.
+The document/officer section headings use their compact, blue-bordered panel
+style and shared content width. The event video and SIKLAB wordmark remain.
+On phones, the wordmark has additional side gutters and top spacing.
+The shared mobile menu animates its hamburger into a close icon and reveals the
+navigation panel with a short fade/slide. Closed links are inert; Escape, an
+outside tap or choosing a link dismisses it. Reduced motion removes transitions.
+Large page-intro SSC crests are hidden on phones; the navigation crest remains.
+
+`about.php` retains About This Platform and the original developer profiles.
+`assets/css/home.css` styles Home and the tally placeholder; `assets/js/home.js`
+handles cards, video playback, reveals and the optional uploaded-announcement
+modal. `assets/js/officer-scroll.mjs` handles the officer sequence. The former
+photo-parallax modules and photo assets are retained as earlier design work but
+are no longer loaded by the homepage. The Regular template remains archived for
+its later redesign.
+
+The owner's original `assets/static/1122(1).mp4` is preserved locally. The runtime
+copy is `assets/video/siklab-2026-loop.mp4`: H.264, 1280 x 720, 24 fps, no audio,
+fast-start metadata, approximately 5.85 MB, reduced from the 26.98 MB source.
+The video loops muted with inline playback. A pause/play button is available;
+playback pauses offscreen and in hidden tabs. Reduced-motion and data-saving
+preferences default to the WebP poster, with manual play still available.
+Blocked autoplay or video errors leave the poster and event information visible.
+
+Recreate the web video and poster from the untouched source with FFmpeg:
+
+```powershell
+ffmpeg -i "assets/static/1122(1).mp4" -vf "scale=1280:-2,fps=24" -c:v libx264 -preset medium -crf 28 -maxrate 2200k -bufsize 4400k -pix_fmt yuv420p -an -movflags +faststart assets/video/siklab-2026-loop.mp4
+ffmpeg -ss 1 -i "assets/static/1122(1).mp4" -frames:v 1 -vf "scale=1280:-2" -quality 85 -update 1 assets/img/siklab/event-video-poster.webp
+```
+
+Original SIKLAB PNGs remain in `assets/static/`; prepared WebP images are in
+`assets/img/siklab/`. The earlier photo source is verified against
+`docs/campus-photo-source.json`. `scripts/prepare-visual-assets.php` still reproduces
+those artwork assets. The GLB remains available but is not loaded by the homepage.
+Local references in `assets/reference/` and original video masters in
+`assets/static/` are excluded from release packages; optimized `assets/video/`
+files are included. `tally.php` is included in both the local router and release.
+
+Run `python scripts/dev.py test` for disposable-database integration checks,
+public pages/media and release safeguards. Run `node --test tests/*.test.mjs`
+for card hover/focus/Escape, video preferences/playback, officer scroll bounds,
+keyboard navigation and responsive/reduced-motion resets. The retained photo
+module tests also continue to run. Visual desktop/mobile browser QA remains
+pending because the browser connection is unavailable.
+
+### Officers directory
+
+`officers.php` uses the owner's original `assets/static/BACKGROUND (1).png`
+as a stationary viewport background, with separate vertical sections for council offices,
+college/campus representatives and committees. Assistants appear in the same
+section as their corresponding office. Ordinary document flow is used on all
+screens; this page does not load the homepage's horizontal rail.
+
+The original 52 AY 2024-2025 profiles and 51 AY 2025-2026 profiles are preserved
+in `includes/officer-rosters.php`. AY 2026-2027 now includes 53 officers: 49 from
+the supplied directory and four from the supplemental note, grouped into 19
+offices. The 46 supplied portraits are encoded for web delivery; seven entries
+without a matched photo use silhouettes. Contact details for the four supplemental
+entries remain blank because none were provided. The owner's confirmed birthday
+correction and Acbang portrait assignment are recorded in
+`docs/officers-2026-source.json` alongside source provenance.
+Current-year hometowns use barangay, town/city and province only; house numbers,
+zones, streets and smaller locality details are omitted. Missing hometowns keep
+their placeholders.
+`includes/council-offices.php` defines office groups. Year links use `?year=2024`,
+`?year=2025` or `?year=2026`; the default is now 2026-2027.
+
+With JavaScript enabled, academic-year tabs fetch and replace the roster in place
+without reloading the page. Visited rosters are cached for the current page session;
+search and office navigation apply to the newly selected roster. The URL and browser
+Back/Forward history track the selected year and search. Tabs support arrow keys,
+Home/End and Space; ordinary links and server-side search remain available without
+JavaScript. Failed requests preserve the displayed roster and offer a retry.
+`includes/current-academic-year.php` supplies the shared current year for the
+directory, homepage executives and footer. Older roster records remain intact.
+Search by name, role or office works live through `assets/js/officers.js` and
+also through `?q=...` without JavaScript. Nonmatching offices, cards and jump
+options are hidden together. The Jump to an office control uses ordinary page
+anchors. Styling is scoped to `assets/css/officers.css` and the Officers page.
+The supplied `assets/static/SSC LOGO.png` replaces the event wordmark. Academic
+years, search and the office selector share one desktop row. On phones, year
+tabs remain while search and the office selector are hidden; entering this layout
+clears any search so hidden controls cannot leave officers filtered out. Office
+headings use shorter labels while retaining their full accessible names.
+The overall results count is removed. Desktop multi-officer cards share a
+measured content height across offices; solo-office cards retain their wider
+layout. Heights recalculate after filtering, fonts load and viewport changes.
+Mobile cards use their natural content height: the eight executive roles have
+larger cards with a full-width portrait above their details. Other officers use
+a compact portrait/name row, tighter details and contact controls below.
+`includes/executive-roles.php` supplies the same role
+list to the directory and homepage.
+Entry reveals and hover feedback respect reduced-motion preferences.
+Program, Hometown and Birthday labels remain visible for every officer, with
+"Not provided" placeholders for missing values. Call officer and Send email
+controls remain visible and are disabled when the corresponding contact is missing.
+
+Directory portraits are validated local WebP copies in `assets/img/officers/`,
+so an image host outage cannot substitute a provider error graphic at runtime.
+The manifest maps original roster URLs to prepared files or silhouette fallbacks;
+original roster fields stay unchanged. Missing assets and browser image errors
+also reveal the silhouette. Supplied local JPEGs use the same encoder as cached
+historical portraits; the original high-resolution files remain intact.
+Refresh them with `python scripts/prepare-officer-portraits.py`; add `--refresh`
+to refetch already-cached sources. Raw downloads stay in ignored `build/`.
+New roster reference PDFs and the `assets/static/2026-2027 officers/` source
+folder are preserved locally and excluded from runtime packaging; prepared
+portrait assets in `assets/img/officers/` are included.
+The CLI encoder rejects invalid files and the provider's cyan error graphics,
+including those returned with HTTP 200.
+
+### Documents library
+
+`documents.php` shares the Officers page's fixed geometric background, SSC crest,
+condensed headings, sharp controls and blue/pink/gold accents. The responsive
+document grid preserves publication labels, upload dates, PDF viewing, direct
+downloads and QR sharing. Normal vertical scrolling is used, with no home rail
+or snap controller. Page assets are scoped to `assets/css/documents.css` and
+`assets/js/documents.js`.
+
+Category links retain `?section=treasurer`, `?section=legislative` and
+`?section=secretary`; `?search=...` searches filenames and descriptions. Links
+and the GET form work without JavaScript. With JavaScript, category changes,
+search submissions, clear-search links, pagination and Back/Forward update results in place.
+Stale requests cannot overwrite newer selections; failures preserve existing
+records and offer a retry. Category totals describe the full library, while the
+results heading shows the filtered count. Results use 12 records per page and
+retain category/search parameters between pages. Office-holder panels derive all three
+academic years from the shared roster and identify AY 2026-2027 as current.
+Compact office-holder cards run from oldest to newest, with the current year on
+the right. Former officers retain their colors with opacity-only fading, and the
+cards have no links. File grids use up to five compact columns; list rows have
+separate borders and spacing. File actions use small, single-line View document
+buttons. Icon-only list
+and grid controls beside the results heading switch document layouts without
+checkmarks. The chosen layout persists across filtering/pagination and is saved
+in local storage when available; blocked storage does not prevent switching.
+On phones (680px and below), office holders and the view toggle are hidden and
+documents always use the list layout, including without JavaScript. Filtering
+and pagination retain this mobile layout. Returning to desktop restores the
+saved desktop view without overwriting it with the mobile list requirement.
+
+PDF and download links normalize legacy Windows upload paths and encode filename
+segments so spaces, apostrophes and hash characters remain usable. QR sharing uses
+the existing QRServer image service, with a native modal dialog, keyboard dismissal,
+backdrop dismissal and a direct document link if the QR image cannot load. Broken
+office-holder portraits fall back to the local silhouette. Automated checks cover
+filters, malformed inputs, escaping, current roster selection, special filenames,
+request races/history, portrait fallback and QR errors. Visual browser QA remains
+pending while the browser connection is unavailable.
+
+### About the platform
+
+`about.php` uses the same fixed SSC background, translucent navigation, condensed
+headings and sharp controls as Officers and Documents. A TransFormation overview
+introduces the platform's existing purpose, with links to council records and the
+officer directory. The five original proposers/developers retain their project
+credits and position histories, clearly labeled as the AY 2025-2026 platform team.
+Their portraits use the validated local officer images with silhouette fallback.
+
+`includes/about-content.php` holds the preserved credit data and renders compact
+cards, a native profile dialog and inline position histories. With JavaScript and
+dialog support, accessible View profile buttons open the dialog and the inline
+histories are hidden; otherwise the inline details remain available. Profile text
+is inserted as text, native dismissal restores scrolling, and backdrop clicks
+outside the dialog close it. Styles and behavior are scoped to `assets/css/about.css`
+and `assets/js/about.js`. Intro/hover effects respect reduced motion. Automated
+checks cover profile selection, history replacement, dismissal/scroll restoration,
+image failure and the fallback experience. Visual browser QA remains pending.
+
+### Council sign in
+
+`login.php` uses the shared SSC background and navigation with a responsive
+two-column sign-in layout. Labels, autocomplete, field errors and a password
+visibility control remain keyboard accessible. Successful sign-in regenerates
+the session ID; forms validate a session token. The login button stays absent
+from the public header; sign in directly at `/login.php` or through the footer.
+
+Local development uses `admin@example.test` and the generated `admin_password`
+in ignored `config/dev.local.json`. Production account passwords do not apply to
+the synthetic development database. Credentials were verified through the local
+login flow; passwords are not displayed on the page or committed. The shared
+workspace styles are in `assets/css/council.css`, with sign-in behavior in
+`assets/js/login.js`.
+
+### Council dashboard
+
+`dashboard.php` shares the sign-in page's SSC styling and presents live category
+totals, a searchable/filterable document table, and separate PDF upload and event
+announcement tools. Existing PDF viewing, metadata editing, bulk moves/deletion,
+and report export remain available. Administrators switch in place between
+Uploaded documents and Upload & announcements tabs. The table occupies its own
+full-width panel; publishing tools share the second panel. Keyboard navigation,
+direct/legacy anchors and post-upload feedback select the appropriate panel,
+without discarding search or file selections. The View website header button is
+removed. Members retain the read-only documents panel. Mobile layouts stack the
+publishing panels and keep wide tables inside a labeled scroll region.
+On phones, the two dashboard tab buttons share one row with equal widths and
+compact padding; longer labels wrap inside their buttons.
+The native edit dialog and selection controls are handled by `assets/js/dashboard.js`.
+Filtering clears hidden selections so bulk actions only affect visible selections.
+The file chooser uses an SSC-styled drop area with Browse, selected filenames and
+sizes, and Clear selection. `includes/file-picker.php` renders the native controls;
+`assets/js/file-picker.js` enhances them with keyboard focus feedback and drag/drop.
+Invalid drops preserve the current selection, while paused announcement controls
+reject drops. Without JavaScript, the native file chooser remains visible and usable.
+
+Administrators can change records; members get read-only access. Mutations require
+session form tokens and deletion uses POST, including `delete_document.php`.
+Uploads validate PDFs and use unique stored filenames to preserve existing files;
+public downloads retain their original names. Record deletions commit before
+unreferenced upload files are removed, with shared document/banner references
+preserved. While SIKLAB is active, the announcement panel is greyed out with a
+disabled fieldset and an explanation of the custom Home presentation. Both image
+publishing and removal are also rejected server-side, preserving saved banner
+data and files. The pause follows the active server theme. The underlying event
+replacement flow is retained for later use. No production
+accounts or data were changed. Automated checks cover admin/member access,
+tokens, complete document workflows, upload collisions, the announcement pause and
+UI interactions; visual browser QA remains pending.
 
 ## Private files and uploaded records
 

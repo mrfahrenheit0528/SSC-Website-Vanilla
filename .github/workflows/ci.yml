@@ -43,6 +43,7 @@ jobs:
           composer validate --no-check-publish
           composer install --no-dev --prefer-dist --no-interaction --no-progress --no-scripts
           npm ci --ignore-scripts --no-audit --no-fund
+          node --test tests/*.test.mjs
       - name: Check PHP syntax
         run: |
           find . -type f -name '*.php' -not -path './vendor/*' -not -path './node_modules/*' -not -path './build/*' -print0 | xargs -0 -n1 php -l
