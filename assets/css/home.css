@@ -23,8 +23,7 @@ html[data-page=home] { scroll-snap-type: none; }
 .hero-subtitle { font: 600 clamp(1.5rem, 3vw, 2.4rem)/1.2 var(--chapter-font); text-transform: uppercase; letter-spacing: .16em; margin: 0 0 22px; }
 .hero-dates { font-size: 1.0625rem; font-weight: 500; letter-spacing: .035em; margin: 0 0 30px; }
 .event-home .tally-button { min-height: 54px; padding-inline: 32px; font-size: 1rem; background: var(--siklab-gold); color: #142145; box-shadow: 0 6px 25px #0002; }
-.event-home .tally-button:focus-visible, .hero-bottom :focus-visible, .poster-trigger:focus-visible { outline-color: #fff; }
-.poster-trigger { display: block; margin: 22px auto 0; color: white; background: none; border: 0; border-bottom: 1px solid #ffffff80; padding: 4px 0; font-size: .875rem; cursor: pointer; }
+.event-home .tally-button:focus-visible, .hero-bottom :focus-visible { outline-color: #fff; }
 .hero-bottom { position: absolute; bottom: 30px; left: 0; right: 0; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px; }
 .hero-scroll-link { justify-self: start; font-size: .875rem; text-underline-offset: 6px; text-decoration-color: #ffffff70; }
 .hero-colleges { list-style: none; margin: 0; padding: 0; display: flex; justify-content: center; gap: clamp(12px, 2vw, 30px); align-items: center; }
@@ -113,12 +112,6 @@ html[data-page=home] { scroll-snap-type: none; }
 .officer-scroll.is-horizontal .officer-rail-controls { padding-block: 8px 18px; }
 .officer-scroll.is-horizontal .officer-portrait { overflow: hidden; }
 .officer-scroll.is-horizontal .portrait-image { min-height: 0; }
-.event-poster-dialog { width: min(720px, calc(100vw - 32px)); max-height: 88svh; padding: 24px; border: 0; background: #f8faff; color: #142145; }
-.event-poster-dialog::backdrop { background: #07112acc; backdrop-filter: blur(8px); }
-.event-poster-dialog form { text-align: right; }
-.event-poster-dialog button { padding: 10px 16px; border: 1px solid #c2cce0; background: white; cursor: pointer; }
-.event-poster-dialog h2 { font: 600 2rem var(--chapter-font); margin: 15px 0; }
-.event-poster-dialog img { display: block; width: 100%; height: auto; }
 .tally-main { min-height: calc(100svh - 80px); display: grid; place-items: center; padding: 90px 24px; background: #f1f5ff; }
 .tally-content { text-align: center; max-width: 900px; }
 .tally-wordmark { display: block; width: min(350px, 75vw); height: auto; margin: 0 auto 18px; }

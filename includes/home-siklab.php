@@ -10,7 +10,6 @@
             <p class="hero-subtitle">CSPC Intramurals 2026</p>
             <p class="hero-dates"><time datetime="2026-11-23">November 23</time>–<time datetime="2026-11-28">28, 2026</time></p>
             <a class="button button-gold tally-button" href="tally.php">Official tally board</a>
-            <?php if ($event_photo): ?><button class="poster-trigger" type="button" data-event-poster-open>View event announcement</button><?php endif; ?>
         </div>
         <div class="hero-bottom page-width">
             <a class="hero-scroll-link" href="#official-documents">Explore the page</a>
@@ -91,9 +90,6 @@
         <div class="officer-end page-width"><a class="button button-primary" href="officers.php">View all officers</a></div>
     </section>
 </main>
-<?php if ($event_photo): ?>
-<dialog class="event-poster-dialog" id="event-poster-dialog" aria-labelledby="event-poster-heading"><form method="dialog"><button type="submit" aria-label="Close event announcement">Close</button></form><h2 id="event-poster-heading">Event announcement</h2><img src="<?php echo htmlspecialchars($event_photo, ENT_QUOTES, 'UTF-8'); ?>" alt="Upcoming Event"></dialog>
-<?php endif; ?>
 <?php include __DIR__ . '/footer.php'; ?>
 </body>
 </html>

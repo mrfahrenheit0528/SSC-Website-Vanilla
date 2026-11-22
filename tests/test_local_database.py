@@ -469,16 +469,19 @@ class LocalApplicationTests(unittest.TestCase):
             self.assertTrue(all(profile['image'].startswith('assets/img/officers/') for profile in profiles.values()))
             self.assertNotIn(b'onclick=', body)
 
-    def test_uploaded_event_announcement_is_available_from_opening(self):
+    def test_siklab_opening_omits_saved_event_announcement(self):
         original = self.sql("SELECT setting_value FROM site_settings WHERE setting_key='event_photo'")
         self.sql("INSERT INTO site_settings (setting_key,setting_value) VALUES ('event_photo','assets/img/siklab/wordmark.webp') ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)")
         try:
             with urllib.request.urlopen(self.base + '/', timeout=10) as response:
                 body = response.read()
-                self.assertIn(b'data-event-poster-open', body)
-                self.assertIn(b'<dialog class="event-poster-dialog"', body)
-                self.assertIn(b'alt="Upcoming Event"', body)
+                self.assertNotIn(b'View event announcement', body)
+                self.assertNotIn(b'data-event-poster-open', body)
+                self.assertNotIn(b'event-poster-dialog', body)
+                self.assertNotIn(b'alt="Upcoming Event"', body)
+                self.assertIn(b'Official tally board', body)
                 self.assertNotIn(b'Event announcements will appear here when posted.', body)
+            self.assertEqual(self.sql("SELECT setting_value FROM site_settings WHERE setting_key='event_photo'")[0]['setting_value'], 'assets/img/siklab/wordmark.webp')
         finally:
             self.sql("DELETE FROM site_settings WHERE setting_key='event_photo'")
             if original:

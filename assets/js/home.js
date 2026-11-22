@@ -92,14 +92,6 @@
     });
   }
 
-  const poster = document.querySelector('#event-poster-dialog');
-  document.querySelector('[data-event-poster-open]')?.addEventListener('click', () => poster?.showModal());
-  poster?.addEventListener('click', (event) => {
-    if (event.target === poster) {
-      const bounds = poster.getBoundingClientRect();
-      if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) poster.close();
-    }
-  });
   document.querySelectorAll('.portrait-image img').forEach((photo) => {
     const markUnavailable = () => photo.closest('.portrait-image').classList.add('photo-unavailable');
     photo.addEventListener('error', markUnavailable);

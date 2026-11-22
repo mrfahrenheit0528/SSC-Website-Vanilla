@@ -159,8 +159,9 @@ Large page-intro SSC crests are hidden on phones; the navigation crest remains.
 
 `about.php` retains About This Platform and the original developer profiles.
 `assets/css/home.css` styles Home and the tally placeholder; `assets/js/home.js`
-handles cards, video playback, reveals and the optional uploaded-announcement
-modal. `assets/js/officer-scroll.mjs` handles the officer sequence. The former
+handles cards, video playback and reveals. Saved event announcements are omitted
+from the SIKLAB opening; the existing banner record remains preserved for later use.
+`assets/js/officer-scroll.mjs` handles the officer sequence. The former
 photo-parallax modules and photo assets are retained as earlier design work but
 are no longer loaded by the homepage. The Regular template remains archived for
 its later redesign.
