@@ -293,7 +293,11 @@ class LocalApplicationTests(unittest.TestCase):
                 self.assertIn(officer, body)
                 self.assertEqual(body.count('class="library-holder-year"'), 3)
                 self.assertIn('Current &middot; AY 2026&ndash;2027', body)
-                self.assertNotIn('https://i.ibb.co/', body.split('<aside class="library-holders"', 1)[1].split('</aside>', 1)[0])
+                holders = body.split('<aside class="library-holders"', 1)[1].split('</aside>', 1)[0]
+                self.assertNotIn('https://i.ibb.co/', holders)
+                self.assertEqual(re.findall(r'AY (\d{4})&ndash;', holders), ['2024', '2025', '2026'])
+                self.assertEqual(holders.count('is-former'), 2)
+                self.assertNotIn('<a ', holders)
         for query, count in [('section=treasurer&search=Synthetic', 1), ('search=Example', 3),
                              ('section=secretary&search=Finance', 0), ('section=unknown', 3),
                              ('section%5B%5D=treasurer&search%5B%5D=invalid', 3),

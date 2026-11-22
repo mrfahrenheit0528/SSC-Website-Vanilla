@@ -5,7 +5,7 @@ import vm from 'node:vm';
 
 const source = readFileSync(new URL('../assets/js/documents.js', import.meta.url), 'utf8');
 const settle = () => new Promise(setImmediate);
-function fixture({ enhanced = true, brokenPortrait = false } = {}) {
+function fixture({ enhanced = true, brokenPortrait = false, savedView = 'grid', blockedStorage = false } = {}) {
   function element(extra = {}) {
     const classes = new Set(), handlers = new Map();
     return {
@@ -22,11 +22,15 @@ function fixture({ enhanced = true, brokenPortrait = false } = {}) {
   const field = element({ value: '' }), section = { value: 'all' }, status = { hidden: true };
   const portrait = element({ complete: brokenPortrait, naturalWidth: brokenPortrait ? 0 : 800 });
   const qr = element({ hidden: true, dataset: { documentQr: "uploads/Council%27s%20budget%20%231.pdf?v=7", documentName: "Council's <budget> #1.pdf" } });
+  const viewControls = { hidden: true };
+  const viewButtons = ['list', 'grid'].map((view) => element({ dataset: { libraryView: view } }));
+  const storage = { value: savedView, getItem() { return this.value; }, setItem(key, value) { this.value = value; } };
   const results = element({
     innerHTML: 'initial', dataset: { section: 'all', search: '', page: '1' },
     scrollIntoView(options) { this.scrolled = options; },
     contains: (node) => node?.inResults === true,
-    querySelectorAll: (selector) => selector === '[data-document-qr]' ? [qr] : selector === '[data-holder-portrait]' ? [portrait] : [],
+    querySelector: (selector) => selector === '[data-library-view-controls]' ? viewControls : null,
+    querySelectorAll: (selector) => selector === '[data-document-qr]' ? [qr] : selector === '[data-holder-portrait]' ? [portrait] : selector === '[data-library-view]' ? viewButtons : [],
   });
   const fields = { '[data-qr-name]': {}, '[data-qr-status]': {}, '[data-qr-link]': {}, '[data-qr-image]': { replaceChildren(image) { this.image = image; } } };
   const dialog = element({
@@ -44,6 +48,8 @@ function fixture({ enhanced = true, brokenPortrait = false } = {}) {
     createElement() { const image = element(); images.push(image); return image; },
   };
   const window = { location, addEventListener: (name, handler) => windowEvents.set(name, handler) };
+  if (blockedStorage) Object.defineProperty(window, 'localStorage', { get() { throw new Error('Storage blocked'); } });
+  else window.localStorage = storage;
   if (enhanced) Object.assign(window, {
     history: {
       pushState(state, title, url) { pushes.push(url); location.href = url; },
@@ -56,7 +62,8 @@ function fixture({ enhanced = true, brokenPortrait = false } = {}) {
   const event = (target, extra = {}) => ({ target, button: 0, preventDefault() { this.prevented = true; }, ...extra });
   const click = (category, extra) => { const e = event(null, extra); categories.find((link) => link.dataset.libraryCategory === category).emit('click', e); return e; };
   const openQR = () => results.emit('click', event({ closest: (selector) => selector === '[data-document-qr]' ? qr : null }));
-  return { results, dialog, fields, field, section, status, portrait, qr, requests, pushes, replaces, images, window, document, categories, windowEvents, form, event, click, openQR };
+  const chooseView = (view) => results.emit('click', event({ closest: (selector) => selector === '[data-library-view]' ? viewButtons.find((button) => button.dataset.libraryView === view) : null }));
+  return { results, dialog, fields, field, section, status, portrait, qr, requests, pushes, replaces, images, window, document, categories, windowEvents, form, event, click, openQR, chooseView, viewControls, viewButtons, storage };
 }
 
 test('category changes load in place with the typed search and update selected links', async () => {
@@ -183,4 +190,37 @@ test('broken office-holder portraits fall back to the local silhouette', () => {
   const f = fixture({ brokenPortrait: true });
   assert.equal(f.portrait.src, 'assets/img/officers/silhouette.svg');
   assert.equal(f.portrait.handlers.get('error').length, 0);
+});
+
+test('list and grid buttons change the layout, accessible state and saved preference', () => {
+  const f = fixture();
+  assert.equal(f.viewControls.hidden, false);
+  assert.equal(f.results.dataset.view, 'grid');
+  f.chooseView('list');
+  assert.equal(f.results.dataset.view, 'list');
+  assert.deepEqual(f.viewButtons.map((button) => button.attributes['aria-pressed']), ['true', 'false']);
+  assert.equal(f.storage.value, 'list');
+  f.chooseView('grid');
+  assert.equal(f.results.dataset.view, 'grid');
+  assert.deepEqual(f.viewButtons.map((button) => button.attributes['aria-pressed']), ['false', 'true']);
+});
+
+test('the saved view survives category changes and initializes replacement buttons', async () => {
+  const f = fixture({ savedView: 'list' });
+  assert.equal(f.results.dataset.view, 'list');
+  f.click('treasurer');
+  // The server renders replacement controls with grid selected by default.
+  f.viewButtons[0].attributes['aria-pressed'] = 'false';
+  f.viewButtons[1].attributes['aria-pressed'] = 'true';
+  f.requests[0].resolve('treasurer'); await settle();
+  assert.equal(f.results.dataset.view, 'list');
+  assert.deepEqual(f.viewButtons.map((button) => button.attributes['aria-pressed']), ['true', 'false']);
+  assert.equal(f.requests.length, 1);
+});
+
+test('view switching works when storage or asynchronous navigation is unavailable', () => {
+  const f = fixture({ enhanced: false, blockedStorage: true });
+  f.chooseView('list');
+  assert.equal(f.results.dataset.view, 'list');
+  assert.equal(fixture({ savedView: 'invalid' }).results.dataset.view, 'grid');
 });

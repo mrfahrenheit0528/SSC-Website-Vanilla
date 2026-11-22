@@ -63,7 +63,8 @@ $office_holders = [];
 if ($section !== 'all') {
     $rosters = require __DIR__ . '/includes/officer-rosters.php';
     $portraits = json_decode(file_get_contents(__DIR__ . '/assets/img/officers/manifest.json'), true) ?? [];
-    foreach (array_reverse($rosters, true) as $year => $roster) {
+    ksort($rosters, SORT_NUMERIC);
+    foreach ($rosters as $year => $roster) {
         foreach ($roster as $officer) {
             if ($officer['role'] !== $categories[$section]['role']) continue;
             $officer['year'] = (string)$year;
@@ -113,12 +114,21 @@ include __DIR__ . '/includes/head.php';
 
     <?php if (($_GET['error'] ?? '') === 'notfound'): ?><p class="library-notice library-width" role="status">That document could not be found. Browse the available records below.</p><?php endif; ?>
     <section class="library-results library-width" id="library-results" tabindex="-1" aria-labelledby="library-results-title" data-library-results data-section="<?php echo $section; ?>" data-search="<?php echo $escape($search); ?>" data-page="<?php echo $library_page; ?>">
-        <header class="library-results-heading"><div><h2 id="library-results-title"><?php echo $section === 'all' ? 'All Documents' : $categories[$section]['name']; ?></h2><p><?php echo $total; ?> document<?php echo $total === 1 ? '' : 's'; ?><?php if ($search !== ''): ?> matching &ldquo;<?php echo $escape($search); ?>&rdquo;<?php endif; ?></p></div><?php if ($search !== ''): ?><a class="library-clear" href="<?php echo $escape($library_url($section)); ?>" data-library-link>Clear search</a><?php endif; ?></header>
+        <header class="library-results-heading">
+            <div><h2 id="library-results-title"><?php echo $section === 'all' ? 'All Documents' : $categories[$section]['name']; ?></h2><p><?php echo $total; ?> document<?php echo $total === 1 ? '' : 's'; ?><?php if ($search !== ''): ?> matching &ldquo;<?php echo $escape($search); ?>&rdquo;<?php endif; ?></p></div>
+            <div class="library-heading-actions">
+                <?php if ($search !== ''): ?><a class="library-clear" href="<?php echo $escape($library_url($section)); ?>" data-library-link>Clear search</a><?php endif; ?>
+                <div class="library-view-controls" role="group" aria-label="Document view" data-library-view-controls hidden>
+                    <button class="library-view-button" type="button" data-library-view="list" aria-label="List view" title="List view" aria-pressed="false" aria-controls="library-results"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h1M3 12h1M3 18h1"/></svg></button>
+                    <button class="library-view-button" type="button" data-library-view="grid" aria-label="Grid view" title="Grid view" aria-pressed="true" aria-controls="library-results"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3zM15 15h6v6h-6z"/></svg></button>
+                </div>
+            </div>
+        </header>
 
         <?php if ($office_holders): ?>
         <aside class="library-holders" aria-labelledby="library-holders-title"><h3 id="library-holders-title">OFFICE HOLDERS</h3><div class="library-holder-grid">
             <?php foreach ($office_holders as $officer): $is_current = $officer['year'] === SSC_CURRENT_ACADEMIC_YEAR; ?>
-            <a class="library-holder<?php if ($is_current): ?> is-current<?php endif; ?>" href="officers.php?year=<?php echo $officer['year']; ?>"><img src="<?php echo $escape($officer['portrait']); ?>" width="640" height="800" alt="" loading="lazy" data-holder-portrait><div><p class="library-holder-year"><?php if ($is_current): ?>Current &middot; <?php endif; ?>AY <?php echo $officer['year']; ?>&ndash;<?php echo (int)$officer['year'] + 1; ?></p><h4><?php echo $escape($officer['name']); ?></h4><p><?php echo $escape($officer['role']); ?></p><p class="library-holder-course"><?php echo $escape($officer['course']); ?></p></div></a>
+            <article class="library-holder <?php echo $is_current ? 'is-current' : 'is-former'; ?>"><img src="<?php echo $escape($officer['portrait']); ?>" width="640" height="800" alt="" loading="lazy" data-holder-portrait><div><p class="library-holder-year"><?php if ($is_current): ?>Current &middot; <?php endif; ?>AY <?php echo $officer['year']; ?>&ndash;<?php echo (int)$officer['year'] + 1; ?></p><h4><?php echo $escape($officer['name']); ?></h4><p><?php echo $escape($officer['role']); ?></p><p class="library-holder-course"><?php echo $escape($officer['course']); ?></p></div></article>
             <?php endforeach; ?>
         </div></aside>
         <?php endif; ?>

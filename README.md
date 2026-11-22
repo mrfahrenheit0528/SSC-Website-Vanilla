@@ -278,6 +278,11 @@ records and offer a retry. Category totals describe the full library, while the
 results heading shows the filtered count. Results use 12 records per page and
 retain category/search parameters between pages. Office-holder panels derive all three
 academic years from the shared roster and identify AY 2026-2027 as current.
+Compact office-holder cards run from oldest to newest, with the current year on
+the right. Former officers are faded, and the cards have no links. Icon-only list
+and grid controls beside the results heading switch document layouts without
+checkmarks. The chosen layout persists across filtering/pagination and is saved
+in local storage when available; blocked storage does not prevent switching.
 
 PDF and download links normalize legacy Windows upload paths and encode filename
 segments so spaces, apostrophes and hash characters remain usable. QR sharing uses

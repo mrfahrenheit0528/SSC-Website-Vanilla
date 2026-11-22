@@ -3,7 +3,16 @@
   if (!results) return;
   const dialog = document.querySelector('[data-library-qr]');
   let qrVersion = 0;
+  let view = 'grid';
+  try { if (window.localStorage?.getItem('ssc.documents.view') === 'list') view = 'list'; } catch { /* Storage can be unavailable in private browsing. */ }
+  function applyView() {
+    results.dataset.view = view;
+    results.querySelectorAll('[data-library-view]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.libraryView === view)));
+    const controls = results.querySelector('[data-library-view-controls]');
+    if (controls) controls.hidden = false;
+  }
   function prepareResults() {
+    applyView();
     results.querySelectorAll('[data-holder-portrait]').forEach((image) => {
       const fallback = () => {
         image.removeEventListener('error', fallback);
@@ -15,6 +24,13 @@
     if (dialog?.showModal) results.querySelectorAll('[data-document-qr]').forEach((button) => { button.hidden = false; });
   }
   prepareResults();
+  results.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-library-view]');
+    if (!button || !['list', 'grid'].includes(button.dataset.libraryView)) return;
+    view = button.dataset.libraryView;
+    applyView();
+    try { window.localStorage?.setItem('ssc.documents.view', view); } catch { /* The selected view still works without persistence. */ }
+  });
   results.addEventListener('click', (event) => {
     const button = event.target.closest('[data-document-qr]');
     if (!button || !dialog?.showModal) return;
