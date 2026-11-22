@@ -132,5 +132,10 @@ $page_description = $page_description ?? 'Promoting transparency and student wel
     <link href="assets/css/about.css?v=<?php echo filemtime(__DIR__ . '/../assets/css/about.css'); ?>" rel="stylesheet">
     <script src="assets/js/about.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/about.js'); ?>" defer></script>
     <?php endif; ?>
+    <?php if (($current_page ?? '') === 'login'): ?>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="assets/css/council.css?v=<?php echo filemtime(__DIR__ . '/../assets/css/council.css'); ?>" rel="stylesheet">
+    <script src="assets/js/login.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/login.js'); ?>" defer></script>
+    <?php endif; ?>
     <script src="assets/js/site.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/site.js'); ?>" defer></script>
 </head>

@@ -303,6 +303,21 @@ and `assets/js/about.js`. Intro/hover effects respect reduced motion. Automated
 checks cover profile selection, history replacement, dismissal/scroll restoration,
 image failure and the fallback experience. Visual browser QA remains pending.
 
+### Council sign in
+
+`login.php` uses the shared SSC background and navigation with a responsive
+two-column sign-in layout. Labels, autocomplete, field errors and a password
+visibility control remain keyboard accessible. Successful sign-in regenerates
+the session ID; forms validate a session token. The login button stays absent
+from the public header; sign in directly at `/login.php` or through the footer.
+
+Local development uses `admin@example.test` and the generated `admin_password`
+in ignored `config/dev.local.json`. Production account passwords do not apply to
+the synthetic development database. Credentials were verified through the local
+login flow; passwords are not displayed on the page or committed. The shared
+workspace styles are in `assets/css/council.css`, with sign-in behavior in
+`assets/js/login.js`.
+
 ## Private files and uploaded records
 
 - `vendor/` and `node_modules/` are generated dependencies and are not tracked.

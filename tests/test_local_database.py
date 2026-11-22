@@ -210,7 +210,9 @@ class LocalApplicationTests(unittest.TestCase):
 
     def login(self):
         opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
-        data = urllib.parse.urlencode({'username': 'admin@example.test', 'password': self.credentials['admin_password']}).encode()
+        with opener.open(self.base + '/login.php') as response:
+            token = re.search(r'name="csrf_token" value="([a-f0-9]+)"', response.read().decode()).group(1)
+        data = urllib.parse.urlencode({'username': 'admin@example.test', 'password': self.credentials['admin_password'], 'csrf_token': token}).encode()
         response = opener.open(self.base + '/login.php', data=data, timeout=10)
         self.assertIn('/dashboard.php', response.url)
         return opener
@@ -506,6 +508,22 @@ class LocalApplicationTests(unittest.TestCase):
         opener.open(self.base + '/logout.php', timeout=10).close()
         with opener.open(self.base + '/dashboard.php', timeout=10) as response:
             self.assertIn('/login.php', response.url)
+
+    def test_login_validation_and_session_token(self):
+        opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+        with opener.open(self.base + '/login.php') as response:
+            body = response.read().decode()
+            token = re.search(r'name="csrf_token" value="([a-f0-9]+)"', body).group(1)
+            self.assertIn('autocomplete="current-password"', body)
+        cases = [({'username': 'admin@example.test', 'password': 'wrong', 'csrf_token': token}, 'Invalid username or password.'),
+                 ({'username[]': 'invalid', 'password[]': 'invalid', 'csrf_token': token}, 'Please enter your email address.'),
+                 ({'username': 'admin@example.test', 'password': self.credentials['admin_password']}, 'Your session expired.')]
+        for form, message in cases:
+            with opener.open(self.base + '/login.php', urllib.parse.urlencode(form).encode()) as response:
+                body = response.read().decode()
+                self.assertIn(message, body)
+                self.assertNotIn('Warning:', body)
+                self.assertIn('/login.php', response.url)
 
     def test_upload_supplies_required_title_on_strict_schema(self):
         opener = self.login()
