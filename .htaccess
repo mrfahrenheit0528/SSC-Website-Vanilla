@@ -4,6 +4,7 @@ DirectoryIndex index.php index.html
 <IfModule mod_mime.c>
     AddType model/gltf-binary .glb
     AddType text/javascript .mjs
+    AddType video/mp4 .mp4
 </IfModule>
 
 <IfModule mod_rewrite.c>

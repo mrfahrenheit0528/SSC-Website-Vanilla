@@ -6,6 +6,7 @@
  *   $page_description – meta description / OG description
  */
 require_once __DIR__ . '/theme.php';
+require_once __DIR__ . '/current-academic-year.php';
 $page_title       = $page_title       ?? 'CSPC — Supreme Student Council';
 $page_description = $page_description ?? 'Promoting transparency and student welfare through accessible documentation and information sharing.';
 ?><!DOCTYPE html>
@@ -107,12 +108,14 @@ $page_description = $page_description ?? 'Promoting transparency and student wel
     <script src="assets/js/flowbite.min.js" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="assets/css/site.css?v=<?php echo filemtime(__DIR__ . '/../assets/css/site.css'); ?>" rel="stylesheet">
-    <?php if (($current_page ?? '') === 'home'): ?>
+    <?php if (in_array($current_page ?? '', ['home', 'tally'], true)): ?>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="preload" as="image" href="assets/img/siklab/campus-photo-v1.webp" fetchpriority="high">
     <link href="assets/css/home.css?v=<?php echo filemtime(__DIR__ . '/../assets/css/home.css'); ?>" rel="stylesheet">
+    <?php endif; ?>
+    <?php if (($current_page ?? '') === 'home'): ?>
+    <link rel="preload" as="image" href="assets/img/siklab/event-video-poster.webp" fetchpriority="high">
     <script src="assets/js/home.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/home.js'); ?>" defer></script>
-    <script type="module" src="assets/js/parallax-scene.mjs?v=<?php echo filemtime(__DIR__ . '/../assets/js/parallax-scene.mjs'); ?>"></script>
+    <script type="module" src="assets/js/officer-scroll.mjs?v=<?php echo filemtime(__DIR__ . '/../assets/js/officer-scroll.mjs'); ?>"></script>
     <?php endif; ?>
     <script src="assets/js/site.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/site.js'); ?>" defer></script>
 </head>

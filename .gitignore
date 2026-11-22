@@ -38,6 +38,12 @@
 __pycache__/
 *.pyc
 
+# Local source media and design references; commit prepared website assets instead.
+/assets/reference/
+/assets/static/1122(1).mp4
+/assets/static/2026-2027 officers/
+/assets/static/CSPC-Supreme-Student-Council-AY-2026-2027-Officers-Directory (2).pdf
+
 # Machine-generated editor and operating-system files
 /.vscode-test/
 .DS_Store

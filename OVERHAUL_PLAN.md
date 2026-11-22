@@ -54,6 +54,7 @@ Approved scope: provide two UI themes: **Regular** for everyday council use and 
 - Use synthetic data for local testing where possible. Keep credentials, private backups, and production database exports out of Git.
 - Complete each phase's checkpoint before moving to work that depends on it.
 - Record design decisions and any scope changes here as work proceeds.
+- Commit each edited page after its implementation and relevant checks are complete, before starting the next page (owner request, November 22, 2026).
 
 ## 1. Establish the deployment baseline and recovery path
 

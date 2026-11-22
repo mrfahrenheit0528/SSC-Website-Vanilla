@@ -106,8 +106,8 @@ they do not reset your persistent development database.
 ## Frontend dependencies
 
 Flowbite's vendored CSS and JavaScript in `assets/` are used by existing pages.
-The SIKLAB hero uses static WebP artwork and CSS, with no 3D renderer or frontend
-build step. The unused Three.js code, bundle, and build dependencies are removed.
+The SIKLAB hero uses an optimized MP4 loop with a WebP poster, with no 3D
+renderer or frontend build step. The unused Three.js code, bundle, and build dependencies are removed.
 Tailwind, PDF.js, fonts, and the existing council logo still use their CDNs.
 
 ### SIKLAB homepage
@@ -117,69 +117,90 @@ theme change. The December 5 cutoff is removed; there is no automatic expiry.
 `includes/theme.php` sets the active theme. There is no visitor theme picker;
 old theme query parameters and preference cookies cannot override it.
 The Regular redesign is deferred until after SIKLAB.
-Secondary page layouts are not yet overhauled.
+The secondary pages retain their existing layouts.
 
-The homepage is rebuilt around the supplied reference video:
+The current homepage uses a lighter SIKLAB design with four sections:
 
-- An original-photo morning opening: the owner's actual campus JPEG is encoded
-  directly for all four visible depth planes (sky, campus, monument, foreground).
-  Alpha masks split the photo without redrawing its buildings, seal or foliage.
-  Hidden-gap repair plates appear only underneath the moving near objects.
-  The dark website sections, official SIKLAB assets and existing content are retained.
-- Three flipping document-category cards (Treasurer, Legislative, Secretary), using
-  live database counts and the existing document-library filters. Click/tap to flip;
-  Escape returns to the front. Hidden faces are inert; without JavaScript both faces
-  and their links remain available.
-- Eight individual executive-officer scroll sections. The existing AY 2025-2026
-  roster/order lives in `includes/executive-officers.php` until the owner supplies
-  the new roster. Portraits and contact details remain the original public content.
-- The seven college emblems above the existing council footer, preserving contact
-  details, social links and copyright information.
-- `about.php` contains About This Platform and the original developer profiles.
-  Profile dialogs use native modal focus handling and keyboard-accessible triggers.
+- A centered, full-width video hero for **SIKLAB: CSPC Intramurals 2026**, dated
+  **November 23-28, 2026**. The official tally-board button opens `tally.php`, which
+  displays "The official tally board is underway" until the real board is ready.
+  The seven college logos sit inside the opening, with names provided only as alt text.
+- Three redesigned document cards (Treasurer, Legislative, Secretary), using live
+  database counts and the existing library filters. Mouse hover reveals a card;
+  click/tap and keyboard activation work too. Escape returns to its front. Hover
+  does not move focus. Hidden faces are inert; without JavaScript both faces and
+  document links remain available.
+- A desktop officer sequence that moves horizontally as the visitor scrolls down.
+  Native sticky positioning and normal page scrolling drive it; wheel and touch
+  events are not intercepted. Previous/Next controls, direct officer anchors and
+  keyboard focus reveal the corresponding panel. The heading, cards and controls
+  share one viewport-height sticky stage beneath the fixed navigation, so the
+  Executive Officers heading stays visible throughout the horizontal sequence.
+  Frame-based easing softens wheel/trackpad motion; 1.35 vertical pixels move the
+  rail one horizontal pixel. Keyboard focus and direct anchors remain immediate.
+  Mobile, reduced motion and
+  short/zoomed layouts use vertical profiles. `includes/executive-officers.php`
+  derives the eight current executives from the shared AY 2026-2027 roster in
+  the supplied directory's order.
+- The existing council footer, quick links, social links and contact information.
 
-`assets/css/home.css` styles the dark navy/purple homepage. `assets/js/home.js`
-handles document cards and reveals; `assets/js/parallax-scene.mjs` drives the
-independent scene planes using `parallax-math.mjs`. The opening uses native sticky
-positioning, with no intercepted wheel/touch events. On narrow screens, travel is
-bounded by the photograph height. The plain photo remains visible until all masks
-and repair plates load, and stays as a fallback if any asset fails. Motion respects reduced-motion
-preferences, which remove the extended scene and reset every plane. Faded copy
-becomes inert; animation stops offscreen or in hidden tabs. Officer panels keep
-natural scrolling. The legacy Regular template remains archived for the later redesign.
-The uploaded event banner is accessible through the opening's announcement dialog;
-when none is uploaded the opening shows a short announcement placeholder.
+Smooth scroll snapping guides visitors from the document section through
+individual officers and the footer. After actual scroll movement settles for
+10 ms, the page advances to a definite stop with a 750-1050 ms cubic
+ease-in/ease-out. New input cancels the transition immediately.
+The gesture stays pending if the timeout precedes the first rendered scroll
+frame; same-direction wheel tails preserve its original intent, including tiny
+trackpad deltas. Reversing direction starts from the current position.
+Accumulated wheel input projects the landing farther for large gestures, allowing
+several officers or sections to be skipped in either direction. Small gestures
+still advance one stop; wheel line/page units are normalized and animation-driven
+movement does not count as additional wheel input. The video
+opening retains ordinary scrolling. Tall cards have intermediate reading stops;
+form controls, modal dialogs, Home/End and scrollbar dragging remain ordinary.
+The officer rail publishes measured positions to `assets/js/section-snap.mjs`,
+which creates invisible vertical stops for the horizontal cards and updates them
+after layout changes. Header clearance is measured. Wheel/touch listeners are
+passive; the browser's faster native snapping is disabled while explicit easing
+is active. Reduced motion disables snapping,
+and unsupported browsers keep normal scrolling.
 
-The eight photo/matte/backplate WebP assets total approximately 673 KB and
-share a 1920 x 1078 registration canvas. Source assets are in
-`assets/static/photo-parallax-v1/`. `original.jpg` is a byte-for-byte copy of the
-owner's supplied image, verified against `docs/campus-photo-source.json`.
-Generated cutout RGB is never displayed: the encoder extracts alpha guides, builds
-exclusive white masks and derives the campus complement and repair-gap mask.
-The four surface masks cover the source once at rest, preventing duplicate geometry.
-Only sky/campus areas hidden by moving objects use repaired backplates. A modest
-shared CSS exposure lift gives a morning treatment. Exact prompts and provenance
-are recorded in `docs/siklab-artwork.txt`. Previous cartoon artwork has been removed.
+`about.php` retains About This Platform and the original developer profiles.
+`assets/css/home.css` styles Home and the tally placeholder; `assets/js/home.js`
+handles cards, video playback, reveals and the optional uploaded-announcement
+modal. `assets/js/officer-scroll.mjs` handles the officer sequence. The former
+photo-parallax modules and photo assets are retained as earlier design work but
+are no longer loaded by the homepage. The Regular template remains archived for
+its later redesign.
 
-Original PNGs are retained in `assets/static/`. Prepared WebP variants are in
-`assets/img/siklab/`; regenerate them with:
+The owner's original `assets/static/1122(1).mp4` is preserved locally. The runtime
+copy is `assets/video/siklab-2026-loop.mp4`: H.264, 1280 x 720, 24 fps, no audio,
+fast-start metadata, approximately 5.85 MB, reduced from the 26.98 MB source.
+The video loops muted with inline playback. A pause/play button is available;
+playback pauses offscreen and in hidden tabs. Reduced-motion and data-saving
+preferences default to the WebP poster, with manual play still available.
+Blocked autoplay or video errors leave the poster and event information visible.
+
+Recreate the web video and poster from the untouched source with FFmpeg:
 
 ```powershell
-php -d extension=gd scripts/prepare-visual-assets.php
+ffmpeg -i "assets/static/1122(1).mp4" -vf "scale=1280:-2,fps=24" -c:v libx264 -preset medium -crf 28 -maxrate 2200k -bufsize 4400k -pix_fmt yuv420p -an -movflags +faststart assets/video/siklab-2026-loop.mp4
+ffmpeg -ss 1 -i "assets/static/1122(1).mp4" -frames:v 1 -vf "scale=1280:-2" -quality 85 -update 1 assets/img/siklab/event-video-poster.webp
 ```
 
-This CLI-only encoder preserves the originals and uses a temporary 512 MB memory
-limit for the large source artwork. It is not run on the hosting server. No event
-dates, match schedules, results or official slogans were invented; existing
-documents, officer rosters and the admin-managed announcement banner remain the
-source of council content. The supplied GLB remains in the source assets for
-future use but is not loaded by the homepage. PHP tests cover the active theme,
-the homepage, About page, event-poster branch, college identities and image delivery.
-Run `node --test tests/home-interactions.test.mjs tests/parallax.test.mjs` for card
-focus/inert/Escape checks, depth displacement, scroll-controller wiring and
-reduced-motion resets. PHP tests verify the source-photo checksum, full-canvas registration and non-overlapping photo coverage. Node tests also cover narrow-screen travel and asset-loading fallbacks.
-Visual desktop/mobile browser QA is pending because both browser and native preview connections are unavailable. HTTP, HTML structure, CSS parsing, PHP/JS syntax and interaction-state checks pass.
-Local reference videos under `assets/reference/` are excluded from runtime packages.
+Original SIKLAB PNGs remain in `assets/static/`; prepared WebP images are in
+`assets/img/siklab/`. The earlier photo source is verified against
+`docs/campus-photo-source.json`. `scripts/prepare-visual-assets.php` still reproduces
+those artwork assets. The GLB remains available but is not loaded by the homepage.
+Local references in `assets/reference/` and original video masters in
+`assets/static/` are excluded from release packages; optimized `assets/video/`
+files are included. `tally.php` is included in both the local router and release.
+
+Run `python scripts/dev.py test` for disposable-database integration checks,
+public pages/media and release safeguards. Run `node --test tests/*.test.mjs`
+for card hover/focus/Escape, video preferences/playback, officer scroll bounds,
+keyboard navigation and responsive/reduced-motion resets. The retained photo
+module tests also continue to run. Visual desktop/mobile browser QA remains
+pending because the browser connection is unavailable.
 
 ## Private files and uploaded records
 

@@ -27,8 +27,8 @@ if($_ep){
 }
 
 require_once __DIR__ . '/includes/theme.php';
-$page_title = 'CSPC — Supreme Student Council | Home';
-$page_description = 'Promoting transparency and student welfare through accessible documentation and information sharing. Empowering students through leadership, service, and advocacy.';
+$page_title = 'SIKLAB: CSPC Intramurals 2026 | November 23–28';
+$page_description = 'SIKLAB: CSPC Intramurals 2026. November 23–28, 2026. Explore official council documents and meet the executive officers.';
 $current_page = 'home';
 include 'includes/head.php';
 ?>

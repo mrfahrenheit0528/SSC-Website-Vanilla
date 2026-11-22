@@ -2,6 +2,7 @@
 
 import http.cookiejar
 import html
+from html.parser import HTMLParser
 import hashlib
 import json
 import os
@@ -25,6 +26,55 @@ from dev import php_command
 
 
 class ConfigurationTests(unittest.TestCase):
+    def test_current_roster_uses_the_confirmed_directory_and_shared_executives(self):
+        source = '''require $argv[1].'/includes/current-academic-year.php';
+        $rosters=require $argv[1].'/includes/officer-rosters.php';
+        $executives=require $argv[1].'/includes/executive-officers.php';
+        echo json_encode(['year'=>SSC_CURRENT_ACADEMIC_YEAR,'roster'=>$rosters[SSC_CURRENT_ACADEMIC_YEAR],'executives'=>$executives]);'''
+        result = subprocess.run(php_command() + ['-r', source, str(ROOT)], capture_output=True, text=True, encoding='utf-8', check=True)
+        data = json.loads(result.stdout)
+        self.assertEqual(data['year'], '2026')
+        self.assertEqual(len(data['roster']), 53)
+        by_name = {officer['name']: officer for officer in data['roster']}
+        self.assertEqual(len(by_name), 53)
+        self.assertEqual(sum(bool(officer['image']) for officer in data['roster']), 46)
+        self.assertEqual(by_name['Trisha Mae E. Abonita']['birthday'], 'Birthday: April 30, 2008')
+        self.assertTrue(by_name['Carl Anthony S. Acbang']['image'].endswith('/acbang.jpg'))
+        self.assertEqual(by_name['Remier Rave O. Acbang']['image'], '')
+        self.assertEqual(by_name['Ma. Vianney B. Morillo']['role'], by_name['Faith Meca T. Puyawan']['role'])
+        self.assertEqual(by_name['Ma. Vianney B. Morillo']['course'], 'BSIS 4A')
+        for name in ('Ma. Vianney B. Morillo', 'Chloe Ysabelle T. Peñones', 'Ma. Socorro B. Igana', 'Janelle Sallena'):
+            self.assertIn(name, by_name)
+            self.assertEqual(by_name[name]['contacts'], [])
+            self.assertEqual(by_name[name]['birthday'], '')
+        self.assertEqual([officer['name'] for officer in data['executives']], [
+            'Jester Carl SJ. Sumpay', 'Jessil C. Martinez', 'Ralph Joefrancis D. Abonal',
+            'Ma. Lourdes Carmen A. Tulabot', 'RJ Patrick A. Sernal', 'Luke Andrei O. Ronquillo',
+            'Krystine Joy A. Grospe', 'Camille C. Salvadora',
+        ])
+        self.assertTrue(all(officer['image'].startswith('assets/img/officers/') for officer in data['executives']))
+
+    def test_portrait_encoder_rejects_provider_error_graphics_and_preserves_valid_photos(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixture = root / 'error.php'
+            fixture.write_text("<?php $i=imagecreatetruecolor(320,240);imagefill($i,0,0,imagecolorallocate($i,34,167,218));imagestring($i,5,20,70,'imgbb.com',imagecolorallocate($i,255,255,255));imagestring($i,4,10,140,'service unavailable',imagecolorallocate($i,255,255,255));imagepng($i,$argv[1]);", encoding='utf-8')
+            error_image = root / 'provider-error.png'
+            subprocess.run(php_command() + [str(fixture), str(error_image)], check=True, capture_output=True)
+            valid_image = next((ROOT / 'assets/img/officers').glob('*.webp'))
+            sources = root / 'sources.json'
+            sources.write_text(json.dumps([
+                {'url': 'fixture-error', 'key': 'error', 'source': str(error_image)},
+                {'url': 'fixture-valid', 'key': 'portrait', 'source': str(valid_image)},
+                {'url': 'fixture-missing', 'key': 'missing', 'source': None},
+            ]), encoding='utf-8')
+            subprocess.run(php_command() + [str(ROOT / 'scripts/encode-officer-portraits.php'), str(sources), str(root)], check=True, capture_output=True)
+            manifest = json.loads((root / 'assets/img/officers/manifest.json').read_text())
+            self.assertIsNone(manifest['fixture-error']['path'])
+            self.assertIsNone(manifest['fixture-missing']['path'])
+            self.assertEqual(manifest['fixture-valid']['path'], 'assets/img/officers/portrait.webp')
+            self.assertEqual((root / manifest['fixture-valid']['path']).read_bytes()[:4], b'RIFF')
+
     def test_campus_source_is_the_untouched_supplied_photograph(self):
         metadata = json.loads((ROOT / 'docs/campus-photo-source.json').read_text(encoding='utf-8'))
         original = (ROOT / 'assets/static/photo-parallax-v1/original.jpg').read_bytes()
@@ -166,7 +216,7 @@ class LocalApplicationTests(unittest.TestCase):
         return opener
 
     def test_public_pages_and_document_filter(self):
-        for path in ('/', '/about.php', '/officers.php', '/documents.php', '/login.php', '/auth/register.php'):
+        for path in ('/', '/about.php', '/tally.php', '/officers.php', '/documents.php', '/login.php', '/auth/register.php'):
             with self.subTest(path=path), urllib.request.urlopen(self.base + path, timeout=10) as response:
                 self.assertEqual(response.status, 200)
                 body = response.read()
@@ -192,29 +242,30 @@ class LocalApplicationTests(unittest.TestCase):
                     if path.startswith('/documents.php'):
                         self.assertIn(b'Example Finance Report', body)
                         continue
-                    for original in (b'CSPC Supreme Student Council', b'Academic Year 2025-2026',
+                    for original in (b'CSPC Supreme Student Council', 'Academic Year 2026–2027'.encode('utf-8'),
                                      b'Promoting transparency and student welfare through accessible documentation and information sharing.',
-                                     b'Empowering students through leadership, service, and advocacy.',
-                                     b'Meet the Council', b'Official Documents', b'Executive Officers',
-                                     b'Ann Kyla V. Aquiler', b'About This Platform',
-                                     b'Event announcements will appear here when posted.'):
+                                     b'OFFICIAL DOCUMENTS', b'EXECUTIVE OFFICERS',
+                                     b'Jester Carl SJ. Sumpay', b'RJ Patrick A. Sernal', b'About This Platform',
+                                     b'SIKLAB: CSPC Intramurals 2026', b'November 23', b'28, 2026'):
                         self.assertIn(original.decode('utf-8'), body_text)
-                    self.assertEqual(b'class="opening-trophy"' in body, expected == 'siklab')
                     if expected == 'siklab':
-                        self.assertIn(b'assets/img/siklab/trophy.webp', body)
                         self.assertEqual(body.count(b'data-officer-section'), 8)
                         self.assertEqual(body.count(b'data-document-card'), 3)
-                        self.assertEqual(body.count(b'data-scene-layer'), 4)
-                        self.assertEqual(body.count(b'data-photo-surface'), 4)
-                        self.assertIn(b'data-photo-scene', body)
-                        self.assertIn(b'campus-photo-v1.webp', body)
-                        self.assertIn(b'data-parallax-stage', body)
-                        self.assertNotIn(b'campus-illustration-v1.webp', body)
+                        self.assertIn(b'data-officer-scroll', body)
+                        self.assertIn(b'data-officer-track', body)
+                        self.assertIn(b'data-hero-video', body)
+                        self.assertIn(b'muted loop playsinline preload="none"', body)
+                        self.assertIn(b'href="tally.php"', body)
+                        for obsolete in (b'data-photo-scene', b'data-parallax-stage', b'opening-trophy', b'THE SEVEN COLLEGES', b'college-chapter'):
+                            self.assertNotIn(obsolete, body)
                         self.assertNotIn(b'id="aboutModal"', body)
                         self.assertNotIn(b'id="profileModal"', body)
                         self.assertIn(b'href="about.php"', body)
+                        hero = body.split(b'<section class="event-hero"', 1)[1].split(b'</section>', 1)[0]
+                        self.assertNotIn(b'Promoting transparency', hero)
                         for college in ('BUHI', 'CAS', 'CCS', 'CEA', 'CHS', 'CTDE', 'CTHBM'):
-                            self.assertIn(f'<span>{college}</span>'.encode(), body)
+                            self.assertIn(f'alt="{college}"'.encode(), hero)
+                            self.assertNotIn(f'<span>{college}</span>'.encode(), body)
         for asset in ('trophy', 'bc', 'cas', 'ccs', 'cea', 'chs', 'ctde', 'cthbm',
                       'campus-photo-v1', 'photo-sky-fill-v1', 'photo-campus-fill-v1',
                       'photo-sky-mask-v1', 'photo-campus-mask-v1', 'photo-monument-mask-v1',
@@ -225,6 +276,21 @@ class LocalApplicationTests(unittest.TestCase):
                 self.assertEqual(header[:4], b'RIFF')
                 self.assertEqual(header[8:12], b'WEBP')
         self.assertEqual(self.sql('SELECT COUNT(*) AS total FROM documents'), before)
+
+
+
+    def test_tally_placeholder_and_event_video_are_public(self):
+        with urllib.request.urlopen(self.base + '/tally.php', timeout=10) as response:
+            body = response.read()
+            self.assertIn(b'<h1>The official tally board is underway</h1>', body)
+            self.assertIn(b'href="index.php"', body)
+            self.assertIn(b'Contact Info', body)
+            self.assertNotIn(b'<table', body)
+            self.assertNotIn(b'Warning:', body)
+        with urllib.request.urlopen(self.base + '/assets/video/siklab-2026-loop.mp4', timeout=10) as response:
+            self.assertEqual(response.status, 200)
+            self.assertEqual(response.headers.get_content_type(), 'video/mp4')
+            self.assertIn(b'ftyp', response.read(32))
 
     def test_about_page_preserves_developer_profiles(self):
         with urllib.request.urlopen(self.base + '/about.php', timeout=10) as response:
