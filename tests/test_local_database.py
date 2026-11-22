@@ -277,6 +277,94 @@ class LocalApplicationTests(unittest.TestCase):
                 self.assertEqual(header[8:12], b'WEBP')
         self.assertEqual(self.sql('SELECT COUNT(*) AS total FROM documents'), before)
 
+    def test_document_library_filters_and_current_office_holders(self):
+        cases = [('treasurer', 'RJ Patrick A. Sernal', 'Example Finance Report', 'Example Meeting Minutes'),
+                 ('legislative', 'Ralph Joefrancis D. Abonal', 'Example Council Resolution', 'Example Finance Report'),
+                 ('secretary', 'Ma. Lourdes Carmen A. Tulabot', 'Example Meeting Minutes', 'Example Council Resolution')]
+        for category, officer, included, excluded in cases:
+            with self.subTest(category=category), urllib.request.urlopen(self.base + '/documents.php?section=' + category) as response:
+                body = response.read().decode('utf-8')
+                self.assertIn('<h1>OFFICIAL DOCUMENTS</h1>', body)
+                self.assertIn('assets/css/documents.css', body)
+                self.assertIn('assets/js/documents.js', body)
+                self.assertNotIn('officer-scroll.mjs', body)
+                self.assertIn(included, body)
+                self.assertNotIn(excluded, body)
+                self.assertIn(officer, body)
+                self.assertEqual(body.count('class="library-holder-year"'), 3)
+                self.assertIn('Current &middot; AY 2026&ndash;2027', body)
+                self.assertNotIn('https://i.ibb.co/', body.split('<aside class="library-holders"', 1)[1].split('</aside>', 1)[0])
+        for query, count in [('section=treasurer&search=Synthetic', 1), ('search=Example', 3),
+                             ('section=secretary&search=Finance', 0), ('section=unknown', 3),
+                             ('section%5B%5D=treasurer&search%5B%5D=invalid', 3),
+                             ('search=%22%3E%3Cscript%3Ealert(1)%3C%2Fscript%3E', 0)]:
+            with self.subTest(query=query), urllib.request.urlopen(self.base + '/documents.php?' + query) as response:
+                body = response.read().decode('utf-8')
+                self.assertEqual(body.count('data-document-record'), count)
+                self.assertNotIn('<script>alert(1)</script>', body)
+                self.assertNotIn('Warning:', body)
+                if count == 0:
+                    self.assertIn('No documents found', body)
+                    self.assertIn('data-library-link', body)
+
+    def test_document_library_preserves_legacy_paths_and_encoded_download_links(self):
+        class Links(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.links, self.qr = [], []
+
+            def handle_starttag(self, tag, attrs):
+                attrs = dict(attrs)
+                if tag == 'a': self.links.append(attrs)
+                if 'data-document-qr' in attrs: self.qr.append(attrs)
+
+        original = self.sql('SELECT file_path FROM documents ORDER BY id LIMIT 1')[0]['file_path']
+        file = ROOT / Path(original).parent / "Council's budget #1.pdf"
+        file.write_bytes((ROOT / original).read_bytes())
+        legacy = 'C:\\xampp\\htdocs\\sscwebsite\\' + str(file.relative_to(ROOT)).replace('/', '\\')
+        name_hex = file.name.encode().hex()
+        legacy_hex = legacy.encode().hex()
+        self.sql(f"INSERT INTO documents (title,original_name,description,category,file_path,uploaded_by,display_name,created_at) SELECT 'Special filename fixture',CONVERT(0x{name_hex} USING utf8mb4),'Filename fixture','treasurer',CONVERT(0x{legacy_hex} USING utf8mb4),uploaded_by,'',NOW() FROM documents ORDER BY id LIMIT 1")
+        fixture_id = self.sql("SELECT id FROM documents WHERE title='Special filename fixture'")[0]['id']
+        try:
+            with urllib.request.urlopen(self.base + '/documents.php?search=budget') as response:
+                body = response.read().decode('utf-8')
+            self.assertEqual(body.count('data-document-record'), 1)
+            parser = Links()
+            parser.feed(body)
+            download = next(link['href'] for link in parser.links if 'download' in link)
+            viewer = next(link['href'] for link in parser.links if link.get('href', '').startswith('pdfviewer.php?file='))
+            self.assertIn('%27s%20budget%20%231.pdf', download)
+            self.assertEqual(parser.qr[0]['data-document-qr'], download)
+            self.assertEqual(parser.qr[0]['data-document-name'], file.name)
+            self.assertNotIn('onclick=', body)
+            with urllib.request.urlopen(self.base + '/' + download) as response:
+                self.assertEqual(response.read(5), b'%PDF-')
+            with urllib.request.urlopen(self.base + '/' + viewer) as response:
+                self.assertIn(b'PDF Viewer', response.read())
+        finally:
+            self.sql(f'DELETE FROM documents WHERE id={int(fixture_id)}')
+            file.unlink()
+
+    def test_document_library_pagination_keeps_search_and_category(self):
+        numbers = ' UNION ALL '.join(f'SELECT {index} AS n' for index in range(1, 15))
+        self.sql("INSERT INTO documents (title,original_name,description,category,file_path,uploaded_by,display_name,created_at) "
+                 "SELECT CONCAT('Pagination fixture ',n.n),CONCAT('Pagination fixture ',n.n,'.pdf'),'Pagination test','treasurer',d.file_path,d.uploaded_by,'Fixture',NOW() "
+                 f"FROM (SELECT file_path,uploaded_by FROM documents ORDER BY id LIMIT 1) d CROSS JOIN ({numbers}) n")
+        try:
+            for page, expected, actual in [('1', 12, 1), ('2', 2, 2), ('9999', 2, 2), ('-1', 12, 1), ('bad', 12, 1)]:
+                with self.subTest(page=page), urllib.request.urlopen(self.base + '/documents.php?section=treasurer&search=Pagination&page=' + page) as response:
+                    body = response.read().decode('utf-8')
+                    self.assertEqual(body.count('data-document-record'), expected)
+                    self.assertIn(f'data-page="{actual}"', body)
+                    self.assertIn('14 documents matching', body)
+                    self.assertIn('section=treasurer&amp;search=Pagination', body)
+                    self.assertIn('data-library-page', body)
+            with urllib.request.urlopen(self.base + '/documents.php?error=notfound') as response:
+                self.assertIn(b'That document could not be found.', response.read())
+        finally:
+            self.sql("DELETE FROM documents WHERE title LIKE 'Pagination fixture %'")
+
     def test_officer_directory_preserves_rosters_and_groups_them_by_office(self):
         for year, profiles in (('2024', 52), ('2025', 51), ('2026', 53)):
             with self.subTest(year=year), urllib.request.urlopen(self.base + '/officers.php?year=' + year, timeout=10) as response:

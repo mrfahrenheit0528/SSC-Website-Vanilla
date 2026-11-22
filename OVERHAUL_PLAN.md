@@ -200,9 +200,9 @@ Work in this order so the most important student journeys become reviewable earl
 
 ### 6.2 Documents and PDF viewing
 
-- [ ] Improve search, category filters, result counts, and mobile layouts while preserving shareable query parameters.
-- [ ] Present consistent document titles, categories, dates, and preview/download/share actions.
-- [ ] Add pagination and meaningful empty/error states. Only add academic-year filters if reliable year metadata is available or a migration is included.
+- [x] Improve search, category filters, result counts, and mobile layouts while preserving shareable query parameters. Category/search updates run in place with browser history support.
+- [x] Present consistent document titles, categories, dates, and preview/download/share actions. Office holders derive from the shared current and archived rosters.
+- [x] Add pagination and meaningful empty/error states. Twelve documents per page; query parameters persist. No academic-year document filter was added because reliable document-year metadata is unavailable.
 - [ ] Standardize the PDF.js version and asset loading after checking compatibility with the current viewer.
 - [ ] Verify PDF viewing, downloads, QR links, and browser back navigation on mobile and desktop.
 

@@ -117,7 +117,7 @@ theme change. The December 5 cutoff is removed; there is no automatic expiry.
 `includes/theme.php` sets the active theme. There is no visitor theme picker;
 old theme query parameters and preference cookies cannot override it.
 The Regular redesign is deferred until after SIKLAB.
-The Officers directory is also overhauled; the other secondary pages retain their existing layouts.
+The Officers directory and Documents library are also overhauled; the other secondary pages retain their existing layouts.
 
 The current homepage uses a lighter SIKLAB design with four sections:
 
@@ -259,6 +259,34 @@ folder are preserved locally and excluded from runtime packaging; prepared
 portrait assets in `assets/img/officers/` are included.
 The CLI encoder rejects invalid files and the provider's cyan error graphics,
 including those returned with HTTP 200.
+
+### Documents library
+
+`documents.php` shares the Officers page's fixed geometric background, SSC crest,
+condensed headings, sharp controls and blue/pink/gold accents. The responsive
+document grid preserves publication labels, upload dates, PDF viewing, direct
+downloads and QR sharing. Normal vertical scrolling is used, with no home rail
+or snap controller. Page assets are scoped to `assets/css/documents.css` and
+`assets/js/documents.js`.
+
+Category links retain `?section=treasurer`, `?section=legislative` and
+`?section=secretary`; `?search=...` searches filenames and descriptions. Links
+and the GET form work without JavaScript. With JavaScript, category changes,
+search submissions, clear-search links, pagination and Back/Forward update results in place.
+Stale requests cannot overwrite newer selections; failures preserve existing
+records and offer a retry. Category totals describe the full library, while the
+results heading shows the filtered count. Results use 12 records per page and
+retain category/search parameters between pages. Office-holder panels derive all three
+academic years from the shared roster and identify AY 2026-2027 as current.
+
+PDF and download links normalize legacy Windows upload paths and encode filename
+segments so spaces, apostrophes and hash characters remain usable. QR sharing uses
+the existing QRServer image service, with a native modal dialog, keyboard dismissal,
+backdrop dismissal and a direct document link if the QR image cannot load. Broken
+office-holder portraits fall back to the local silhouette. Automated checks cover
+filters, malformed inputs, escaping, current roster selection, special filenames,
+request races/history, portrait fallback and QR errors. Visual browser QA remains
+pending while the browser connection is unavailable.
 
 ## Private files and uploaded records
 
