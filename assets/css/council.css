@@ -127,3 +127,7 @@ body.council-page .site-header { background: #ffffffb8; border-bottom: 1px solid
 @media (max-width: 1050px) { .council-width { width: calc(100% - 56px); } .login-main { gap: 40px; } }
 @media (max-width: 800px) { .login-main { grid-template-columns: minmax(0, 1fr); gap: 32px; max-width: 580px; min-height: 0; padding-block: 40px 60px; } .login-introduction img { width: 90px; margin-bottom: 20px; } }
 @media (max-width: 680px) { .council-width { width: calc(100% - 40px); } .council-page .site-navigation { padding: 16px 20px; } .council-panel, .login-panel { padding: 24px 20px; } .login-introduction h1 { font-size: 3.5rem; } }
+@media (max-width: 680px) {
+  .workspace-tabs { flex-wrap: nowrap; gap: 8px; }
+  .workspace-tabs a { flex: 1 1 0; min-width: 0; justify-content: center; padding: 10px 8px; font-size: .875rem; line-height: 1.35; text-align: center; overflow-wrap: anywhere; }
+}

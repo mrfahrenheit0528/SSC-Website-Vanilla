@@ -346,6 +346,8 @@ direct/legacy anchors and post-upload feedback select the appropriate panel,
 without discarding search or file selections. The View website header button is
 removed. Members retain the read-only documents panel. Mobile layouts stack the
 publishing panels and keep wide tables inside a labeled scroll region.
+On phones, the two dashboard tab buttons share one row with equal widths and
+compact padding; longer labels wrap inside their buttons.
 The native edit dialog and selection controls are handled by `assets/js/dashboard.js`.
 Filtering clears hidden selections so bulk actions only affect visible selections.
 The file chooser uses an SSC-styled drop area with Browse, selected filenames and
