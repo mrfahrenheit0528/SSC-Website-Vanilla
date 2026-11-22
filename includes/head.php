@@ -137,5 +137,8 @@ $page_description = $page_description ?? 'Promoting transparency and student wel
     <link href="assets/css/council.css?v=<?php echo filemtime(__DIR__ . '/../assets/css/council.css'); ?>" rel="stylesheet">
     <script src="assets/js/<?php echo $current_page; ?>.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/' . $current_page . '.js'); ?>" defer></script>
     <?php endif; ?>
+    <?php if (($current_page ?? '') === 'dashboard'): ?>
+    <script src="assets/js/file-picker.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/file-picker.js'); ?>" defer></script>
+    <?php endif; ?>
     <script src="assets/js/site.js?v=<?php echo filemtime(__DIR__ . '/../assets/js/site.js'); ?>" defer></script>
 </head>

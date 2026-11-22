@@ -53,8 +53,8 @@ test('edit dialog receives the selected record and restores scrolling on dismiss
  assert.equal(f.document.body.style.overflow,'hidden');
  f.dialog.emit('click',{target:f.dialog,clientX:1,clientY:1});assert.equal(f.dialog.open,false);assert.equal(f.document.body.style.overflow,'auto');
 });
-test('file selection labels use filenames as text and readonly dashboards retain search',()=>{
- const f=fixture({admin:false});f.file.files=[{name:'<Council>.pdf'}];f.file.emit('change');assert.equal(f.summary.textContent,'<Council>.pdf');
+test('readonly dashboards retain document search',()=>{
+ const f=fixture({admin:false});
  f.search.value='legislative';f.search.emit('input');assert.equal(f.count.textContent,'1 document');
 });
 test('dashboard tabs switch in place and preserve an in-progress upload selection',()=>{

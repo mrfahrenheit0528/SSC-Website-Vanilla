@@ -102,10 +102,6 @@
     if (!selected.length || (action === 'delete' && !window.confirm(`Delete ${selected.length} document(s)? This cannot be undone.`))) event.preventDefault();
   });
   document.querySelectorAll('[data-confirm]').forEach((form) => form.addEventListener('submit', (event) => { if (!window.confirm(form.dataset.confirm)) event.preventDefault(); }));
-  document.querySelectorAll('[data-file-input]').forEach((input) => input.addEventListener('change', () => {
-    const summary = input.parentElement.querySelector('[data-file-summary]');
-    summary.textContent = input.files.length === 1 ? input.files[0].name : input.files.length ? `${input.files.length} files selected` : 'No files selected.';
-  }));
   const dialog = document.getElementById('editModal');
   if (!dialog?.showModal) return;
   let previousOverflow = null;

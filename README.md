@@ -332,6 +332,11 @@ removed. Members retain the read-only documents panel. Mobile layouts stack the
 publishing panels and keep wide tables inside a labeled scroll region.
 The native edit dialog and selection controls are handled by `assets/js/dashboard.js`.
 Filtering clears hidden selections so bulk actions only affect visible selections.
+The file chooser uses an SSC-styled drop area with Browse, selected filenames and
+sizes, and Clear selection. `includes/file-picker.php` renders the native controls;
+`assets/js/file-picker.js` enhances them with keyboard focus feedback and drag/drop.
+Invalid drops preserve the current selection, while paused announcement controls
+reject drops. Without JavaScript, the native file chooser remains visible and usable.
 
 Administrators can change records; members get read-only access. Mutations require
 session form tokens and deletion uses POST, including `delete_document.php`.
