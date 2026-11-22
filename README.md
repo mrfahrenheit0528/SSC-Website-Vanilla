@@ -325,7 +325,7 @@ totals, a searchable/filterable document table, and separate PDF upload and even
 announcement tools. Existing PDF viewing, metadata editing, bulk moves/deletion,
 and report export remain available. Administrators switch in place between
 Uploaded documents and Upload & announcements tabs. The table occupies its own
-full-width panel; upload and announcement cards stack vertically in the second panel. Keyboard navigation,
+full-width panel; publishing tools share the second panel. Keyboard navigation,
 direct/legacy anchors and post-upload feedback select the appropriate panel,
 without discarding search or file selections. The View website header button is
 removed. Members retain the read-only documents panel. Mobile layouts stack the
