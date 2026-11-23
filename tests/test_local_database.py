@@ -271,7 +271,7 @@ class LocalApplicationTests(unittest.TestCase):
                         self.assertIn(b'data-officer-track', body)
                         self.assertIn(b'data-hero-video', body)
                         self.assertIn(b'muted loop playsinline preload="none"', body)
-                        self.assertIn(b'href="tally.php"', body)
+                        self.assertIn(b'href="https://www.siklab2026.app"', body)
                         for obsolete in (b'data-photo-scene', b'data-parallax-stage', b'opening-trophy', b'THE SEVEN COLLEGES', b'college-chapter'):
                             self.assertNotIn(obsolete, body)
                         self.assertNotIn(b'id="aboutModal"', body)

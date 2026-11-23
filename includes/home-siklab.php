@@ -9,7 +9,7 @@
             <h1 id="hero-heading"><span class="visually-hidden">SIKLAB: CSPC Intramurals 2026</span><img src="assets/img/siklab/wordmark.webp" width="1100" height="202" alt="" class="hero-wordmark" fetchpriority="high"></h1>
             <p class="hero-subtitle">CSPC Intramurals 2026</p>
             <p class="hero-dates"><time datetime="2026-11-23">November 23</time>–<time datetime="2026-11-28">28, 2026</time></p>
-            <a class="button button-gold tally-button" href="tally.php">Official tally board</a>
+            <a class="button button-gold tally-button" href="https://www.siklab2026.app">Official tally board</a>
         </div>
         <div class="hero-bottom page-width">
             <a class="hero-scroll-link" href="#official-documents">Explore the page</a>
