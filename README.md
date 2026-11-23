@@ -166,12 +166,14 @@ The November 22, 2026 rollout and follow-ups succeeded:
 | SIKLAB overhaul | `0c25ded` | [45035544631](https://github.com/mrfahrenheit0528/SSC-Website-Vanilla/actions/runs/45035544631) |
 | Remove Home announcement link; center QR dialog | `20e978b` | [45037565068](https://github.com/mrfahrenheit0528/SSC-Website-Vanilla/actions/runs/45037565068) |
 | Refresh proponent profiles and current positions | `453ba3f` | [45039895702](https://github.com/mrfahrenheit0528/SSC-Website-Vanilla/actions/runs/45039895702) |
+| Official tally-board URL, targeted publication on November 23 | `f840b7a` | [45200924757](https://github.com/mrfahrenheit0528/SSC-Website-Vanilla/actions/runs/45200924757) |
 
 Public HTTP checks verified pages, existing PDF links, selected asset hashes and denied
 private routes. The library grew from 47 to 84 documents during live use; those figures
 are historical observations, not fixed totals or migration assertions. Browser visual QA
-and signed-in production verification remain incomplete. The tally-board URL change is
-in source commit `f840b7a`; confirm its production workflow before treating it as deployed.
+and signed-in production verification remain incomplete. The targeted tally-link run
+verified the saved template, published only its URL replacement, and read back the
+result. The Home button points directly to `https://www.siklab2026.app`.
 
 Known follow-ups include the Regular theme redesign, legacy registration and PDF-serving
 hardening, report-category alignment, and full browser/accessibility verification.
