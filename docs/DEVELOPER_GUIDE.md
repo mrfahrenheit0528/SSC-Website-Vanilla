@@ -1,6 +1,7 @@
 # Comprehensive developer guide
 
-**CSPC Supreme Student Council website**  
+**CSPC Supreme Student Council website**
+
 Reviewed November 23, 2026 · Asia/Taipei
 
 This guide describes the current repository implementation and the supported way
