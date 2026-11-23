@@ -12,7 +12,7 @@ import uuid
 from build_release import release_files
 
 
-def settings(environ):
+def connection_settings(environ):
     names = ('FTP_SERVER', 'FTP_REMOTE_DIR', 'FTP_USERNAME', 'FTP_PASSWORD')
     if any(not environ.get(name) for name in names):
         raise ValueError('Set FTP_SERVER/FTP_REMOTE_DIR variables and FTP_USERNAME/FTP_PASSWORD secrets in production')
@@ -27,6 +27,11 @@ def settings(environ):
             or PurePosixPath(remote).name != 'htdocs'):
         raise ValueError('FTP_REMOTE_DIR must be the verified absolute website directory ending in /htdocs/')
     values['FTP_REMOTE_DIR'] = remote.rstrip('/')
+    return values
+
+
+def settings(environ):
+    values = connection_settings(environ)
     if environ.get('DEPLOY_DRY_RUN', 'true') not in {'true', 'false'}:
         raise ValueError('DEPLOY_DRY_RUN must be true or false')
     values['dry_run'] = environ.get('DEPLOY_DRY_RUN', 'true') == 'true'

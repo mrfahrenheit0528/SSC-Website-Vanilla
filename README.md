@@ -115,8 +115,8 @@ git diff --check
 The local Python launcher creates a disposable `ssc_test_*` database and removes it
 after the suite; it does not reset `ssc_dev`. Plain `python -m unittest discover -s tests -v`
 runs safeguards/configuration tests but skips application integration unless the dedicated
-test environment is configured. The latest UI verification ran 70 JavaScript tests and
-40 Python/integration tests; use actual results when the suite changes.
+test environment is configured. The current suite has 70 JavaScript tests and
+48 Python/integration tests; use actual results when the suite changes.
 
 `build/release/` is a generated runtime package, not a backup. Browser checks remain
 necessary for layout, focus, animation, touch interaction and signed-in production flows.
@@ -149,6 +149,13 @@ it runs no database migrations or remote deletions. Individual files use tempora
 uploads followed by rename. The whole release is not atomic. Recent full transfers
 took roughly 9–14 minutes. See the guide for the exact preflight, release exclusions,
 failure handling and rollback procedure.
+
+The separate **Publish official tally link** workflow is limited to one template
+and one URL replacement. It verifies the live template against the committed
+recovery copy `453ba3f`, verifies the staged upload, then replaces and reads back
+that file. It rejects unrelated edits. The full release workflow retains its
+current-backup requirement; this one-file operation does not publish database,
+upload, configuration or other application changes.
 
 ## Release evidence and remaining work
 

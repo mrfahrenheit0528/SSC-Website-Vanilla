@@ -459,7 +459,7 @@ The full Python run creates a random `ssc_test_*` database, applies migrations,
 seeds fixtures, starts an isolated PHP test server, and exercises public/authenticated
 flows, PDF/report output, upload collisions, permissions, announcement pause and
 private paths. Cleanup drops only that disposable database and its fixture uploads.
-The latest suite has 70 Node tests and 40 Python/integration tests; check actual output.
+The current suite has 70 Node tests and 48 Python/integration tests; check actual output.
 
 Without `SSC_INTEGRATION=1` and a supported test DB, plain unittest discovery skips
 the application integration class. Use `dev.py test` on Windows or the CI service
@@ -563,7 +563,34 @@ After the backup and preview are verified, the upload command is:
 gh workflow run deploy.yml --repo mrfahrenheit0528/SSC-Website-Vanilla --ref main -f dry_run=false -f backups_confirmed=true
 ```
 
-### What the deployer checks and preserves
+### Publish only the official tally link
+
+[tally-link.yml](../.github/workflows/tally-link.yml) is a separate, one-purpose manual
+workflow. It runs CI and uses the same production environment, main-branch gate,
+verified FTPS and concurrency group as a full release. With `publish=false` it only
+previews; `publish=true` applies the one allowed change in `includes/home-siklab.php`.
+
+[publish_tally_link.py](../scripts/publish_tally_link.py) loads the original template
+from immutable recovery commit `453ba3fafff8bf7b0259b84a07be2519da3a890b`. It requires
+the new template to equal that copy with exactly one approved URL replacement. It
+refuses a live template that differs from both the recovery copy and the desired
+result, verifies the temporary upload, checks again for live edits before rename,
+and reads back the published file. An already updated file is a no-op. A failed
+attempt may leave a temporary file; it never deletes the original to force rename.
+
+This operation uses the versioned template as its verified file recovery copy.
+It does not transfer other application files or touch production data/configuration.
+It is not a general incremental deployer and does not relax the full-release backup
+guard. Review a new workflow if the template acquires unrelated changes; do not
+rewrite the recovery comparison simply to bypass an unexpected live edit.
+
+```powershell
+gh workflow run tally-link.yml --repo mrfahrenheit0528/SSC-Website-Vanilla --ref main -f publish=false
+```
+
+After the preview succeeds, invoke it with `-f publish=true` to publish the link.
+
+### Full-release preflight and preservation
 
 [scripts/deploy_ftps.py](../scripts/deploy_ftps.py) uses explicit FTPS on port 21,
 verified certificates and encrypted control/data channels. There is no insecure

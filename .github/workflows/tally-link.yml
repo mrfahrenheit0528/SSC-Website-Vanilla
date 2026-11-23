@@ -1,0 +1,47 @@
+name: Publish official tally link
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Apply only the verified Home tally URL change; false performs a read-only preview'
+        type: boolean
+        default: false
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: infinityfree-production
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+  publish:
+    needs: checks
+    if: github.repository == 'mrfahrenheit0528/SSC-Website-Vanilla' && github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: https://cspcssc.ct.ws/
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify or publish the one-file update over FTPS
+        env:
+          FTP_SERVER: ${{ vars.FTP_SERVER }}
+          FTP_REMOTE_DIR: ${{ vars.FTP_REMOTE_DIR }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          PUBLISH_TALLY_LINK: ${{ inputs.publish }}
+        run: |
+          if [ "$PUBLISH_TALLY_LINK" = true ]; then
+            python3 scripts/publish_tally_link.py --publish
+          else
+            python3 scripts/publish_tally_link.py
+          fi
